@@ -60,6 +60,8 @@ function Ball(x, y, dx, dy, radius, color) {
 
 function drawGrid(){
     
+    console.log("hello world!");
+
 }
 
 Object.prototype.draw = function() {
@@ -81,6 +83,8 @@ Object.prototype.update = function() {
 // Implementation
 
 function init() {
+
+    drawGrid();
     
 }
 
