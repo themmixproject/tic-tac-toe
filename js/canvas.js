@@ -22,6 +22,13 @@ var gravity = 0.5;
 // var friction = 0.99;
 var friction = 0.99;
 
+
+var defaultStroke = 1;
+
+console.log(c.lineWidth);
+
+
+
 // Event Listeners
 addEventListener('mousemove', event => {
     mouse.x = event.clientX
@@ -31,6 +38,14 @@ addEventListener('mousemove', event => {
 addEventListener('resize', () => {
     canvas.width = innerWidth
     canvas.height = innerHeight
+
+    center = {
+        x: canvas.width / 2,
+        y: canvas.height / 2
+    }
+
+    init();
+
 })
 
 addEventListener("click", function(){
@@ -46,6 +61,13 @@ function randomColor(colors) {
     return colors[Math.floor(Math.random() * colors.length)]
 }
 
+function drawPath(x, y, x1, y1){
+    c.beginPath();
+    c.moveTo(x, y);
+    c.lineTo(x1, y1);
+    c.stroke();
+}
+
 // Objects
 function Ball(x, y, dx, dy, radius, color) {
     this.x = x;
@@ -58,10 +80,49 @@ function Ball(x, y, dx, dy, radius, color) {
     this.color = color;
 }
 
+
+// draws the first grid
 function drawGrid(){
     
-    console.log("hello world!");
+    c.lineWidth = 5;
 
+    var gridPadding = 60;
+
+    var x = center.x - gridPadding;
+
+    var height = gridPadding * 6;
+
+    var y = center.y;
+
+    c.beginPath();
+    c.moveTo(x, y + height / 2);
+    c.lineTo(x, y - height / 2);
+    c.stroke();
+
+    var x = center.x + gridPadding;
+
+    c.beginPath();
+    c.moveTo(x, y + height / 2);
+    c.lineTo(x, y - height / 2);
+    c.stroke();
+
+    var x = center.x;
+
+    var y = center.y - gridPadding;
+
+    var width = gridPadding * 6
+
+    c.beginPath();
+    c.moveTo(x + width / 2, y);
+    c.lineTo(x - width / 2, y);
+    c.stroke();
+
+    var y = center.y + gridPadding;
+
+    c.beginPath();
+    c.moveTo(x + width / 2, y);
+    c.lineTo(x - width / 2, y);
+    c.stroke();
 }
 
 Object.prototype.draw = function() {
@@ -84,8 +145,10 @@ Object.prototype.update = function() {
 
 function init() {
 
+    c.clearRect(0, 0, canvas.width, canvas.height);
+
     drawGrid();
-    
+
 }
 
 // Animation Loop
