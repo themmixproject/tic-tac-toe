@@ -100,16 +100,16 @@ function drawGrid(){
     var x = center.x + gridPadding;
 
     drawPath(x, y + ( height / 2),
-             x, y - (height / 2) );
+             x, y - ( height / 2) );
 
     var x = center.x;
 
     var y = center.y - gridPadding;
 
-    var width = gridPadding * 6
+    var width = gridPadding * 6;
 
-    drawPath(x + width / 2, y,
-             x - width / 2, y);
+    drawPath(x + ( width / 2 ), y,
+             x - ( width / 2 ), y);
 
     var y = center.y + gridPadding;
 
