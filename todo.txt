@@ -1,0 +1,7 @@
+TO DO LIST:
+
+1. let the JS draw a psuedo-grid so when you hover over a squar the cursor turns to a pointer
+
+2. add animations
+
+3. create the game

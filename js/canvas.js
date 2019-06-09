@@ -94,17 +94,23 @@ function drawGrid(){
 
     var y = center.y;
 
-    c.beginPath();
-    c.moveTo(x, y + height / 2);
-    c.lineTo(x, y - height / 2);
-    c.stroke();
+    drawPath(x, y + ( height / 2 ),
+             x, y - ( height / 2 ));
+
+    // c.beginPath();
+    // c.moveTo(x, y + height / 2);
+    // c.lineTo(x, y - height / 2);
+    // c.stroke();
 
     var x = center.x + gridPadding;
 
-    c.beginPath();
-    c.moveTo(x, y + height / 2);
-    c.lineTo(x, y - height / 2);
-    c.stroke();
+    drawPath(x, y + ( height / 2),
+             x, y - (height / 2) );
+
+    // c.beginPath();
+    // c.moveTo(x, y + height / 2);
+    // c.lineTo(x, y - height / 2);
+    // c.stroke();
 
     var x = center.x;
 
@@ -112,17 +118,23 @@ function drawGrid(){
 
     var width = gridPadding * 6
 
-    c.beginPath();
-    c.moveTo(x + width / 2, y);
-    c.lineTo(x - width / 2, y);
-    c.stroke();
+    // c.beginPath();
+    // c.moveTo(x + width / 2, y);
+    // c.lineTo(x - width / 2, y);
+    // c.stroke();
+
+    drawPath(x + width / 2, y,
+             x - width / 2, y);
 
     var y = center.y + gridPadding;
 
-    c.beginPath();
-    c.moveTo(x + width / 2, y);
-    c.lineTo(x - width / 2, y);
-    c.stroke();
+    drawPath(x + width / 2, y,
+             x - width / 2, y);
+
+    // c.beginPath();
+    // c.moveTo(x + width / 2, y);
+    // c.lineTo(x - width / 2, y);
+    // c.stroke();
 }
 
 Object.prototype.draw = function() {
