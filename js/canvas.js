@@ -97,31 +97,16 @@ function drawGrid(){
     drawPath(x, y + ( height / 2 ),
              x, y - ( height / 2 ));
 
-    // c.beginPath();
-    // c.moveTo(x, y + height / 2);
-    // c.lineTo(x, y - height / 2);
-    // c.stroke();
-
     var x = center.x + gridPadding;
 
     drawPath(x, y + ( height / 2),
              x, y - (height / 2) );
-
-    // c.beginPath();
-    // c.moveTo(x, y + height / 2);
-    // c.lineTo(x, y - height / 2);
-    // c.stroke();
 
     var x = center.x;
 
     var y = center.y - gridPadding;
 
     var width = gridPadding * 6
-
-    // c.beginPath();
-    // c.moveTo(x + width / 2, y);
-    // c.lineTo(x - width / 2, y);
-    // c.stroke();
 
     drawPath(x + width / 2, y,
              x - width / 2, y);
@@ -131,10 +116,6 @@ function drawGrid(){
     drawPath(x + width / 2, y,
              x - width / 2, y);
 
-    // c.beginPath();
-    // c.moveTo(x + width / 2, y);
-    // c.lineTo(x - width / 2, y);
-    // c.stroke();
 }
 
 Object.prototype.draw = function() {
