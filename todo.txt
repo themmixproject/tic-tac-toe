@@ -5,3 +5,7 @@ TO DO LIST:
 2. add animations
 
 3. create the game
+
+4. get cooridinates of the grid blocks
+
+5. edit documentation

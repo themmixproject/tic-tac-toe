@@ -1,5 +1,28 @@
 // import utils from './utils'
 
+/*
+
+    ~Index canvas.js~
+    ----------------------
+
+    1. init values
+    2. init functions
+    3. Utility functions
+    4. draw grid function
+    5. intialize
+
+*/
+
+
+/*#####################################################\
+ *|                                                    #
+ *| 1.init values                                      #
+ *|                                                    #
+ *| These values are the standart var's of canvas.js   #
+ *|                                                    #
+\#####################################################*/
+
+
 // global variables
 
 const canvas = document.querySelector('canvas')
@@ -31,7 +54,25 @@ console.log(c.lineWidth);
 
 var gridSquareArray = [];
 
-var gridCoordinatesArray = [];
+var gridCoordinates = {};
+
+
+var crossPoints={};
+
+
+/*#####################################################\
+ *|                                                    #
+ *| 4. init classes                                    #
+ *|                                                    #
+\#####################################################*/
+
+
+
+/*#####################################################\
+ *|                                                    #
+ *| 2.init functions                                   #
+ *|                                                    #
+\#####################################################*/
 
 // Event Listeners
 addEventListener('mousemove', event => {
@@ -55,6 +96,12 @@ addEventListener('resize', () => {
 addEventListener("click", function(){
     init();
 });
+
+/*#######################################################\
+ *|                                                      #
+ *| 3.uitility functions                                 #
+ *|                                                      # 
+\#######################################################*/
 
 // Utility Functions
 
@@ -96,7 +143,7 @@ class gridSquare{
 
         this.topLeft = {x:x_tl, y:y_tl};
 
-        this.topRight - {x:x_tr, y: Y_tr};
+        this.topRight - {x:x_tr, y: y_tr};
         
         this.bottomLeft = {x: x_bl, y: y_bl};
 
@@ -117,12 +164,16 @@ class gridSquare{
     }
 }
 
-
+/*#####################################################\
+ *|                                                    #
+ *| 4. draw grid function                              #
+ *|                                                    #
+\#####################################################*/
 
 // draws the first grid
 function drawGrid(){
     
-    gridCoordinatesArray = [];
+
 
     c.lineWidth = 5;
 
@@ -138,7 +189,7 @@ function drawGrid(){
              x, y - height);
 
 
-    var leftVertical = {
+    gridCoordinates.leftVertical = {
         description: "left vertical",
         top: {
             x: x,
@@ -147,10 +198,11 @@ function drawGrid(){
         bottom: {
             x: x,
             y: y - height
-        }
+        },
+        x: x
     }
 
-    gridCoordinatesArray.push(leftVertical);
+    // gridCoordinatesArray.push(leftVertical);
 
     var x = center.x + gridPadding;
 
@@ -158,7 +210,7 @@ function drawGrid(){
     drawPath(x, y + height,
              x, y - height );
 
-    var rightVertical = {
+    gridCoordinates.rightVertical = {
         description: "right vertical",
         top: {
             x: x,
@@ -167,10 +219,11 @@ function drawGrid(){
         bottom: {
             x: x,
             y: y - height
-        }
+        },
+        x: x
     }
 
-    gridCoordinatesArray.push(rightVertical);
+    // gridCoordinatesArray.push(rightVertical);
 
     var x = center.x;
 
@@ -181,44 +234,69 @@ function drawGrid(){
     drawPath(x + width, y,
              x - width, y);
 
-    var topHorizontal = {
+    gridCoordinates.topHorizontal = {
         description: "top horizontal",
-        top: {
+        left: {
             x: x + width,
             y: y
         },
-        bottom: {
+        right: {
             x: x - width,
             y: y
-        }
+        },
+        y: y
     }
 
-    gridCoordinatesArray.push(topHorizontal)
+    // gridCoordinatesArray.push(topHorizontal)
 
     var y = center.y + gridPadding;
 
     drawPath(x + width, y,
              x - width, y);
 
-    var bottomHorizontal = {
+    gridCoordinates.bottomHorizontal = {
         description: "bottom horizontal",
-        top: {
+        left: {
             x: x + width,
             y: y
         },
-        bottom: {
+        right: {
             x: x - width,
             y: y
-        }
+        },
+        y: y
     }
 
-    gridCoordinatesArray.push(bottomHorizontal)
 
-    console.log(gridCoordinatesArray);
+    crossPoints.topLeft = {x: gridCoordinates.leftVertical.x ,y: gridCoordinates.topHorizontal.y};
+
+    crossPoints.topRight = {x: gridCoordinates.rightVertical.x, y: gridCoordinates.topHorizontal.y};
+
+    crossPoints.bottomLeft = {x: gridCoordinates.leftVertical.x ,y: gridCoordinates.bottomHorizontal.y};
+
+    crossPoints.bottomRight = {x: gridCoordinates.rightVertical.x, y: gridCoordinates.bottomHorizontal.y};
+
+
+
+    // gridCoordinatesArray.push(bottomHorizontal);
+
+    console.log(crossPoints);
     
 
    resetBrush();
+
+   
     
+}
+
+function setBlockCoordinates(){
+
+    // gridSquareArray[0] = 
+    // new gridSquare(
+    //     gridCoordinates.topHorizontal.left.x, grid,
+    //     gridCoordinates.leftVertical
+    // )
+
 }
 
 Object.prototype.draw = function() {
@@ -237,9 +315,13 @@ Object.prototype.update = function() {
    
 }
 
-// Implementation
+/*########################################################\
+ *|                                                       #
+ *| 7. initialize function                                #
+ *|                                                       #
+\########################################################*/
 
-var gridSquareArray = [];
+// Implementation
 
 function init() {
 
@@ -247,6 +329,7 @@ function init() {
 
     drawGrid();
 
+    setBlockCoordinates();
 }
 
 // Animation Loop
