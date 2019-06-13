@@ -139,15 +139,27 @@ function drawPath(x, y, x1, y1){
 // }
 
 class gridSquare{
-    constructor(x_tl, y_tl, x_tr, y_tr, x_bl, y_bl, x_br, y_br){
+    // constructor(x_tl, y_tl, x_tr, y_tr, x_bl, y_bl, x_br, y_br){
+    constructor(topLeft, topRight, bottomLeft, bottomRight){
 
-        this.topLeft = {x:x_tl, y:y_tl};
 
-        this.topRight - {x:x_tr, y: y_tr};
+
+        this.topLeft = topLeft;
+
+        this.topRight = topRight;
         
-        this.bottomLeft = {x: x_bl, y: y_bl};
+        this.bottomLeft = bottomLeft;
 
-        this.bottomRight = {x: x_br, y: y_br};
+        this.bottomRight = bottomRight;
+
+
+        // this.topLeft = {x:x_tl, y:y_tl};
+
+        // this.topRight = {x:x_tr, y: y_tr};
+        
+        // this.bottomLeft = {x: x_bl, y: y_bl};
+
+        // this.bottomRight = {x: x_br, y: y_br};
 
         // this.x_tl = x_tl;
         // this.y_tl = y_tl;
@@ -161,7 +173,15 @@ class gridSquare{
         // this.x_br = x_br;
         // this.y_br = y_br;
 
+        this.center = {
+            x: this.bottomLeft.x + ( (this.bottomRight.x - this.bottomLeft.x) / 2),
+            y: this.topRight.y + ( (this.bottomRight.y - this.topRight.y) / 2)
+        }
+
     }
+    
+    
+
 }
 
 /*#####################################################\
@@ -185,19 +205,19 @@ function drawGrid(){
 
     var y = center.y;
 
-    drawPath(x, y + height,
-             x, y - height);
+    drawPath(x, y - height,
+             x, y + height);
 
 
     gridCoordinates.leftVertical = {
         description: "left vertical",
         top: {
             x: x,
-            y: y + height
+            y: y - height
         },
         bottom: {
             x: x,
-            y: y - height
+            y: y + height
         },
         x: x
     }
@@ -207,18 +227,18 @@ function drawGrid(){
     var x = center.x + gridPadding;
 
     
-    drawPath(x, y + height,
-             x, y - height );
+    drawPath(x, y - height,
+             x, y + height );
 
     gridCoordinates.rightVertical = {
         description: "right vertical",
         top: {
             x: x,
-            y: y + height
+            y: y - height
         },
         bottom: {
             x: x,
-            y: y - height
+            y: y + height
         },
         x: x
     }
@@ -231,17 +251,17 @@ function drawGrid(){
 
     var width = height;
 
-    drawPath(x + width, y,
-             x - width, y);
+    drawPath(x - width, y,
+             x + width, y);
 
     gridCoordinates.topHorizontal = {
         description: "top horizontal",
         left: {
-            x: x + width,
+            x: x - width,
             y: y
         },
         right: {
-            x: x - width,
+            x: x + width,
             y: y
         },
         y: y
@@ -251,17 +271,17 @@ function drawGrid(){
 
     var y = center.y + gridPadding;
 
-    drawPath(x + width, y,
-             x - width, y);
+    drawPath(x - width, y,
+             x + width, y);
 
     gridCoordinates.bottomHorizontal = {
         description: "bottom horizontal",
         left: {
-            x: x + width,
+            x: x - width,
             y: y
         },
         right: {
-            x: x - width,
+            x: x + width,
             y: y
         },
         y: y
@@ -280,7 +300,7 @@ function drawGrid(){
 
     // gridCoordinatesArray.push(bottomHorizontal);
 
-    console.log(crossPoints);
+    console.log(gridCoordinates);
     
 
    resetBrush();
@@ -291,11 +311,30 @@ function drawGrid(){
 
 function setBlockCoordinates(){
 
-    // gridSquareArray[0] = 
-    // new gridSquare(
-    //     gridCoordinates.topHorizontal.left.x, grid,
-    //     gridCoordinates.leftVertical
-    // )
+    console.log(gridCoordinates);
+    
+
+    gridSquareArray[0] = new gridSquare(
+        {
+            x: gridCoordinates.topHorizontal.left.x,
+            y: gridCoordinates.leftVertical.top.y
+        },{
+            x: gridCoordinates.leftVertical.x,
+            y: gridCoordinates.leftVertical.top.y
+        },{
+            x: gridCoordinates.topHorizontal.left.x,
+            y: gridCoordinates.topHorizontal.y,
+        },{
+            x: crossPoints.topLeft.x,
+            y: crossPoints.topLeft.y
+        }
+
+    );
+
+    drawPath(gridSquareArray[0].topLeft.x, gridSquareArray[0].topLeft.y,gridSquareArray[0].center.x, gridSquareArray[0].center.y)
+
+    console.log(gridSquareArray);
+    
 
 }
 
