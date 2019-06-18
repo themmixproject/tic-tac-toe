@@ -25,8 +25,10 @@
 
 // global variables
 
-const canvas = document.querySelector('canvas')
-const c = canvas.getContext('2d')
+const canvas = document.querySelector('canvas');
+const c = canvas.getContext('2d');
+
+// c.translate(0.5, 0.5);
 
 canvas.width = innerWidth
 canvas.height = innerHeight
@@ -318,18 +320,36 @@ function setBlockCoordinates(){
         {
             x: gridCoordinates.topHorizontal.left.x,
             y: gridCoordinates.leftVertical.top.y
-        },{
-            x: gridCoordinates.leftVertical.x,
-            y: gridCoordinates.leftVertical.top.y
-        },{
-            x: gridCoordinates.topHorizontal.left.x,
-            y: gridCoordinates.topHorizontal.y,
-        },{
-            x: crossPoints.topLeft.x,
-            y: crossPoints.topLeft.y
-        }
+        },
+            gridCoordinates.leftVertical.top,
+            gridCoordinates.topHorizontal.left,
+            crossPoints.topLeft
 
     );
+
+    gridSquareArray[1] = new gridSquare(
+
+        gridCoordinates.leftVertical.top,
+        gridCoordinates.rightVertical.top,
+        crossPoints.topLeft,
+        crossPoints.topRight
+
+    );
+
+    gridSquareArray[2] = new gridSquare(
+        gridCoordinates.rightVertical.top,
+        {
+            x: gridCoordinates.rightVertical.top.x,
+            y: gridCoordinates.topHorizontal.right.x
+        },
+        crossPoints.topRight,
+        gridCoordinates.topHorizontal.right
+    )
+
+
+    gridSquare[3] = new gridSquare(
+        
+    )
 
     drawPath(gridSquareArray[0].topLeft.x, gridSquareArray[0].topLeft.y,gridSquareArray[0].center.x, gridSquareArray[0].center.y)
 
