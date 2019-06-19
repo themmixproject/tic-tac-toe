@@ -175,11 +175,16 @@ class gridSquare{
         // this.x_br = x_br;
         // this.y_br = y_br;
 
-        this.center = {
-            x: this.bottomLeft.x + ( (this.bottomRight.x - this.bottomLeft.x) / 2),
-            y: this.topRight.y + ( (this.bottomRight.y - this.topRight.y) / 2)
-        }
+        // this.center = {
+        //     x: this.bottomLeft.x + ( (this.bottomRight.x - this.bottomLeft.x) / 2),
+        //     y: this.topRight.y + ( (this.bottomRight.y - this.topRight.y) / 2)
+        // }
 
+    }
+    
+     center(){
+       return { x: this.bottomLeft.x + ( (this.bottomRight.x - this.bottomLeft.x) / 2),
+            y: this.topRight.y + ( (this.bottomRight.y - this.topRight.y) / 2)};
     }
     
     
@@ -351,7 +356,7 @@ function setBlockCoordinates(){
         
     )
 
-    drawPath(gridSquareArray[0].topLeft.x, gridSquareArray[0].topLeft.y,gridSquareArray[0].center.x, gridSquareArray[0].center.y)
+    // drawPath(gridSquareArray[0].topLeft.x, gridSquareArray[0].topLeft.y,gridSquareArray[0].center().x, gridSquareArray[0].center().y);
 
     console.log(gridSquareArray);
     
