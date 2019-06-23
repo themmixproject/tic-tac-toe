@@ -9,7 +9,7 @@
     4. Event Listeners
     5. Utility Functions
     6. Functions
-    6. intialize
+    7. intialize
 
 */
 
@@ -48,6 +48,11 @@ const mouse = {
     y: innerHeight / 2
 }
 
+var topLeft = {
+    x: center.x - sectionWidth * 1.5,
+    y: center.y - sectionWidth * 1.5
+}
+
 const colors = ['#2185C5', '#7ECEFD', '#FFF6E5', '#FF7F66'];
 
 /*#####################################################\
@@ -75,9 +80,25 @@ Object.prototype.update = function() {
  *|                                                    #
 \#####################################################*/
 
-addEventListener('mousemove', event => {
+addEventListener('click', event => {
     mouse.x = event.clientX
     mouse.y = event.clientY
+
+    for(x=0; x<3;x++){
+        for(y=0;y<3;y++){
+
+            var gridX = sectionWidth * x;
+            var gridY = sectionWidth * y;
+
+            if(
+                mouse.x >= topLeft.x + gridX && mouse.x <= topLeft.x + gridX + sectionWidth &&
+                mouse.y >= topLeft.y + gridY && mouse.y <= topLeft.y + gridY + sectionWidth
+            ){
+                
+                
+            }
+        }
+    }
 })
 
 addEventListener('resize', () => {
@@ -87,6 +108,11 @@ addEventListener('resize', () => {
     center = {
         x: canvas.width / 2,
         y: canvas.height / 2
+    }
+
+    topLeft = {
+        x: center.x - sectionWidth * 1.5,
+        y: center.y - sectionWidth * 1.5
     }
 
     init()
@@ -131,7 +157,6 @@ function drawGrid(){
     );
 
     }
-    
     
 }
 
