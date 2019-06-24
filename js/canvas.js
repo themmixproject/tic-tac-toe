@@ -9,7 +9,8 @@
     4. Event Listeners
     5. Utility Functions
     6. Functions
-    7. intialize
+    7. Game Functions
+    8. intialize
 
 */
 
@@ -57,6 +58,29 @@ var topLeft = {
 
 const colors = ['#2185C5', '#7ECEFD', '#FFF6E5', '#FF7F66'];
 
+
+
+/*#####################################################\
+ *|                                                    #
+ *| 1. Game Variables                                  #
+ *|                                                    #
+\#####################################################*/
+
+var grid = [0,0,0,0,0,0,0,0,0];
+
+var combinations=[
+    [0,1,2],
+    [3,4,5],
+    [6,7,8],
+    [0,3,6],
+    [1,4,7],
+    [2,5,8],
+    [6,4,2],
+    [0,4,8]
+];
+
+var computerMoved = false;
+
 /*#####################################################\
  *|                                                    #
  *| 3. object prototype functions                      #
@@ -99,9 +123,7 @@ addEventListener('click', event => {
 
                 index = x + (y * 3);
 
-                console.log(index);
-                
-                drawO(gridX,gridY, index);
+                playerTurn(gridX, gridY, index);
 
             }
         }
@@ -145,7 +167,7 @@ function drawPath(x, y, x1, y1){
 /*#####################################################\
  *|                                                    #
  *| 6. Functions                                       #
- *|                                                    # 
+ *|                                                    #
 \#####################################################*/
 
 function drawGrid(){
@@ -172,7 +194,6 @@ function drawGrid(){
 }
 
 function drawX(x, y, index){
-    console.log(x + " " + y);
 
     drawPath(x + padding, y + padding,
         x+ sectionWidth - padding,
@@ -204,8 +225,100 @@ function drawO(x, y, index){
 
 /*#####################################################\
  *|                                                    #
- *| 7. initialize                                      #
- *|                                                    # 
+ *| 7. Game Functions                                  #
+ *|                                                    #
+\#####################################################*/
+
+function playerTurn(x, y, index){
+    // console.log(index);
+
+    if(grid[index] == 0){
+        drawX(x, y);
+
+        grid[index] = 1;
+
+    }
+
+    computer();
+
+};
+
+function computerTurn(index){
+
+    console.log(index);
+
+    grid[index] = 2;
+
+    var x = index % 3;
+    var y = Math.floor( index / 3 );
+
+    console.log(x+ " " + y);
+
+    var gridX = x * sectionWidth + topLeft.x;
+    var gridY = y * sectionWidth + topLeft.y;
+
+    drawO(gridX, gridY);
+
+
+}
+
+function computer(){
+    
+    function computerLoop(player){
+        combinations.forEach(function(arr,index){
+            for(var i=0; i<3; i++){
+                if(
+                    grid[arr[0]]==player &&
+                    grid[arr[1]]==player &&
+                    grid[arr[2]]==0 &&
+                    
+
+
+                    computerMoved == false
+                ){  
+                    computerTurn(arr[2]);
+                    computerMoved = true;
+                }
+                else {
+                    arr.unshift(arr[2]);
+                    arr.pop();
+                }
+            }
+            
+        });
+    }
+    
+    computerLoop(2);
+    computerLoop(1);
+
+
+
+    if(computerMoved ==false){
+
+        function randomIndex(){
+            function ranNum(){
+                return Math.floor(Math.random()*8);
+            }
+
+            var ran=ranNum();
+            if(grid[ran]!=0){randomIndex();}
+            else{computerTurn(ran);}
+
+            return;
+        }
+
+        randomIndex();
+    }
+
+    computerMoved = false;
+
+}
+
+
+/*#####################################################\
+ *|                                                    #
+ *| 8. initialize                                      #
+ *|                                                    #
 \#####################################################*/
 
 // Implementation
@@ -222,6 +335,4 @@ function animate() {
 
 init();
 
-drawO(topLeft.x + (sectionWidth * 2), topLeft.y + (sectionWidth * 2), 3);
-drawX(topLeft.x + (sectionWidth * 2), topLeft.y + (sectionWidth * 2), 3);
 // animate()
