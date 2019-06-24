@@ -22,6 +22,8 @@
 var gridWidth = 250;
 var sectionWidth = gridWidth / 3;
 
+var padding = 10;
+
 /*#####################################################\
  *|                                                    #
  *| 2.init values                                      #
@@ -87,19 +89,28 @@ addEventListener('click', event => {
     for(x=0; x<3;x++){
         for(y=0;y<3;y++){
 
-            var gridX = sectionWidth * x;
-            var gridY = sectionWidth * y;
+            var gridX = x * sectionWidth + topLeft.x;
+            var gridY = y * sectionWidth + topLeft.y;
 
             if(
-                mouse.x >= topLeft.x + gridX && mouse.x <= topLeft.x + gridX + sectionWidth &&
-                mouse.y >= topLeft.y + gridY && mouse.y <= topLeft.y + gridY + sectionWidth
+                mouse.x >= gridX && mouse.x <= gridX + sectionWidth &&
+                mouse.y >= gridY && mouse.y <= gridY + sectionWidth
             ){
+
+                index = x + (y * 3);
+
+                console.log(index);
                 
-                
+                drawO(gridX,gridY, index);
+
             }
         }
     }
 })
+
+// addEventListener('mousemove',function(){
+
+// });
 
 addEventListener('resize', () => {
     canvas.width = innerWidth
@@ -160,6 +171,37 @@ function drawGrid(){
     
 }
 
+function drawX(x, y, index){
+    console.log(x + " " + y);
+
+    drawPath(x + padding, y + padding,
+        x+ sectionWidth - padding,
+        y + sectionWidth - padding
+
+    )
+
+    drawPath(
+        x + sectionWidth - padding,
+        y + padding,
+        x + padding,
+        y + sectionWidth - padding
+    )
+
+}
+
+function drawO(x, y, index){
+    c.beginPath();
+    c.arc(
+        x + sectionWidth / 2,
+        y + sectionWidth / 2,
+        sectionWidth / 2 - padding,
+        0,
+        Math.PI*2,
+        false
+    )
+    c.stroke();
+}
+
 /*#####################################################\
  *|                                                    #
  *| 7. initialize                                      #
@@ -178,5 +220,8 @@ function animate() {
 
 }
 
-init()
+init();
+
+drawO(topLeft.x + (sectionWidth * 2), topLeft.y + (sectionWidth * 2), 3);
+drawX(topLeft.x + (sectionWidth * 2), topLeft.y + (sectionWidth * 2), 3);
 // animate()
