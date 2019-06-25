@@ -20,11 +20,11 @@
  *|                                                    #
 \#####################################################*/
 
-var gridWidth = 250;
+var gridWidth = 350;
 var sectionWidth = gridWidth / 3;
 
 var padding = 10;
-
+ 
 /*#####################################################\
  *|                                                    #
  *| 2.init values                                      #
@@ -80,6 +80,11 @@ var combinations=[
 ];
 
 var computerMoved = false;
+
+var game = {
+    end: false,
+    win: false
+}
 
 /*#####################################################\
  *|                                                    #
@@ -171,9 +176,8 @@ function drawPath(x, y, x1, y1){
 \#####################################################*/
 
 function drawGrid(){
-    var lineStart = 4;
-    var lineLength = gridWidth - 5;
 
+    // horizontal lines
     for(var y = 1, o = 1; y <= 2; y++, o=-1){
         drawPath(
             center.x - (sectionWidth * 1.5), center.y + (sectionWidth * -0.5) * o,
@@ -182,6 +186,7 @@ function drawGrid(){
 
     }
 
+    // vertical lines
     for(var x = 1, o = 1; x <= 2; x++, o=-1){
 
     drawPath(
@@ -231,15 +236,19 @@ function drawO(x, y, index){
 
 function playerTurn(x, y, index){
     // console.log(index);
+    if(game.end==true){game.end=false};
 
     if(grid[index] == 0){
         drawX(x, y);
 
         grid[index] = 1;
 
-    }
+        checkWin(1);
 
-    computer();
+        if(game.end == false){computer();}
+    }
+    
+    
 
 };
 
@@ -251,6 +260,7 @@ function computerTurn(index){
 
     var x = index % 3;
     var y = Math.floor( index / 3 );
+    
 
     console.log(x+ " " + y);
 
@@ -259,6 +269,7 @@ function computerTurn(index){
 
     drawO(gridX, gridY);
 
+    checkWin(2);
 
 }
 
@@ -310,10 +321,77 @@ function computer(){
         randomIndex();
     }
 
+    checkWin(2);
+
     computerMoved = false;
 
 }
 
+function checkWin(p){
+    var counter=0;
+    
+        combinations.forEach(function(item,index){
+            if(game.win==false){
+                item.forEach(function(item,index){
+                    if(grid[item]===p){counter++};
+                });
+            }
+            if(counter===3 && game.win==false){
+                game.win=true;
+                game.end=true;
+                console.log("win");
+            }
+            else{counter=0};
+        });
+    if(game.win==true && game.end==true){reset();
+    };
+    counter=0;
+    grid.forEach(function(item){
+        if(item!=0){counter++};
+    });
+       
+    if(counter==9 && game.end==false){
+        game.end=true;
+
+        reset();
+    };
+    
+    // counter=0;
+}
+
+function reset(){
+
+    game.win = false;
+
+    grid = [0,0,0,0,0,0,0,0,0];
+
+    for(var x=0; x<3; x++){
+        for(var y=0; y<3; y++){
+
+            var gridX = x * sectionWidth + topLeft.x + (padding  / 2);
+            var gridY = y * sectionWidth + topLeft.y + (padding / 2);
+
+            c.clearRect(
+                gridX,
+                gridY, 
+                sectionWidth - padding,
+                sectionWidth - padding
+
+            )
+            
+            // c.fillRect(
+            //     gridX,
+            //     gridY, 
+            //     sectionWidth - padding,
+            //     sectionWidth - padding
+
+            // )
+        }
+    }
+
+    
+
+};
 
 /*#####################################################\
  *|                                                    #
@@ -334,5 +412,4 @@ function animate() {
 }
 
 init();
-
 // animate()
