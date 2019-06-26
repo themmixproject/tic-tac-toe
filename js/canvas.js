@@ -66,7 +66,12 @@ const colors = ['#2185C5', '#7ECEFD', '#FFF6E5', '#FF7F66'];
  *|                                                    #
 \#####################################################*/
 
-var grid = [0,0,0,0,0,0,0,0,0];
+var grid = [];
+
+for(var i=0;i<3;i++){
+    grid.push([0,0,0]);
+}
+
 
 var combinations=[
     [0,1,2],
@@ -118,17 +123,19 @@ addEventListener('click', event => {
     for(x=0; x<3;x++){
         for(y=0;y<3;y++){
 
-            var gridX = x * sectionWidth + topLeft.x;
-            var gridY = y * sectionWidth + topLeft.y;
+            // var gridX = x * sectionWidth + topLeft.x;
+            // var gridY = y * sectionWidth + topLeft.y;
 
             if(
-                mouse.x >= gridX && mouse.x <= gridX + sectionWidth &&
-                mouse.y >= gridY && mouse.y <= gridY + sectionWidth
+                mouse.x >= gridX(x) && mouse.x <= gridX(x) + sectionWidth &&
+                mouse.y >= gridY(y) && mouse.y <= gridY(y) + sectionWidth
             ){
 
-                index = x + (y * 3);
+                // index = x + (y * 3);
 
-                playerTurn(gridX, gridY, index);
+                playerTurn(x, y);
+
+                // console.log(x + " " + y);
 
             }
         }
@@ -169,6 +176,14 @@ function drawPath(x, y, x1, y1){
     c.stroke();
 }
 
+function gridX(x){
+    return x * sectionWidth + topLeft.x;
+}
+
+function gridY(y){
+    return y * sectionWidth + topLeft.y;
+}
+
 /*#####################################################\
  *|                                                    #
  *| 6. Functions                                       #
@@ -199,6 +214,8 @@ function drawGrid(){
 }
 
 function drawX(x, y, index){
+
+
 
     drawPath(x + padding, y + padding,
         x+ sectionWidth - padding,
@@ -235,17 +252,19 @@ function drawO(x, y, index){
 \#####################################################*/
 
 function playerTurn(x, y, index){
-    // console.log(index);
+    console.log(x + " " + y);
     if(game.end==true){game.end=false};
 
-    if(grid[index] == 0){
-        drawX(x, y);
+    if(grid[y][x] == 0){
+        drawX(gridX(x), gridY(y));
 
-        grid[index] = 1;
+        grid[y][x] = 1;
 
-        checkWin(1);
+        console.log(grid);
 
-        if(game.end == false){computer();}
+        // checkWin(1);
+
+        // if(game.end == false){computer();}
     }
     
     
