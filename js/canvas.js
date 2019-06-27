@@ -14,6 +14,11 @@
 
 */
 
+/** TO MORE AWAKE STEVEN, RESTRUCTURE THE "setCoordinates()" FUNCTION
+ * BASICALLY, PUT IT IN A DIFFERENT PLACE, OR JUST CREATE A SEPERATE CHAPTER FOR IT
+ * 
+ */
+
 /*#####################################################\
  *|                                                    #
  *| 1. Canvas properties                               #
@@ -73,16 +78,99 @@ for(var i=0;i<3;i++){
 }
 
 
-var combinations=[
-    [0,1,2],
-    [3,4,5],
-    [6,7,8],
-    [0,3,6],
-    [1,4,7],
-    [2,5,8],
-    [6,4,2],
-    [0,4,8]
-];
+
+
+// for(var y = 0; y < 3; y++){
+//     var array = [];
+//     for(var x = 0; x < 3; x++){
+//         array.push([x,y])
+//     }
+//     combinations.push(array);
+// }
+
+// for(var y = 0; y < 3; y++){
+//     var array = [];
+//     for(var x = 0; x < 3; x++){
+//         array.push([y,x]);
+//     }
+//     combinations.push(array);
+// }
+// // for(o=0;o<1;o++){
+// //     var array = [];
+// //     for(i=0;i<3;i++){
+        
+// //         array.push([i,i]); 
+// //     }
+// //     combinations.push(array);
+// // }
+
+// for(i=0;i<1;i++){
+//     var array = [];
+//     var array1 = [];
+//         for(var x=2, y=0; x >= 0; x--, y++){
+
+//             array1.push([x,x]); 
+
+//             array.push([x, y]);
+
+//         }
+    
+//     combinations.push(array1,array);
+// }
+
+
+var combinations=[];
+
+
+
+function setCombinations(){
+    
+
+    for(var y = 0; y < 3; y++){
+        var array = [];
+        for(var x = 0; x < 3; x++){
+            array.push([x,y])
+        }
+        combinations.push(array);
+    }
+    
+    for(var y = 0; y < 3; y++){
+        var array = [];
+        for(var x = 0; x < 3; x++){
+            array.push([y,x]);
+        }
+        combinations.push(array);
+    }
+
+    for(i=0;i<1;i++){
+        var array = [];
+        var array1 = [];
+            for(var x=2, y=0; x >= 0; x--, y++){
+    
+                array1.push([x,x]); 
+    
+                array.push([x, y]);
+    
+            }
+        
+        combinations.push(array1,array);
+    }
+
+    // [6,4,2],
+    // [0,4,8]
+    // [
+    //     [0,0],
+    //     [1,1],
+    //     [2,2]
+    // ],
+    // [
+    //     [2,0],
+    //     [1,1],
+    //     [0,2]
+    // ]
+
+}
+
 
 var computerMoved = false;
 
@@ -90,6 +178,9 @@ var game = {
     end: false,
     win: false
 }
+
+// 
+
 
 /*#####################################################\
  *|                                                    #
@@ -221,14 +312,14 @@ function drawX(x, y, index){
         x+ sectionWidth - padding,
         y + sectionWidth - padding
 
-    )
+    );
 
     drawPath(
         x + sectionWidth - padding,
         y + padding,
         x + padding,
         y + sectionWidth - padding
-    )
+    );
 
 }
 
@@ -420,7 +511,12 @@ function reset(){
 
 // Implementation
 function init() {
+
+    setCombinations();
+
     drawGrid();
+
+
 }
 
 // Animation Loop
@@ -431,4 +527,5 @@ function animate() {
 }
 
 init();
+
 // animate()
