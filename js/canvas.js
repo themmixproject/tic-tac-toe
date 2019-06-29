@@ -351,33 +351,36 @@ function playerTurn(x, y, index){
 
         grid[y][x] = 1;
 
-        console.log(grid);
+        // console.log(grid);
 
-        // checkWin(1);
+        // computer();
 
-        // if(game.end == false){computer();}
+        checkWin(1);
+
+        if(game.end == false){computer();
+        }
     }
     
     
 
 };
 
-function computerTurn(index){
+function computerTurn(x, y){
 
-    console.log(index);
+    // console.log(index);
 
-    grid[index] = 2;
+    grid[y][x] = 2;
 
-    var x = index % 3;
-    var y = Math.floor( index / 3 );
+    // var x = index % 3;
+    // var y = Math.floor( index / 3 );
     
 
-    console.log(x+ " " + y);
+    // console.log(x+ " " + y);
 
-    var gridX = x * sectionWidth + topLeft.x;
-    var gridY = y * sectionWidth + topLeft.y;
+    // var gridX = x * sectionWidth + topLeft.x;
+    // var gridY = y * sectionWidth + topLeft.y;
 
-    drawO(gridX, gridY);
+    drawO( gridX(x) , gridY(y) );
 
     checkWin(2);
 
@@ -386,64 +389,139 @@ function computerTurn(index){
 function computer(){
     
     function computerLoop(player){
-        combinations.forEach(function(arr,index){
+        combinations.forEach(function(array,index){
             for(var i=0; i<3; i++){
-                if(
-                    grid[arr[0]]==player &&
-                    grid[arr[1]]==player &&
-                    grid[arr[2]]==0 &&
+            //     if(
+            //         grid[array[0]]==player &&
+            //         grid[array[1]]==player &&
+            //         grid[array[2]]==0 &&
+
+            //         grid[array[i][0][0]]
                     
 
 
+            //         computerMoved == false
+            //     ){  
+            //         computerTurn(array[2]);
+            //         computerMoved = true;
+            //     }
+            //     else {
+            //         array.unshift(array[2]);
+            //         array.pop();
+            //     }
+
+            // array.forEach(function(array1, index){
+            //     console.log(array1);
+                
+            // });
+                // console.log(array);
+                 
+                if(
+                    grid[ array[0][1] ][ array[0][0] ] == player &&
+                    grid[ array[1][1] ][ array[1][0] ] == player &&
+                    grid[ array[2][1] ][ array[2][0] ] == 0 &&
                     computerMoved == false
-                ){  
-                    computerTurn(arr[2]);
+                ){
+                    
+                    // console.log("block");
+                    computerTurn( array[2][0] , array[2][1] );
                     computerMoved = true;
+                    
                 }
                 else {
-                    arr.unshift(arr[2]);
-                    arr.pop();
+                    
+                    array.unshift(array[2]);
+                    array.pop();
+                    // console.log("nothing");
+                    
                 }
+
+
             }
             
         });
     }
     
-    computerLoop(2);
     computerLoop(1);
+    computerLoop(2);
 
+    if(computerMoved == false){
 
-
-    if(computerMoved ==false){
-
-        function randomIndex(){
-            function ranNum(){
-                return Math.floor(Math.random()*8);
+        function randomBox(){
+            
+            function randomX(){
+                return Math.floor(Math.random()*3);
             }
 
-            var ran=ranNum();
-            if(grid[ran]!=0){randomIndex();}
-            else{computerTurn(ran);}
+            function randomY(){
+                return Math.floor(Math.random() * 3);
+            }
+
+            var x = randomX();
+            var y = randomY();
+
+            if( grid[y][x] != 0  ){
+
+                // console.log("call");
+                
+
+                randomBox();
+
+            }
+            else{
+
+                computerTurn( x, y);
+                
+            }
 
             return;
+
         }
 
-        randomIndex();
+        randomBox();
+
     }
 
-    checkWin(2);
+    // computerMoved = false;
+
+    // console.log(combinations)
+
+
+    // if(computerMoved ==false){
+
+    //     function randomIndex(){
+    //         function ranNum(){
+    //             return Math.floor(Math.random()*8);
+    //         }
+
+    //         var ran=ranNum();
+    //         if(grid[ran]!=0){randomIndex();}
+    //         else{computerTurn(ran);}
+
+    //         return;
+    //     }
+
+    //     randomIndex();
+    // }
+
 
     computerMoved = false;
 
+    return;
 }
 
-function checkWin(p){
+function checkWin(player){
     var counter=0;
     
-        combinations.forEach(function(item,index){
+        combinations.forEach(function(combination,index){
             if(game.win==false){
-                item.forEach(function(item,index){
-                    if(grid[item]===p){counter++};
+                combination.forEach(function(array,index){
+                    if(
+                        // grid[item]===p
+                        grid[ array[1] ][ array[0] ] == player
+                    ){
+                        counter++
+                    };
                 });
             }
             if(counter===3 && game.win==false){
@@ -455,25 +533,47 @@ function checkWin(p){
         });
     if(game.win==true && game.end==true){reset();
     };
+
     counter=0;
-    grid.forEach(function(item){
-        if(item!=0){counter++};
+
+    grid.forEach(function(array){
+
+        array.forEach(function(item){
+            // console.log(item);
+            // if(item != 0){ console.log(true) };
+            // console.log(array);
+            if(item!=0){
+                counter++;
+            };
+            
+            // console.log(item !== 0);
+
+        })
+        
+
+        
     });
+
+    console.log(counter);
        
     if(counter==9 && game.end==false){
         game.end=true;
-
+        console.log("tie");
         reset();
     };
     
-    // counter=0;
+    counter=0;
 }
 
 function reset(){
 
     game.win = false;
 
-    grid = [0,0,0,0,0,0,0,0,0];
+    // grid = [0,0,0,0,0,0,0,0,0];
+
+    grid.forEach(function(item,index){
+        grid[index] = [0,0,0];
+    })
 
     for(var x=0; x<3; x++){
         for(var y=0; y<3; y++){
@@ -514,6 +614,10 @@ function init() {
 
     setCombinations();
 
+    console.log(combinations);
+    console.log(grid);
+    
+
     drawGrid();
 
 
@@ -527,5 +631,4 @@ function animate() {
 }
 
 init();
-
 // animate()
