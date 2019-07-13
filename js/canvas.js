@@ -28,7 +28,26 @@
 var gridWidth = 350;
 var sectionWidth = gridWidth / 3;
 
-var padding = 10;
+var theme = {
+    cross : {
+        color : "#4F9BA8",
+        cap : "round",
+        thickness : 10
+    },
+    knot : {
+        color : "#D9695F",
+        cap : "round",
+        thickness : 10
+    },
+    grid : {
+        color : "#2D3742",
+        thickness : 10,
+        cap : "round"
+    },
+    background : "#EFCDBF"
+}
+
+var padding = 25;
  
 /*#####################################################\
  *|                                                    #
@@ -40,6 +59,7 @@ var padding = 10;
 
 // setting up canvas
 const canvas = document.querySelector('canvas');
+canvas.style.backgroundColor = theme.background;
 const c = canvas.getContext('2d');
 c.translate(0.5,0.5);
 
@@ -62,7 +82,6 @@ var topLeft = {
 }
 
 const colors = ['#2185C5', '#7ECEFD', '#FFF6E5', '#FF7F66'];
-
 
 
 /*#####################################################\
@@ -275,6 +294,13 @@ function gridY(y){
     return y * sectionWidth + topLeft.y;
 }
 
+function resetBrush(){
+    c.lineWidth = 1;
+    c.strokeStyle = "black";
+    c.fillStyle = "black";
+    c.lineCap = "butt";
+}
+
 /*#####################################################\
  *|                                                    #
  *| 6. Functions                                       #
@@ -283,6 +309,10 @@ function gridY(y){
 
 function drawGrid(){
 
+    c.lineCap = theme.grid.cap;
+    c.strokeStyle = theme.grid.color;
+    c.lineWidth = theme.grid.thickness;
+    
     // horizontal lines
     for(var y = 1, o = 1; y <= 2; y++, o=-1){
         drawPath(
@@ -301,11 +331,15 @@ function drawGrid(){
 
     }
     
+    resetBrush();
+
 }
 
 function drawX(x, y, index){
 
-
+    c.lineCap = theme.cross.cap;
+    c.strokeStyle = theme.cross.color;
+    c.lineWidth = theme.cross.thickness;
 
     drawPath(x + padding, y + padding,
         x+ sectionWidth - padding,
@@ -320,9 +354,16 @@ function drawX(x, y, index){
         y + sectionWidth - padding
     );
 
+    resetBrush();
+
 }
 
 function drawO(x, y, index){
+
+    c.lineCap = theme.knot.cap;
+    c.strokeStyle = theme.knot.color;
+    c.lineWidth = theme.knot.thickness;
+
     c.beginPath();
     c.arc(
         x + sectionWidth / 2,
@@ -333,6 +374,8 @@ function drawO(x, y, index){
         false
     )
     c.stroke();
+
+    resetBrush();
 }
 
 /*#####################################################\
