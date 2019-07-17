@@ -21,7 +21,70 @@
 
 /*#####################################################\
  *|                                                    #
- *| 1. Canvas properties                               #
+ *| 1. Monkey Patches                                  #
+ *|                                                    #
+\#####################################################*/
+
+window.requestAnimationFrame = (function () {
+    return window.requestAnimationFrame ||
+    window.webkitRequestAnimationFrame ||
+    window.mozRequestAnimationFrame ||
+    function (callback) {
+        window.setTimeout(callback, 1000 / 60);
+    };
+})();
+
+window.cancelAnimationFrame = (function () {
+    return window.cancelAnimationFrame ||
+    window.webkitCancelAnimationFrame ||
+    window.mozCancelAnimationFrame ||
+    function (timPtr) {
+        window.clearTimeout(timPtr);
+    };
+})();
+
+/*#####################################################\
+ *|                                                    #
+ *| 2. Global Utility Functions                        #
+ *|                                                    # 
+\#####################################################*/
+
+function drawPath(x, y, x1, y1){
+    c.beginPath();
+    c.moveTo(x, y);
+    c.lineTo(x1, y1);
+    c.stroke();
+}
+
+function gridX(x){
+    return x * sectionWidth + topLeft.x;
+}
+
+function gridY(y){
+    return y * sectionWidth + topLeft.y;
+}
+
+function resetBrush(){
+    c.lineWidth = 1;
+    c.strokeStyle = "black";
+    c.fillStyle = "black";
+    c.lineCap = "butt";
+}
+
+function easeInOutExpo(t, b, c, d) {
+    if (t==0) return b;
+    if (t==d) return b+c;
+    if ((t/=d/2) < 1) return c/2 * Math.pow(2, 10 * (t - 1)) + b;
+    return c/2 * (-Math.pow(2, -10 * --t) + 2) + b;
+  }
+  
+  function easeInExpo(t, b, c, d) {
+    return (t==0) ? b : c * Math.pow(2, 10 * (t/d - 1)) + b;
+  }
+
+/*#####################################################\
+ *|                                                    #
+ *| 2. Canvas properties                               #
  *|                                                    #
 \#####################################################*/
 
@@ -51,7 +114,7 @@ var padding = 25;
  
 /*#####################################################\
  *|                                                    #
- *| 2.init values                                      #
+ *| 3.init values                                      #
  *|                                                    #
  *| These values are the standard var's of canvas.js   #
  *|                                                    #
@@ -86,7 +149,7 @@ const colors = ['#2185C5', '#7ECEFD', '#FFF6E5', '#FF7F66'];
 
 /*#####################################################\
  *|                                                    #
- *| 1. Game Variables                                  #
+ *| 4. Game Variables                                  #
  *|                                                    #
 \#####################################################*/
 
@@ -222,7 +285,7 @@ Object.prototype.update = function() {
 
 /*#####################################################\
  *|                                                    #
- *| 4. Event Listeners                                 #
+ *| 5. Event Listeners                                 #
  *|                                                    #
 \#####################################################*/
 
@@ -275,34 +338,6 @@ addEventListener('resize', () => {
 
 /*#####################################################\
  *|                                                    #
- *| 5. utility functions                               #
- *|                                                    # 
-\#####################################################*/
-
-function drawPath(x, y, x1, y1){
-    c.beginPath();
-    c.moveTo(x, y);
-    c.lineTo(x1, y1);
-    c.stroke();
-}
-
-function gridX(x){
-    return x * sectionWidth + topLeft.x;
-}
-
-function gridY(y){
-    return y * sectionWidth + topLeft.y;
-}
-
-function resetBrush(){
-    c.lineWidth = 1;
-    c.strokeStyle = "black";
-    c.fillStyle = "black";
-    c.lineCap = "butt";
-}
-
-/*#####################################################\
- *|                                                    #
  *| 6. Functions                                       #
  *|                                                    #
 \#####################################################*/
@@ -335,14 +370,84 @@ function drawGrid(){
 
 }
 
-function drawX(x, y, index){
+function drawFirst(x, y){
+
+    var iteration = 0;
+    var totalIterations = 20;
+
+    var easingValueX;
+    var easingValueY;
+
+    function draw(){
+
+        c.lineCap = theme.cross.cap;
+        c.strokeStyle = theme.cross.color;
+        c.lineWidth = theme.cross.thickness;
+
+        easingValueX = easeInOutExpo(iteration, (x + padding), (sectionWidth - padding*2), totalIterations);
+        easingValueY = easeInOutExpo(iteration, (y + padding), (sectionWidth - padding*2), totalIterations);        
+
+        drawPath(x + padding, y + padding, easingValueX, easingValueY);
+
+        if(iteration<totalIterations){
+            iteration ++;
+            requestAnimationFrame(draw);
+        }
+        
+    }
+
+    draw();
+}
+
+function drawSecond(x, y){
+    var iteration = 0;
+    var totalIterations = 20;
+    var easingValueX;
+    var easingValueY;
+
+    function draw(){
+
+        c.lineCap = theme.cross.cap;
+        c.strokeStyle = theme.cross.color;
+        c.lineWidth = theme.cross.thickness;
+
+        easingValueX = easeInOutExpo(iteration, (x + sectionWidth - padding), -sectionWidth+(padding*2), totalIterations);
+        easingValueY = easeInOutExpo(iteration, (y + padding), sectionWidth-(padding*2), totalIterations);        
+
+         drawPath(
+            x + sectionWidth - padding,
+            y + padding,
+            easingValueX,
+            easingValueY
+        );
+
+        if(iteration<totalIterations){
+            iteration ++;
+            requestAnimationFrame(draw);
+        }
+        
+    }
+
+    draw();
+}
+
+function drawX(x, y){
+    
+    x = gridX(x);
+    y = gridY(y);
 
     c.lineCap = theme.cross.cap;
     c.strokeStyle = theme.cross.color;
     c.lineWidth = theme.cross.thickness;
 
+    // console.log(y + sectionWidth - padding);
+
+    // drawFirst(x, y);
+
+    // drawSecond(x, y);
+
     drawPath(x + padding, y + padding,
-        x+ sectionWidth - padding,
+        x + sectionWidth - padding,
         y + sectionWidth - padding
 
     );
@@ -359,6 +464,9 @@ function drawX(x, y, index){
 }
 
 function drawO(x, y, index){
+
+    x = gridX(x);
+    y = gridY(y);
 
     c.lineCap = theme.knot.cap;
     c.strokeStyle = theme.knot.color;
@@ -384,12 +492,13 @@ function drawO(x, y, index){
  *|                                                    #
 \#####################################################*/
 
-function playerTurn(x, y, index){
-    console.log(x + " " + y);
+function playerTurn(x, y){
+    // console.log(x + " " + y);
     if(game.end==true){game.end=false};
 
     if(grid[y][x] == 0){
-        drawX(gridX(x), gridY(y));
+
+        drawX(x,y);
 
         grid[y][x] = 1;
 
@@ -407,7 +516,7 @@ function computerTurn(x, y){
 
     grid[y][x] = 2;
 
-    drawO( gridX(x) , gridY(y) );
+    drawO(x, y);
 
     checkWin(2);
 
@@ -500,7 +609,7 @@ function checkWin(player){
         
     });
 
-    console.log(counter);
+    // console.log(counter);
        
     if(counter==9 && game.end==false){
         game.end=true;
