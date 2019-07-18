@@ -162,47 +162,6 @@ for(var i=0;i<3;i++){
     grid.push([0,0,0]);
 }
 
-
-
-
-// for(var y = 0; y < 3; y++){
-//     var array = [];
-//     for(var x = 0; x < 3; x++){
-//         array.push([x,y])
-//     }
-//     combinations.push(array);
-// }
-
-// for(var y = 0; y < 3; y++){
-//     var array = [];
-//     for(var x = 0; x < 3; x++){
-//         array.push([y,x]);
-//     }
-//     combinations.push(array);
-// }
-// // for(o=0;o<1;o++){
-// //     var array = [];
-// //     for(i=0;i<3;i++){
-        
-// //         array.push([i,i]); 
-// //     }
-// //     combinations.push(array);
-// // }
-
-// for(i=0;i<1;i++){
-//     var array = [];
-//     var array1 = [];
-//         for(var x=2, y=0; x >= 0; x--, y++){
-
-//             array1.push([x,x]); 
-
-//             array.push([x, y]);
-
-//         }
-    
-//     combinations.push(array1,array);
-// }
-
 var computerMoved = false;
 
 var game = {
@@ -250,19 +209,6 @@ function setCombinations(){
         
         combinations.push(array1,array);
     }
-
-    // [6,4,2],
-    // [0,4,8]
-    // [
-    //     [0,0],
-    //     [1,1],
-    //     [2,2]
-    // ],
-    // [
-    //     [2,0],
-    //     [1,1],
-    //     [0,2]
-    // ]
 
 }
 
@@ -521,12 +467,11 @@ function playerTurn(x, y){
 
         checkWin(1);
 
-        if(game.end == false){computer();
+        if(game.end == false){
+            computer();
         }
     }
     
-    
-
 };
 
 function computerTurn(x, y){
@@ -641,8 +586,6 @@ function reset(){
 
     game.win = false;
 
-    // grid = [0,0,0,0,0,0,0,0,0];
-
     grid.forEach(function(item,index){
         grid[index] = [0,0,0];
     })
@@ -692,12 +635,4 @@ function init() {
 
 }
 
-// Animation Loop
-function animate() {
-    requestAnimationFrame(animate)
-    c.clearRect(0, 0, canvas.width, canvas.height)
-
-}
-
 init();
-// animate()
