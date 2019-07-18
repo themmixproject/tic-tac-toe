@@ -1,16 +1,19 @@
 /*
 
-    ~Index new_canvas.js~
+    ~Index canvas.js~
     ----------------------
 
-    1. Canvas Properties
-    2. init values
-    3. object prototype functions
-    4. Event Listeners
-    5. Utility Functions
-    6. Functions
-    7. Game Functions
-    8. intialize
+    1. Monkey Patches
+    2. Global Utility Functions
+    3. Canvas Properties
+    4. Init Values
+    5. Game Variables
+        5.1 Win Combinations
+    6. Object Prototype Functions (needs to be removed)
+    7. Event Listeners
+    8. Functions
+    9. Game Functions
+    10. Intialize
 
 */
 
@@ -84,7 +87,7 @@ function easeInOutExpo(t, b, c, d) {
 
 /*#####################################################\
  *|                                                    #
- *| 2. Canvas properties                               #
+ *| 3. Canvas properties                               #
  *|                                                    #
 \#####################################################*/
 
@@ -114,7 +117,7 @@ var padding = 25;
  
 /*#####################################################\
  *|                                                    #
- *| 3.init values                                      #
+ *| 4. Init Values                                     #
  *|                                                    #
  *| These values are the standard var's of canvas.js   #
  *|                                                    #
@@ -149,7 +152,7 @@ const colors = ['#2185C5', '#7ECEFD', '#FFF6E5', '#FF7F66'];
 
 /*#####################################################\
  *|                                                    #
- *| 4. Game Variables                                  #
+ *| 5. Game Variables                                  #
  *|                                                    #
 \#####################################################*/
 
@@ -200,10 +203,20 @@ for(var i=0;i<3;i++){
 //     combinations.push(array1,array);
 // }
 
+var computerMoved = false;
+
+var game = {
+    end: false,
+    win: false
+}
+
+/*#####################################################\
+ *|                                                    #
+ *| 5.1 Win Combinations                               #
+ *|                                                    #
+\#####################################################*/
 
 var combinations=[];
-
-
 
 function setCombinations(){
     
@@ -253,20 +266,9 @@ function setCombinations(){
 
 }
 
-
-var computerMoved = false;
-
-var game = {
-    end: false,
-    win: false
-}
-
-// 
-
-
 /*#####################################################\
  *|                                                    #
- *| 3. object prototype functions                      #
+ *| 6. Object Prototype Functions                      #
  *|                                                    #
 \#####################################################*/
 
@@ -285,7 +287,7 @@ Object.prototype.update = function() {
 
 /*#####################################################\
  *|                                                    #
- *| 5. Event Listeners                                 #
+ *| 7. Event Listeners                                 #
  *|                                                    #
 \#####################################################*/
 
@@ -339,7 +341,7 @@ addEventListener('resize', () => {
 
 /*#####################################################\
  *|                                                    #
- *| 6. Functions                                       #
+ *| 8. Functions                                       #
  *|                                                    #
 \#####################################################*/
 
@@ -503,7 +505,7 @@ function drawO(x, y, index){
 
 /*#####################################################\
  *|                                                    #
- *| 7. Game Functions                                  #
+ *| 9. Game Functions                                  #
  *|                                                    #
 \#####################################################*/
 
@@ -675,7 +677,7 @@ function reset(){
 
 /*#####################################################\
  *|                                                    #
- *| 8. initialize                                      #
+ *| 10. Intialize                                      #
  *|                                                    #
 \#####################################################*/
 
