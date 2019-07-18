@@ -333,7 +333,8 @@ addEventListener('resize', () => {
         y: center.y - sectionWidth * 1.5
     }
 
-    drawGrid();
+    // drawGrid();
+    redraw();
 })
 
 /*#####################################################\
@@ -368,6 +369,20 @@ function drawGrid(){
     
     resetBrush();
 
+}
+
+function redraw(){
+    c.clearRect(0,0,innerHeight,innerWidth);
+    drawGrid();
+    grid.forEach(function(item,y){
+        item.forEach(function(piece,x){
+            if(piece==1){
+                drawX(x,y);
+            }if(piece==2){
+                drawO(x,y);
+            }
+        });
+    });
 }
 
 function drawFirst(x, y){
