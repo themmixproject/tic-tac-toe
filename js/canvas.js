@@ -333,7 +333,7 @@ addEventListener('resize', () => {
         y: center.y - sectionWidth * 1.5
     }
 
-    init()
+    drawGrid();
 })
 
 /*#####################################################\
@@ -668,11 +668,10 @@ function reset(){
 function init() {
 
     setCombinations();
+    drawGrid();
 
     console.log(combinations);
     console.log(grid);
-
-    drawGrid();
 
 }
 
