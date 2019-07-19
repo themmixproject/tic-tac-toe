@@ -706,3 +706,5 @@ function init() {
 }
 
 init();
+
+document.getElementById("output").innerText=innerWidth;
