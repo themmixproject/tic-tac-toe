@@ -129,6 +129,9 @@ canvas.style.backgroundColor = theme.background;
 const c = canvas.getContext('2d');
 c.translate(0.5,0.5);
 
+var innerWidth = window.innerWidth
+var innerHeight = window.innerHeight;
+
 canvas.width = innerWidth
 canvas.height = innerHeight
 
