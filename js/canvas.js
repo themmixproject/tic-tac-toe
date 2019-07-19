@@ -394,7 +394,7 @@ function drawSecond(x, y){
     draw();
 }
 
-function drawX(x, y){
+function drawX(x, y, animate=false){
     
     x = gridX(x);
     y = gridY(y);
@@ -405,46 +405,113 @@ function drawX(x, y){
 
     // console.log(y + sectionWidth - padding);
 
-    // drawFirst(x, y);
+    if(animate==true){
+        // drawFirst(x, y);
 
-    // drawSecond(x, y);
+        // drawSecond(x, y);
+    }
+    else{
+        drawPath(x + padding, y + padding,
+            x + sectionWidth - padding,
+            y + sectionWidth - padding
 
-    drawPath(x + padding, y + padding,
-        x + sectionWidth - padding,
-        y + sectionWidth - padding
+        );
 
-    );
+        drawPath(
+            x + sectionWidth - padding,
+            y + padding,
+            x + padding,
+            y + sectionWidth - padding
+        );
+    }
+    
 
-    drawPath(
-        x + sectionWidth - padding,
-        y + padding,
-        x + padding,
-        y + sectionWidth - padding
-    );
+    
 
     resetBrush();
 
 }
 
-function drawO(x, y, index){
+function animateCircle(x, y, rawX, rawY){
+    var iteration = 0;
+    var totalIterations = 50;
+    var easingValue;
 
+    function animate(){
+
+        // console.log("run");
+        
+            var gridPosX = gridX(rawX) + (padding  / 2);
+            var gridPosY = gridY(rawY) + (padding / 2);
+
+            c.clearRect(
+                gridPosX,
+                gridPosY, 
+                sectionWidth - padding,
+                sectionWidth - padding
+
+            )
+            
+        c.lineCap = theme.knot.cap;
+        c.strokeStyle = theme.knot.color;
+        c.lineWidth = theme.knot.thickness;
+
+        easingValue = easeInOutExpo(iteration, 0, Math.PI*2, totalIterations);
+
+        c.beginPath();
+        
+        c.arc(
+            gridX(rawX) + sectionWidth / 2,
+            gridY(rawY) + sectionWidth / 2,
+            sectionWidth / 2 - padding,
+            0,
+            easingValue,
+            false
+        )
+        
+        c.stroke()
+
+        if(iteration<totalIterations){
+            console.log("true");
+            
+            iteration ++;
+            requestAnimationFrame(animate);
+        }
+    }
+
+    animate();
+}
+
+function drawO(x, y, aniamte=false){
+
+    let rawX = x;
+    let rawY = y;
     x = gridX(x);
     y = gridY(y);
+    
 
     c.lineCap = theme.knot.cap;
     c.strokeStyle = theme.knot.color;
     c.lineWidth = theme.knot.thickness;
 
-    c.beginPath();
-    c.arc(
-        x + sectionWidth / 2,
-        y + sectionWidth / 2,
-        sectionWidth / 2 - padding,
-        0,
-        Math.PI*2,
-        false
-    )
-    c.stroke();
+    if(aniamte == true){
+        animateCircle(x, y, rawX, rawY);   
+    }
+    else{
+        c.beginPath();
+        c.arc(
+            x + sectionWidth / 2,
+            y + sectionWidth / 2,
+            sectionWidth / 2 - padding,
+            0,
+            Math.PI*2,
+            false
+        )
+        c.stroke();
+    }
+    
+
+    
 
     resetBrush();
 }
@@ -478,7 +545,7 @@ function computerTurn(x, y){
 
     grid[y][x] = 2;
 
-    drawO(x, y);
+    drawO(x, y, true);
 
     checkWin(2);
 
