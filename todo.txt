@@ -4,8 +4,8 @@ TO DO LIST:
 
 2. add animations
 
-3. create the game
+3. get cooridinates of the grid blocks
 
-4. get cooridinates of the grid blocks
+4. edit documentation
 
-5. edit documentation
+6. make grid scaleable
