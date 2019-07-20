@@ -111,7 +111,7 @@ var theme = {
         cap : "round"
     },
     background : "#EFCDBF"
-}
+};
 
 var padding = 25;
  
@@ -129,26 +129,26 @@ canvas.style.backgroundColor = theme.background;
 const c = canvas.getContext('2d');
 c.translate(0.5,0.5);
 
-var innerWidth = window.innerWidth
+var innerWidth = window.innerWidth;
 var innerHeight = window.innerHeight;
 
-canvas.width = innerWidth
-canvas.height = innerHeight
+canvas.width = innerWidth;
+canvas.height = innerHeight;
 
 var center = {
     x: canvas.width / 2,
     y: canvas.height / 2
-}
+};
 
 const mouse = {
     x: innerWidth / 2,
     y: innerHeight / 2
-}
+};
 
 var topLeft = {
     x: center.x - sectionWidth * 1.5,
     y: center.y - sectionWidth * 1.5
-}
+};
 
 const colors = ['#2185C5', '#7ECEFD', '#FFF6E5', '#FF7F66'];
 
@@ -170,7 +170,7 @@ var computerMoved = false;
 var game = {
     end: false,
     win: false
-}
+};
 
 /*#####################################################\
  *|                                                    #
@@ -186,13 +186,13 @@ function setCombinations(){
     for(var y = 0; y < 3; y++){
         var array = [];
         for(var x = 0; x < 3; x++){
-            array.push([x,y])
+            array.push([x,y]);
         }
         combinations.push(array);
     }
     
     for(var y = 0; y < 3; y++){
-        var array = [];
+        array = [];
         for(var x = 0; x < 3; x++){
             array.push([y,x]);
         }
@@ -223,16 +223,16 @@ function setCombinations(){
 
 // Objects
 Object.prototype.draw = function() {
-    c.beginPath()
-    c.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false)
-    c.fillStyle = this.color
-    c.fill()
-    c.closePath()
-}
+    c.beginPath();
+    c.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+    c.fillStyle = this.color;
+    c.fill();
+    c.closePath();
+};
 
 Object.prototype.update = function() {
-    this.draw()
-}
+    this.draw();
+};
 
 /*#####################################################\
  *|                                                    #
@@ -240,9 +240,36 @@ Object.prototype.update = function() {
  *|                                                    #
 \#####################################################*/
 
-addEventListener('click', event => {
-    mouse.x = event.clientX
-    mouse.y = event.clientY
+// addEventListener('click', event => {
+//     mouse.x = event.clientX
+//     mouse.y = event.clientY
+
+//     for(x=0; x<3;x++){
+//         for(y=0;y<3;y++){
+
+//             // var gridX = x * sectionWidth + topLeft.x;
+//             // var gridY = y * sectionWidth + topLeft.y;
+
+//             if(
+//                 mouse.x >= gridX(x) && mouse.x <= gridX(x) + sectionWidth &&
+//                 mouse.y >= gridY(y) && mouse.y <= gridY(y) + sectionWidth
+//             ){
+
+//                 // index = x + (y * 3);
+
+//                 playerTurn(x, y);
+
+//                 // console.log(x + " " + y);
+
+//             }
+//         }
+//     }
+// });
+
+document.addEventListener("click",function(){
+
+    mouse.x = event.clientX;
+    mouse.y = event.clientY;
 
     for(x=0; x<3;x++){
         for(y=0;y<3;y++){
@@ -264,29 +291,48 @@ addEventListener('click', event => {
             }
         }
     }
-})
+
+});
 
 // addEventListener('mousemove',function(){
 
 // });
 
-addEventListener('resize', () => {
-    canvas.width = innerWidth
-    canvas.height = innerHeight
+// addEventListener('resize', () => {
+//     canvas.width = innerWidth
+//     canvas.height = innerHeight
+
+//     center = {
+//         x: canvas.width / 2,
+//         y: canvas.height / 2
+//     }
+
+//     topLeft = {
+//         x: center.x - sectionWidth * 1.5,
+//         y: center.y - sectionWidth * 1.5
+//     }
+
+//     // drawGrid();
+//     redraw();
+// })
+
+document.addEventListener("resize",function(){
+    canvas.width = innerWidth;
+    canvas.height = innerHeight;
 
     center = {
         x: canvas.width / 2,
         y: canvas.height / 2
-    }
+    };
 
     topLeft = {
         x: center.x - sectionWidth * 1.5,
         y: center.y - sectionWidth * 1.5
-    }
+    };
 
     // drawGrid();
-    redraw();
-})
+    redraw(); 
+});
 
 /*#####################################################\
  *|                                                    #
@@ -302,6 +348,7 @@ function drawGrid(){
     
     // horizontal lines
     for(var y = 1, o = 1; y <= 2; y++, o=-1){
+
         drawPath(
             center.x - (sectionWidth * 1.5), center.y + (sectionWidth * -0.5) * o,
             center.x + (sectionWidth * 1.5), center.y + (sectionWidth * -0.5) * o
@@ -311,10 +358,10 @@ function drawGrid(){
     // vertical lines
     for(var x = 1, o = 1; x <= 2; x++, o=-1){
 
-    drawPath(
-        center.x + (sectionWidth * -0.5) * o, center.y - (sectionWidth * 1.5),
-        center.x + (sectionWidth * -0.5) * o, center.y + (sectionWidth * 1.5)
-    );
+        drawPath(
+            center.x + (sectionWidth * -0.5) * o, center.y - (sectionWidth * 1.5),
+            center.x + (sectionWidth * -0.5) * o, center.y + (sectionWidth * 1.5)
+        );
 
     }
     
@@ -453,7 +500,7 @@ function animateCircle(x, y, rawX, rawY){
                 sectionWidth - padding,
                 sectionWidth - padding
 
-            )
+            );
             
         c.lineCap = theme.knot.cap;
         c.strokeStyle = theme.knot.color;
@@ -470,9 +517,9 @@ function animateCircle(x, y, rawX, rawY){
             0,
             easingValue,
             false
-        )
+        );
         
-        c.stroke()
+        c.stroke();
 
         if(iteration<totalIterations){
             console.log("true");
@@ -487,8 +534,8 @@ function animateCircle(x, y, rawX, rawY){
 
 function drawO(x, y, aniamte=false){
 
-    let rawX = x;
-    let rawY = y;
+    var rawX = x;
+    var rawY = y;
     x = gridX(x);
     y = gridY(y);
     
@@ -509,7 +556,7 @@ function drawO(x, y, aniamte=false){
             0,
             Math.PI*2,
             false
-        )
+        );
         c.stroke();
     }
     
