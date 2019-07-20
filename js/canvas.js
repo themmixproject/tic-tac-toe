@@ -294,7 +294,7 @@ document.addEventListener("click",function(event){
 
 });
 
-camvas.addEventListener("touchstart",function(event){
+canvas.addEventListener("touchstart",function(event){
 
     mouse.x = event.clientX;
     mouse.y = event.clientY;
