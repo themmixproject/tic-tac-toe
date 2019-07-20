@@ -129,8 +129,8 @@ canvas.style.backgroundColor = theme.background;
 var c = canvas.getContext('2d');
 c.translate(0.5,0.5);
 
-var innerWidth = window.innerWidth;
-var innerHeight = window.innerHeight;
+// var innerWidth = window.innerWidth;
+// var innerHeight = window.innerHeight;
 
 canvas.width = innerWidth;
 canvas.height = innerHeight;
@@ -266,7 +266,7 @@ Object.prototype.update = function() {
 //     }
 // });
 
-document.addEventListener("click",function(){
+document.addEventListener("click",function(event){
 
     mouse.x = event.clientX;
     mouse.y = event.clientY;
@@ -316,9 +316,15 @@ document.addEventListener("click",function(){
 //     redraw();
 // })
 
-document.addEventListener("resize",function(){
-    canvas.width = innerWidth;
-    canvas.height = innerHeight;
+window.addEventListener("resize",function(){
+
+    // console.log("resize");
+        
+    // innerWidth = window.innerWidth;
+    // innerHeight = window.innerHeight;
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
 
     center = {
         x: canvas.width / 2,
@@ -753,5 +759,3 @@ function init() {
 }
 
 init();
-
-document.getElementById("output").innerText=innerWidth;
