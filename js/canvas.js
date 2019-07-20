@@ -294,33 +294,43 @@ document.addEventListener("click",function(event){
 
 });
 
-canvas.addEventListener("touchstart",function(event){
+// canvas.addEventListener("touchstart",function(event){
 
-    mouse.x = event.clientX;
-    mouse.y = event.clientY;
+//     mouse.x = event.clientX;
+//     mouse.y = event.clientY;
 
-    for(x=0; x<3;x++){
-        for(y=0;y<3;y++){
+//     for(x=0; x<3;x++){
+//         for(y=0;y<3;y++){
 
-            // var gridX = x * sectionWidth + topLeft.x;
-            // var gridY = y * sectionWidth + topLeft.y;
+//             // var gridX = x * sectionWidth + topLeft.x;
+//             // var gridY = y * sectionWidth + topLeft.y;
 
-            if(
-                mouse.x >= gridX(x) && mouse.x <= gridX(x) + sectionWidth &&
-                mouse.y >= gridY(y) && mouse.y <= gridY(y) + sectionWidth
-            ){
+//             if(
+//                 mouse.x >= gridX(x) && mouse.x <= gridX(x) + sectionWidth &&
+//                 mouse.y >= gridY(y) && mouse.y <= gridY(y) + sectionWidth
+//             ){
 
-                // index = x + (y * 3);
+//                 // index = x + (y * 3);
 
-                playerTurn(x, y);
+//                 playerTurn(x, y);
 
-                // console.log(x + " " + y);
+//                 // console.log(x + " " + y);
 
-            }
-        }
-    }
+//             }
+//         }
+//     }
 
+// });
+
+canvas.addEventListener("touchstart", function (e) {
+    mousePos = getTouchPos(canvas, e);
+var touch = e.touches[0];
+var mouseEvent = new MouseEvent("mousedown", {
+clientX: touch.clientX,
+clientY: touch.clientY
 });
+canvas.dispatchEvent(mouseEvent);
+}, false);
 
 function clickEvent(event){
     mouse.x = event.clientX;
