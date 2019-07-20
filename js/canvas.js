@@ -266,7 +266,7 @@ Object.prototype.update = function() {
 //     }
 // });
 
-document.addEventListener("click",function(event){
+document.addEventListener("click touchstart",function(event){
 
     mouse.x = event.clientX;
     mouse.y = event.clientY;
