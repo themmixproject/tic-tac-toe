@@ -124,9 +124,9 @@ var padding = 25;
 \#####################################################*/
 
 // setting up canvas
-const canvas = document.querySelector('canvas');
+var canvas = document.querySelector('canvas');
 canvas.style.backgroundColor = theme.background;
-const c = canvas.getContext('2d');
+var c = canvas.getContext('2d');
 c.translate(0.5,0.5);
 
 var innerWidth = window.innerWidth;
