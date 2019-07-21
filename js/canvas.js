@@ -240,10 +240,39 @@ Object.prototype.update = function() {
  *|                                                    #
 \#####################################################*/
 
-document.addEventListener("click",function(event){
+// document.addEventListener("click",function(event){
 
-    mouse.x = event.clientX;
-    mouse.y = event.clientY;
+//     mouse.x = event.clientX;
+//     mouse.y = event.clientY;
+
+//     for(x=0; x<3;x++){
+//         for(y=0;y<3;y++){
+
+//             // var gridX = x * sectionWidth + topLeft.x;
+//             // var gridY = y * sectionWidth + topLeft.y;
+
+//             if(
+//                 mouse.x >= gridX(x) && mouse.x <= gridX(x) + sectionWidth &&
+//                 mouse.y >= gridY(y) && mouse.y <= gridY(y) + sectionWidth
+//             ){
+
+//                 // index = x + (y * 3);
+
+//                 playerTurn(x, y);
+
+//                 // console.log(x + " " + y);
+
+//             }
+//         }
+//     }
+
+// });
+
+
+// event that gets execute on tap or click
+function canvasEvent(clientX, clientY){
+    mouse.x = clientX;
+    mouse.y = clientY;
 
     for(x=0; x<3;x++){
         for(y=0;y<3;y++){
@@ -256,6 +285,8 @@ document.addEventListener("click",function(event){
                 mouse.y >= gridY(y) && mouse.y <= gridY(y) + sectionWidth
             ){
 
+                console.log(mouse.x);
+                
                 // index = x + (y * 3);
 
                 playerTurn(x, y);
@@ -266,8 +297,21 @@ document.addEventListener("click",function(event){
         }
     }
 
-});
+};
 
+if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+    document.addEventListener("touchstart",function(event){
+        var clientX = event.touches[0].clientX;
+        var clientY = event.touches[0].clientY;
+
+        canvasEvent(clientX, clientY);
+    });
+}
+else{
+    document.addEventListener("click",function(event) {
+        canvasEvent(event.clientX, event.clientY);
+    })
+}
 
 
 window.addEventListener("resize",function(){
