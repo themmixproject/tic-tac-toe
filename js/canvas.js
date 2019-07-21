@@ -269,6 +269,7 @@ document.addEventListener("click",function(event){
 });
 
 
+
 window.addEventListener("resize",function(){
 
     // console.log("resize");
