@@ -90,8 +90,17 @@ function easeInOutExpo(t, b, c, d) {
  *|                                                    #
 \#####################################################*/
 
-var gridWidth = 350;
+var gridWidth = 350.5;
 var sectionWidth = gridWidth / 3;
+
+if(innerWidth<gridWidth){
+
+    
+    gridWidth = (innerWidth*0.9);
+    sectionWidth = gridWidth / 3;
+    console.log(gridWidth);
+    
+}
 
 var theme = {
     cross : {
