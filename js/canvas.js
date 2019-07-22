@@ -9,11 +9,10 @@
     4. Init Values
     5. Game Variables
         5.1 Win Combinations
-    6. Object Prototype Functions (needs to be removed)
-    7. Event Listeners
-    8. Functions
-    9. Game Functions
-    10. Intialize
+    6. Event Listeners
+    7. Functions
+    8. Game Functions
+    9. Intialize
 
 */
 
@@ -217,26 +216,7 @@ function setCombinations(){
 
 /*#####################################################\
  *|                                                    #
- *| 6. Object Prototype Functions                      #
- *|                                                    #
-\#####################################################*/
-
-// Objects
-Object.prototype.draw = function() {
-    c.beginPath();
-    c.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
-    c.fillStyle = this.color;
-    c.fill();
-    c.closePath();
-};
-
-Object.prototype.update = function() {
-    this.draw();
-};
-
-/*#####################################################\
- *|                                                    #
- *| 7. Event Listeners                                 #
+ *| 6. Event Listeners                                 #
  *|                                                    #
 \#####################################################*/
 
@@ -340,7 +320,7 @@ window.addEventListener("resize",function(){
 
 /*#####################################################\
  *|                                                    #
- *| 8. Functions                                       #
+ *| 7. Functions                                       #
  *|                                                    #
 \#####################################################*/
 
@@ -571,7 +551,7 @@ function drawO(x, y, aniamte=false){
 
 /*#####################################################\
  *|                                                    #
- *| 9. Game Functions                                  #
+ *| 8. Game Functions                                  #
  *|                                                    #
 \#####################################################*/
 
@@ -740,7 +720,7 @@ function reset(){
 
 /*#####################################################\
  *|                                                    #
- *| 10. Intialize                                      #
+ *| 9. Intialize                                      #
  *|                                                    #
 \#####################################################*/
 
