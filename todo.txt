@@ -4,8 +4,16 @@ TO DO LIST:
 
 2. add animations
 
-3. get cooridinates of the grid blocks
+3. make for the X animations that they go after eachother
 
-4. edit documentation
+4. make a click variable so player can't click when animations are running
 
-6. make grid scaleable
+5. edit documentation
+
+6. make grid scaleable (or basically the entire game)
+
+7. make the padding scaleable
+
+8. draw line after a player wins so that the player can see that he/she has won
+
+9. make congratualtions or something screen

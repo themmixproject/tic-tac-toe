@@ -376,7 +376,7 @@ function redraw(){
 function drawFirst(x, y){
 
     var iteration = 0;
-    var totalIterations = 20;
+    var totalIterations = 500;
 
     var easingValueX;
     var easingValueY;
@@ -387,8 +387,8 @@ function drawFirst(x, y){
         c.strokeStyle = theme.cross.color;
         c.lineWidth = theme.cross.thickness;
 
-        easingValueX = easeInOutExpo(iteration, (x + padding), (sectionWidth - padding*2), totalIterations);
-        easingValueY = easeInOutExpo(iteration, (y + padding), (sectionWidth - padding*2), totalIterations);        
+        easingValueX = easeInOutExpo(iteration, (x + padding), (sectionWidth - padding*2), ((totalIterations*60)/1000));
+        easingValueY = easeInOutExpo(iteration, (y + padding), (sectionWidth - padding*2), ((totalIterations*60)/1000));        
 
         drawPath(x + padding, y + padding, easingValueX, easingValueY);
 
@@ -404,7 +404,7 @@ function drawFirst(x, y){
 
 function drawSecond(x, y){
     var iteration = 0;
-    var totalIterations = 20;
+    var totalIterations = 500;
     var easingValueX;
     var easingValueY;
 
@@ -414,8 +414,8 @@ function drawSecond(x, y){
         c.strokeStyle = theme.cross.color;
         c.lineWidth = theme.cross.thickness;
 
-        easingValueX = easeInOutExpo(iteration, (x + sectionWidth - padding), -sectionWidth+(padding*2), totalIterations);
-        easingValueY = easeInOutExpo(iteration, (y + padding), sectionWidth-(padding*2), totalIterations);        
+        easingValueX = easeInOutExpo(iteration, (x + sectionWidth - padding), -sectionWidth+(padding*2), ((totalIterations*60)/1000));
+        easingValueY = easeInOutExpo(iteration, (y + padding), sectionWidth-(padding*2), ((totalIterations*60)/1000));        
 
          drawPath(
             x + sectionWidth - padding,
@@ -446,9 +446,9 @@ function drawX(x, y, animate=false){
     // console.log(y + sectionWidth - padding);
 
     if(animate==true){
-        // drawFirst(x, y);
+        drawFirst(x, y);
 
-        // drawSecond(x, y);
+        drawSecond(x, y);
     }
     else{
         drawPath(x + padding, y + padding,
@@ -474,7 +474,7 @@ function drawX(x, y, animate=false){
 
 function animateCircle(x, y, rawX, rawY){
     var iteration = 0;
-    var totalIterations = 50;
+    var totalIterations = 500;
     var easingValue;
 
     function animate(){
@@ -496,7 +496,7 @@ function animateCircle(x, y, rawX, rawY){
         c.strokeStyle = theme.knot.color;
         c.lineWidth = theme.knot.thickness;
 
-        easingValue = easeInOutExpo(iteration, 0, Math.PI*2, totalIterations);
+        easingValue = easeInOutExpo(iteration, 0, Math.PI*2, ((totalIterations*60)/1000));
 
         c.beginPath();
         
@@ -568,7 +568,7 @@ function playerTurn(x, y){
 
     if(grid[y][x] == 0){
 
-        drawX(x,y);
+        drawX(x,y,true);
 
         grid[y][x] = 1;
 
