@@ -287,7 +287,7 @@ function canvasEvent(clientX, clientY){
                 mouse.y >= gridY(y) && mouse.y <= gridY(y) + sectionWidth
             ){
 
-                console.log(mouse.x);
+                // console.log(mouse.x);
                 
                 // index = x + (y * 3);
 
@@ -392,7 +392,7 @@ function redraw(){
 function drawFirst(x, y){
 
     var iteration = 0;
-    var totalIterations = 100;
+    var totalIterations = 120;
 
     var easingValueX;
     var easingValueY;
@@ -403,6 +403,13 @@ function drawFirst(x, y){
         c.strokeStyle = theme.cross.color;
         c.lineWidth = theme.cross.thickness;
 
+        // c.clearRect(
+        //     x + (padding / 2),
+        //     y + (padding / 2),
+        //     sectionWidth - padding,
+        //     sectionWidth - padding
+        // );
+
         // c.fillRect(
         //     x + (padding / 2),
         //     y + (padding / 2),
@@ -410,12 +417,12 @@ function drawFirst(x, y){
         //     sectionWidth - padding
         // )
 
-        easingValueX = easeOutQuad(iteration, (x + padding), (sectionWidth - padding*2), totalIterations);
-        easingValueY = easeOutQuad(iteration, (y + padding), (sectionWidth - padding*2), totalIterations);        
-
+        easingValueX = easeOutQuad(iteration, (x + padding),sectionWidth, 150);
+        easingValueY = easeOutQuad(iteration, (y + padding), sectionWidth,150);    
+        
         drawPath(x + padding, y + padding, easingValueX, easingValueY);
 
-        if(iteration<totalIterations){
+        if(iteration<150){
             iteration ++;
             requestAnimationFrame(draw);
         }
@@ -426,14 +433,13 @@ function drawFirst(x, y){
 }
 
 function drawSecond(x, y){
-
-    console.log("execute");
-    
-
     var iteration = 0;
-    var totalIterations = 100;
+    var totalIterations = 200;
     var easingValueX;
     var easingValueY;
+
+    var xFinal = sectionWidth+(padding*2);
+    var yFinal = sectionWidth-(padding*2);
 
     function draw(){
 
@@ -441,14 +447,16 @@ function drawSecond(x, y){
         c.strokeStyle = theme.cross.color;
         c.lineWidth = theme.cross.thickness;
 
-        easingValueX = easeOutQuad(iteration, (x + sectionWidth - padding), -sectionWidth+(padding*2), totalIterations);
-        easingValueY = easeOutQuad(iteration, (y + padding), sectionWidth-(padding*2), totalIterations);        
-
+        easingValueX = easeInExpo(iteration, (x + sectionWidth - padding), x, totalIterations);
+        easingValueY = easeInExpo(iteration, (y + padding), y, totalIterations);        
+        
         // drawPath(x + padding, y + padding,
         //     x + sectionWidth - padding,
         //     y + sectionWidth - padding
 
         // );
+        console.log("loop");
+        
 
          drawPath(
             x + sectionWidth - padding,
@@ -457,13 +465,11 @@ function drawSecond(x, y){
             easingValueY
         );
 
-
-
         if(iteration<totalIterations){
             iteration ++;
             requestAnimationFrame(draw);
         }
-
+        
     }
 
     draw();
@@ -483,10 +489,7 @@ function drawX(x, y, animate=false){
     if(animate==true){
         drawFirst(x, y);
 
-        drawSecond(x, y);
-
         // setTimeout(function(){drawSecond(x, y);},(xDuration));
-
     }
     else{
         drawPath(x + padding, y + padding,
@@ -512,7 +515,7 @@ function drawX(x, y, animate=false){
 
 function animateCircle(x, y, rawX, rawY){
     var iteration = 0;
-    var totalIterations = 250;
+    var totalIterations = oDuratoin;
     var easingValue;
 
     function animate(){
@@ -534,7 +537,7 @@ function animateCircle(x, y, rawX, rawY){
         c.strokeStyle = theme.knot.color;
         c.lineWidth = theme.knot.thickness;
 
-        easingValue = easeInOutExpo(iteration, 0, Math.PI*2, totalIterations);
+        easingValue = easeInOutExpo(iteration, 0, Math.PI*2, ((totalIterations*60)/1000));
 
         c.beginPath();
         
@@ -550,7 +553,7 @@ function animateCircle(x, y, rawX, rawY){
         c.stroke();
 
         if(iteration<totalIterations){
-            console.log("true");
+            // console.log("true");
             
             iteration ++;
             requestAnimationFrame(animate);
