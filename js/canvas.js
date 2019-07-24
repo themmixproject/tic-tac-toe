@@ -286,6 +286,7 @@ function canvasEvent(clientX, clientY){
 
 };
 
+// Checks if browser is mobile, and adds a touch event
 if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
     document.addEventListener("touchstart",function(event){
         var clientX = event.touches[0].clientX;
