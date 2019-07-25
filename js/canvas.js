@@ -107,20 +107,24 @@ if(innerWidth<gridWidth){
 var theme = {
     cross : {
         color : "#4F9BA8",
+        // color : "#74BADD",
         cap : "round",
         thickness : 10
     },
     knot : {
         color : "#D9695F",
+        // color: "#ED7462",
         cap : "round",
         thickness : 10
     },
     grid : {
         color : "#2D3742",
+        // color : "#0E1C27",
         thickness : 10,
         cap : "round"
     },
     background : "#EFCDBF"
+    // background : "#FBC49A"
 };
 
 var padding = 25;
