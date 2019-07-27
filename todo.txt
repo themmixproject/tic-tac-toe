@@ -17,3 +17,7 @@ TO DO LIST:
 8. draw line after a player wins so that the player can see that he/she has won
 
 9. make congratualtions or something screen
+
+10. make function that converts miliseconds to FPS
+
+11. make delays, or some buffer so that the reset function works (basically fix reset function)
