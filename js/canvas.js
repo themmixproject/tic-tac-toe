@@ -73,6 +73,11 @@ function resetBrush(){
     c.lineCap = "butt";
 }
 
+function toFps(miliseconds){
+    return (miliseconds*60)/1000;
+}
+
+
 function easeInOutExpo(t, b, c, d) {
     if (t==0) return b;
     if (t==d) return b+c;
@@ -86,6 +91,10 @@ function easeInOutExpo(t, b, c, d) {
 
   function easeOutQuad(t, b, c, d) {
     return -c *(t/=d)*(t-2) + b;
+  }
+
+  function easeOutCubic(t, b, c, d) {
+    return c*((t=t/d-1)*t*t + 1) + b;
   }
 
 /*#####################################################\
@@ -396,7 +405,7 @@ function redraw(){
 function drawFirst(x, y){
 
     var iteration = 0;
-    var totalIterations = 100;
+    var totalIterations = toFps(400);
 
     var easingValueX;
     var easingValueY;
@@ -414,8 +423,8 @@ function drawFirst(x, y){
         //     sectionWidth - padding
         // )
 
-        easingValueX = easeOutQuad(iteration, (x + padding), (sectionWidth - padding*2), totalIterations);
-        easingValueY = easeOutQuad(iteration, (y + padding), (sectionWidth - padding*2), totalIterations);        
+        easingValueX = easeOutCubic(iteration, (x + padding), (sectionWidth - padding*2), totalIterations);
+        easingValueY = easeOutCubic(iteration, (y + padding), (sectionWidth - padding*2), totalIterations);        
 
         drawPath(x + padding, y + padding, easingValueX, easingValueY);
 
@@ -435,7 +444,7 @@ function drawSecond(x, y){
     
 
     var iteration = 0;
-    var totalIterations = 100;
+    var totalIterations = toFps(400);
     var easingValueX;
     var easingValueY;
 
@@ -445,8 +454,8 @@ function drawSecond(x, y){
         c.strokeStyle = theme.cross.color;
         c.lineWidth = theme.cross.thickness;
 
-        easingValueX = easeOutQuad(iteration, (x + sectionWidth - padding), -sectionWidth+(padding*2), totalIterations);
-        easingValueY = easeOutQuad(iteration, (y + padding), sectionWidth-(padding*2), totalIterations);        
+        easingValueX = easeOutCubic(iteration, (x + sectionWidth - padding), -sectionWidth+(padding*2), totalIterations);
+        easingValueY = easeOutCubic(iteration, (y + padding), sectionWidth-(padding*2), totalIterations);        
 
         // drawPath(x + padding, y + padding,
         //     x + sectionWidth - padding,
@@ -516,7 +525,7 @@ function drawX(x, y, animate=false){
 
 function animateCircle(x, y, rawX, rawY){
     var iteration = 0;
-    var totalIterations = 250;
+    var totalIterations = toFps(500);
     var easingValue;
 
     function animate(){
@@ -538,7 +547,7 @@ function animateCircle(x, y, rawX, rawY){
         c.strokeStyle = theme.knot.color;
         c.lineWidth = theme.knot.thickness;
 
-        easingValue = easeInOutExpo(iteration, 0, Math.PI*2, totalIterations);
+        easingValue = easeOutCubic(iteration, 0, Math.PI*2, totalIterations);
 
         c.beginPath();
         
@@ -614,11 +623,14 @@ function playerTurn(x, y){
 
         grid[y][x] = 1;
 
-        checkWin(1);
+        setTimeout(function(){
+            checkWin(1);
+            if(game.end == false){
+                computer();
+            }
+        },405);
 
-        if(game.end == false){
-            computer();
-        }
+        
     }
     
 };
@@ -629,7 +641,7 @@ function computerTurn(x, y){
 
     drawO(x, y, true);
 
-    checkWin(2);
+    setTimeout(function(){checkWin(2);},505);
 
 }
 
@@ -655,8 +667,8 @@ function computer(){
         });
     }
     
-    computerLoop(1);
     computerLoop(2);
+    computerLoop(1);
 
     if(computerMoved == false){
 
