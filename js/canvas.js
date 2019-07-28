@@ -446,9 +446,18 @@ function drawFirst(x, y){
             easingValueY1
         );
 
-        if(iteration<totalIterations){
+        if(iteration<totalIterations && game.end==false){
             iteration ++;
             requestAnimationFrame(draw);
+        }
+        else if(game.end==true){
+            c.clearRect(
+                x + (padding / 2),
+                y + (padding / 2), 
+                sectionWidth - padding,
+                sectionWidth - padding
+    
+            )
         }
         
     }
@@ -580,11 +589,20 @@ function animateCircle(x, y, rawX, rawY){
         
         c.stroke();
 
-        if(iteration<totalIterations){
+        if(iteration<totalIterations && game.end==false){
             console.log("true");
             
             iteration ++;
             requestAnimationFrame(animate);
+        }
+        else if(game.end==true){
+            c.clearRect(
+                gridPosX,
+                gridPosY, 
+                sectionWidth - padding,
+                sectionWidth - padding
+
+            );
         }
     }
 
@@ -641,12 +659,10 @@ function playerTurn(x, y){
 
         grid[y][x] = 1;
 
-        setTimeout(function(){
-            checkWin(1);
-            if(game.end == false){
-                computer();
-            }
-        },405);
+        checkWin(1);
+        if(game.end == false){
+            computer();
+        }
 
         
     }
@@ -659,7 +675,7 @@ function computerTurn(x, y){
 
     drawO(x, y, true);
 
-    setTimeout(function(){checkWin(2);},505);
+    checkWin(2);
 
 }
 
