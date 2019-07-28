@@ -148,7 +148,7 @@ var padding = 25;
 
 // setting up canvas
 var canvas = document.getElementById("canvas");
-canvas.style.backgroundColor = theme.background;
+// canvas.style.backgroundColor = theme.background;
 var c = canvas.getContext('2d');
 c.translate(0.5,0.5);
 
@@ -362,9 +362,9 @@ window.addEventListener("resize",function(){
 
 function drawGrid(){
 
-    c.lineCap = theme.grid.cap;
-    c.strokeStyle = theme.grid.color;
-    c.lineWidth = theme.grid.thickness;
+    // c.lineCap = theme.grid.cap;
+    // c.strokeStyle = theme.grid.color;
+    // c.lineWidth = theme.grid.thickness;
     
     // horizontal lines
     for(var y = 1, o = 1; y <= 2; y++, o=-1){
@@ -412,9 +412,9 @@ function drawFirst(x, y){
 
     function draw(){
 
-        c.lineCap = theme.cross.cap;
-        c.strokeStyle = theme.cross.color;
-        c.lineWidth = theme.cross.thickness;
+        // c.lineCap = theme.cross.cap;
+        // c.strokeStyle = theme.cross.color;
+        // c.lineWidth = theme.cross.thickness;
 
         // c.fillRect(
         //     x + (padding / 2),
@@ -423,10 +423,28 @@ function drawFirst(x, y){
         //     sectionWidth - padding
         // )
 
+        c.clearRect(
+            x + (padding / 2),
+            y + (padding / 2), 
+            sectionWidth - padding,
+            sectionWidth - padding
+
+        )
+
         easingValueX = easeOutCubic(iteration, (x + padding), (sectionWidth - padding*2), totalIterations);
-        easingValueY = easeOutCubic(iteration, (y + padding), (sectionWidth - padding*2), totalIterations);        
+        easingValueY = easeOutCubic(iteration, (y + padding), (sectionWidth - padding*2), totalIterations);
+        
+        easingValueX1 = easeOutCubic(iteration, (x + sectionWidth - padding), -sectionWidth+(padding*2), totalIterations);
+        easingValueY1 = easeOutCubic(iteration, (y + padding), sectionWidth-(padding*2), totalIterations);
 
         drawPath(x + padding, y + padding, easingValueX, easingValueY);
+
+        drawPath(
+            x + sectionWidth - padding,
+            y + padding,
+            easingValueX1,
+            easingValueY1
+        );
 
         if(iteration<totalIterations){
             iteration ++;
@@ -450,9 +468,9 @@ function drawSecond(x, y){
 
     function draw(){
 
-        c.lineCap = theme.cross.cap;
-        c.strokeStyle = theme.cross.color;
-        c.lineWidth = theme.cross.thickness;
+        // c.lineCap = theme.cross.cap;
+        // c.strokeStyle = theme.cross.color;
+        // c.lineWidth = theme.cross.thickness;
 
         easingValueX = easeOutCubic(iteration, (x + sectionWidth - padding), -sectionWidth+(padding*2), totalIterations);
         easingValueY = easeOutCubic(iteration, (y + padding), sectionWidth-(padding*2), totalIterations);        
@@ -487,16 +505,16 @@ function drawX(x, y, animate=false){
     x = gridX(x);
     y = gridY(y);
 
-    c.lineCap = theme.cross.cap;
-    c.strokeStyle = theme.cross.color;
-    c.lineWidth = theme.cross.thickness;
+    // c.lineCap = theme.cross.cap;
+    // c.strokeStyle = theme.cross.color;
+    // c.lineWidth = theme.cross.thickness;
 
     // console.log(y + sectionWidth - padding);
 
     if(animate==true){
         drawFirst(x, y);
 
-        drawSecond(x, y);
+        // drawSecond(x, y);
 
         // setTimeout(function(){drawSecond(x, y);},(xDuration));
 
@@ -543,9 +561,9 @@ function animateCircle(x, y, rawX, rawY){
 
             );
             
-        c.lineCap = theme.knot.cap;
-        c.strokeStyle = theme.knot.color;
-        c.lineWidth = theme.knot.thickness;
+        // c.lineCap = theme.knot.cap;
+        // c.strokeStyle = theme.knot.color;
+        // c.lineWidth = theme.knot.thickness;
 
         easingValue = easeOutCubic(iteration, 0, Math.PI*2, totalIterations);
 
@@ -581,9 +599,9 @@ function drawO(x, y, aniamte=false){
     y = gridY(y);
     
 
-    c.lineCap = theme.knot.cap;
-    c.strokeStyle = theme.knot.color;
-    c.lineWidth = theme.knot.thickness;
+    // c.lineCap = theme.knot.cap;
+    // c.strokeStyle = theme.knot.color;
+    // c.lineWidth = theme.knot.thickness;
 
     if(aniamte == true){
         animateCircle(x, y, rawX, rawY);   
