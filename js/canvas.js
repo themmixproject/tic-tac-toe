@@ -483,50 +483,6 @@ function drawFirst(x, y){
     draw();
 }
 
-function drawSecond(x, y){
-
-    console.log("execute");
-    
-
-    var iteration = 0;
-    var totalIterations = toFps(400);
-    var easingValueX;
-    var easingValueY;
-
-    function draw(){
-
-        // c.lineCap = theme.cross.cap;
-        // c.strokeStyle = theme.cross.color;
-        // c.lineWidth = theme.cross.thickness;
-
-        easingValueX = easeOutCubic(iteration, (x + sectionWidth - padding), -sectionWidth+(padding*2), totalIterations);
-        easingValueY = easeOutCubic(iteration, (y + padding), sectionWidth-(padding*2), totalIterations);        
-
-        // drawPath(x + padding, y + padding,
-        //     x + sectionWidth - padding,
-        //     y + sectionWidth - padding
-
-        // );
-
-         drawPath(
-            x + sectionWidth - padding,
-            y + padding,
-            easingValueX,
-            easingValueY
-        );
-
-
-
-        if(iteration<totalIterations){
-            iteration ++;
-            requestAnimationFrame(draw);
-        }
-
-    }
-
-    draw();
-}
-
 function drawX(x, y, animate=false){
     
     x = gridX(x);
@@ -779,35 +735,6 @@ function drawWinLine(winArray){
 
     var x1 = gridX(winArray[2][0]) + halfSection;
     var y1 = gridY(winArray[2][1]) + halfSection;
-
-    // if(x==x1 && y1>y || y==y1 && x1>x){
-        // x+=halfSection;
-        // x1+=halfSection;
-
-        // y+=halfSection;
-        // y1+=halfSection;
-    // }
-    // else if(x1>x && y1>y){
-    //    x+=halfSection;
-    //    x1+=halfSection;
-
-    //    y+=halfSection;
-    //    y1+=halfSection;
-    // }
-    // else if(y==y1 && x1>x){
-    //     x+=halfSection;
-    //     x1+=halfSection;
-        
-    //     y+=halfSection;
-    //     y1+=halfSection;
-        
-    // }
-    // else if(x<x1 && y<y1){
-    //     x+=halfSection;
-    //     x1==halfSection;
-    //     y-=halfSection;
-    //     y-=halfSection;
-    // }
 
     drawPath(
         x,
