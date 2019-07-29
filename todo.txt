@@ -21,3 +21,7 @@ TO DO LIST:
 10. make function that converts miliseconds to FPS
 
 11. make delays, or some buffer so that the reset function works (basically fix reset function)
+
+12. TOP PRIORITY start adding setTimeout functions so that the winCheck function works again
+
+13. split canvas.js into two documents, because right now it's a bit too long, and a bit tedious to work on.

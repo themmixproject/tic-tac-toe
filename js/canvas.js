@@ -227,7 +227,7 @@ function setCombinations(){
         var array1 = [];
             for(var x=2, y=0; x >= 0; x--, y++){
     
-                array1.push([x,x]); 
+                array1.push([y,y]); 
     
                 array.push([x, y]);
     
@@ -300,7 +300,7 @@ function canvasEvent(clientX, clientY){
                 mouse.y >= gridY(y) && mouse.y <= gridY(y) + sectionWidth
             ){
 
-                console.log(mouse.x);
+                // console.log(mouse.x);
                 
                 // index = x + (y * 3);
 
@@ -431,6 +431,8 @@ function drawFirst(x, y){
 
         )
 
+        resetBrush();
+
         easingValueX = easeOutCubic(iteration, (x + padding), (sectionWidth - padding*2), totalIterations);
         easingValueY = easeOutCubic(iteration, (y + padding), (sectionWidth - padding*2), totalIterations);
         
@@ -450,14 +452,30 @@ function drawFirst(x, y){
             iteration ++;
             requestAnimationFrame(draw);
         }
+        else if(game.end==true && game.win==false){
+
+            drawPath(x + padding, y + padding,
+                x + sectionWidth - padding,
+                y + sectionWidth - padding
+    
+            );
+    
+            drawPath(
+                x + sectionWidth - padding,
+                y + padding,
+                x + padding,
+                y + sectionWidth - padding
+            );
+        }
         else if(game.end==true){
             c.clearRect(
                 x + (padding / 2),
                 y + (padding / 2), 
                 sectionWidth - padding,
                 sectionWidth - padding
+            );
     
-            )
+            
         }
         
     }
@@ -590,12 +608,12 @@ function animateCircle(x, y, rawX, rawY){
         c.stroke();
 
         if(iteration<totalIterations && game.end==false){
-            console.log("true");
+            // console.log("true");
             
             iteration ++;
             requestAnimationFrame(animate);
         }
-        else if(game.end==true){
+        else if(game.end==true && game.win==false){
             c.clearRect(
                 gridPosX,
                 gridPosY, 
@@ -604,12 +622,24 @@ function animateCircle(x, y, rawX, rawY){
 
             );
         }
+        else if(game.end==true && game.win==true){
+            c.beginPath();
+            c.arc(
+                x + sectionWidth / 2,
+                y + sectionWidth / 2,
+                sectionWidth / 2 - padding,
+                0,
+                Math.PI*2,
+                false
+            );
+            c.stroke();
+        }
     }
 
     animate();
 }
 
-function drawO(x, y, aniamte=false){
+function drawO(x, y, animate=false){
 
     var rawX = x;
     var rawY = y;
@@ -621,7 +651,7 @@ function drawO(x, y, aniamte=false){
     // c.strokeStyle = theme.knot.color;
     // c.lineWidth = theme.knot.thickness;
 
-    if(aniamte == true){
+    if(animate == true){
         animateCircle(x, y, rawX, rawY);   
     }
     else{
@@ -653,16 +683,21 @@ function playerTurn(x, y){
     // console.log(x + " " + y);
     if(game.end==true){game.end=false};
 
-    if(grid[y][x] == 0){
+    if(grid[y][x] == 0 && playerClick==true){
 
         drawX(x,y,true);
 
         grid[y][x] = 1;
 
+        playerClick=false;
+        setTimeout(function(){
         checkWin(1);
         if(game.end == false){
             computer();
+            playerClick=true;
         }
+        },400);
+        
 
         
     }
@@ -729,6 +764,61 @@ function computer(){
     return;
 }
 
+function drawWinLine(winArray){
+
+    console.log(winArray);
+    
+    // console.log(winArray[0][1]);
+    
+    var halfSection = sectionWidth/2;
+    
+    c.strokeStyle="red";
+
+    var x = gridX(winArray[0][0]) + halfSection;
+    var y = gridY(winArray[0][1]) + halfSection;
+
+    var x1 = gridX(winArray[2][0]) + halfSection;
+    var y1 = gridY(winArray[2][1]) + halfSection;
+
+    // if(x==x1 && y1>y || y==y1 && x1>x){
+        // x+=halfSection;
+        // x1+=halfSection;
+
+        // y+=halfSection;
+        // y1+=halfSection;
+    // }
+    // else if(x1>x && y1>y){
+    //    x+=halfSection;
+    //    x1+=halfSection;
+
+    //    y+=halfSection;
+    //    y1+=halfSection;
+    // }
+    // else if(y==y1 && x1>x){
+    //     x+=halfSection;
+    //     x1+=halfSection;
+        
+    //     y+=halfSection;
+    //     y1+=halfSection;
+        
+    // }
+    // else if(x<x1 && y<y1){
+    //     x+=halfSection;
+    //     x1==halfSection;
+    //     y-=halfSection;
+    //     y-=halfSection;
+    // }
+
+    drawPath(
+        x,
+        y,
+        x1,
+        y1
+    );
+    
+    c.strokeStyle="red"
+}
+
 function checkWin(player){
     var counter=0;
     
@@ -740,16 +830,19 @@ function checkWin(player){
                     ){
                         counter++
                     };
+                    
                 });
             }
             if(counter===3 && game.win==false){
                 game.win=true;
                 game.end=true;
                 console.log("win");
+                drawWinLine(combination);
             }
             else{counter=0};
         });
-    if(game.win==true && game.end==true){reset();
+    if(game.win==true && game.end==true){
+        reset();
     };
 
     counter=0;
@@ -778,7 +871,7 @@ function checkWin(player){
 }
 
 function reset(){
-
+    
     game.win = false;
 
     grid.forEach(function(item,index){
@@ -808,9 +901,8 @@ function reset(){
             // )
         }
     }
-
     
-
+    playerClick=true;
 };
 
 /*#####################################################\
