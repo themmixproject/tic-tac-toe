@@ -11,8 +11,9 @@
         5.1 Win Combinations
     6. Event Listeners
     7. Functions
-    8. Game Functions
-    9. Intialize
+        7.1 Drawing Functions 
+        7.2 Game Functions
+    8. Intialize
 
 */
 
@@ -360,6 +361,12 @@ window.addEventListener("resize",function(){
  *|                                                    #
 \#####################################################*/
 
+/*#####################################################\
+ *|                                                    #
+ *| 7.1 Drawing Functions                              #
+ *|                                                    #
+\#####################################################*/
+
 function drawGrid(){
 
     // c.lineCap = theme.grid.cap;
@@ -631,7 +638,7 @@ function drawO(x, y, animate=false){
 
 /*#####################################################\
  *|                                                    #
- *| 8. Game Functions                                  #
+ *| 7.2 Game Functions                                 #
  *|                                                    #
 \#####################################################*/
 
@@ -834,7 +841,7 @@ function reset(){
 
 /*#####################################################\
  *|                                                    #
- *| 9. Intialize                                      #
+ *| 8. Intialize                                       #
  *|                                                    #
 \#####################################################*/
 
