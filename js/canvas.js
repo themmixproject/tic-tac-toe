@@ -9,18 +9,36 @@
     4. Init Values
     5. Game Variables
         5.1 Win Combinations
+        5.2 Animation Varaibles
     6. Event Listeners
     7. Functions
-        7.1 Drawing Functions 
-        7.2 Game Functions
-    8. Intialize
+    8. Drawing
+    9. Animation
+    10. Game
+    11. Intialize
 
 */
 
-/** TO MORE AWAKE STEVEN, RESTRUCTURE THE "setCoordinates()" FUNCTION
- * BASICALLY, PUT IT IN A DIFFERENT PLACE, OR JUST CREATE A SEPERATE CHAPTER FOR IT
+/** TO MORE AWAKE STEVEN
+ * 
+ * SPLIT THE FUNCTIONS CHAPTER INTO TWO OR THREE SEPERATE CHAPTERS
+ * SPLIT THE VARABLES TO THE PROPERLY ASSIGNED CHAPTERS
+ * 
+ * REORGANIZE CHAPTERS
+ * 
+ * CREATE ANIMATION CLASS TO MINIMIZE ANIMATION CHAPTER
+ * 
+ * MAYBE SPLIT THE CODE INTO DIFFERENT FILES
  * 
  */
+
+
+
+
+
+
+
+
 
 /*#####################################################\
  *|                                                    #
@@ -45,6 +63,17 @@ window.cancelAnimationFrame = (function () {
         window.clearTimeout(timPtr);
     };
 })();
+
+
+
+
+
+
+
+
+
+
+
 
 /*#####################################################\
  *|                                                    #
@@ -98,6 +127,16 @@ function easeInOutExpo(t, b, c, d) {
     return c*((t=t/d-1)*t*t + 1) + b;
   }
 
+
+
+
+
+
+
+
+
+
+
 /*#####################################################\
  *|                                                    #
  *| 3. Canvas properties                               #
@@ -139,6 +178,18 @@ var theme = {
 
 var padding = 25;
  
+
+
+
+
+
+
+
+
+
+
+
+
 /*#####################################################\
  *|                                                    #
  *| 4. Init Values                                     #
@@ -177,6 +228,13 @@ var topLeft = {
 const colors = ['#2185C5', '#7ECEFD', '#FFF6E5', '#FF7F66'];
 
 
+
+
+
+
+
+
+
 /*#####################################################\
  *|                                                    #
  *| 5. Game Variables                                  #
@@ -195,6 +253,16 @@ var game = {
     end: false,
     win: false
 };
+
+
+
+
+
+
+
+
+
+
 
 /*#################################\
  *|                                #
@@ -239,9 +307,16 @@ function setCombinations(){
 
 }
 
+
+
+
+
+
+
+
 /*#################################\
  *|                                #
- *| 5.2 Animation Functions        #
+ *| 5.2 Animation Variables        #
  *|                                #
 \#################################*/
 
@@ -249,6 +324,17 @@ var xDuration = 500;
 var oDuratoin = 500;
 
 var playerClick = true;
+
+
+
+
+
+
+
+
+
+
+
 
 /*#####################################################\
  *|                                                    #
@@ -355,17 +441,39 @@ window.addEventListener("resize",function(){
     redraw(); 
 });
 
+
+
+
+
+
+
+
+
 /*#####################################################\
  *|                                                    #
  *| 7. Functions                                       #
  *|                                                    #
 \#####################################################*/
 
-/*#################################\
- *|                                #
- *| 7.1 Drawomg Functions          #
- *|                                #
-\#################################*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*#####################################################\
+ *|                                                    #
+ *| 8. Drawing                                         #
+ *|                                                    #
+\#####################################################*/
 
 function drawGrid(){
 
@@ -408,6 +516,32 @@ function redraw(){
         });
     });
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*#####################################################\
+ *|                                                    #
+ *| 9. Animation                                       #
+ *|                                                    #
+\#####################################################*/
 
 function drawFirst(x, y){
 
@@ -636,11 +770,22 @@ function drawO(x, y, animate=false){
     resetBrush();
 }
 
-/*#####################################\
- *|                                    #
- *| 7.2 Game Functions                 #
- *|                                    #
-\#####################################*/
+
+
+
+
+
+
+
+
+
+
+/*#####################################################\
+ *|                                                    #
+ *| 10. Game                                           #
+ *|                                                    #
+\#####################################################*/
+
 
 function playerTurn(x, y){
     // console.log(x + " " + y);
@@ -839,9 +984,21 @@ function reset(){
     playerClick=true;
 };
 
+
+
+
+
+
+
+
+
+
+
+
+
 /*#####################################################\
  *|                                                    #
- *| 8. Intialize                                       #
+ *| 11. Intialize                                       #
  *|                                                    #
 \#####################################################*/
 
