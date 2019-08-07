@@ -9,13 +9,13 @@
     4. Init Values
     5. Game Variables
         5.1 Win Combinations
-        5.2 Animation Varaibles
     6. Event Listeners
-    7. Functions
-    8. Drawing
-    9. Animation
-    10. Game
-    11. Intialize
+    7. Animation Utility
+    8. X Animation Function
+    9. O Animation Function
+    10. Drawing
+    11. Game
+    12. Initialize
 
 */
 
@@ -108,24 +108,7 @@ function toFps(miliseconds){
 }
 
 
-function easeInOutExpo(t, b, c, d) {
-    if (t==0) return b;
-    if (t==d) return b+c;
-    if ((t/=d/2) < 1) return c/2 * Math.pow(2, 10 * (t - 1)) + b;
-    return c/2 * (-Math.pow(2, -10 * --t) + 2) + b;
-  }
-  
-  function easeInExpo(t, b, c, d) {
-    return (t==0) ? b : c * Math.pow(2, 10 * (t/d - 1)) + b;
-  }
 
-  function easeOutQuad(t, b, c, d) {
-    return -c *(t/=d)*(t-2) + b;
-  }
-
-  function easeOutCubic(t, b, c, d) {
-    return c*((t=t/d-1)*t*t + 1) + b;
-  }
 
 
 
@@ -228,8 +211,9 @@ var topLeft = {
 const colors = ['#2185C5', '#7ECEFD', '#FFF6E5', '#FF7F66'];
 
 
+// sets if player is able to put a piece down
 
-
+var playerClick = true;
 
 
 
@@ -314,16 +298,6 @@ function setCombinations(){
 
 
 
-/*#################################\
- *|                                #
- *| 5.2 Animation Variables        #
- *|                                #
-\#################################*/
-
-var xDuration = 500;
-var oDuratoin = 500;
-
-var playerClick = true;
 
 
 
@@ -449,88 +423,63 @@ window.addEventListener("resize",function(){
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /*#####################################################\
  *|                                                    #
- *| 7. Functions                                       #
+ *| 7. Animation Utility                               #
  *|                                                    #
 \#####################################################*/
 
 
+// easing functions
 
+function easeInOutExpo(t, b, c, d) {
+    if (t==0) return b;
+    if (t==d) return b+c;
+    if ((t/=d/2) < 1) return c/2 * Math.pow(2, 10 * (t - 1)) + b;
+    return c/2 * (-Math.pow(2, -10 * --t) + 2) + b;
+  }
+  
+  function easeInExpo(t, b, c, d) {
+    return (t==0) ? b : c * Math.pow(2, 10 * (t/d - 1)) + b;
+  }
 
+  function easeOutQuad(t, b, c, d) {
+    return -c *(t/=d)*(t-2) + b;
+  }
 
+  function easeOutCubic(t, b, c, d) {
+    return c*((t=t/d-1)*t*t + 1) + b;
+  }
 
+// animation variables
 
+var xDuration = 500;
+var oDuratoin = 500;
 
+// var animation = class {
+//     constructor(duration, startX, startY, endX, endY, ){
+        
+//     }
+// }
 
-
-
-
-
-
-
-/*#####################################################\
- *|                                                    #
- *| 8. Drawing                                         #
- *|                                                    #
-\#####################################################*/
-
-function drawGrid(){
-
-    // c.lineCap = theme.grid.cap;
-    // c.strokeStyle = theme.grid.color;
-    // c.lineWidth = theme.grid.thickness;
-    
-    // horizontal lines
-    for(var y = 1, o = 1; y <= 2; y++, o=-1){
-        drawPath(
-            center.x - (sectionWidth * 1.5), center.y + (sectionWidth * -0.5) * o,
-            center.x + (sectionWidth * 1.5), center.y + (sectionWidth * -0.5) * o
-        );
-    }
-
-    // vertical lines
-    for(var x = 1, o = 1; x <= 2; x++, o=-1){
-
-        drawPath(
-            center.x + (sectionWidth * -0.5) * o, center.y - (sectionWidth * 1.5),
-            center.x + (sectionWidth * -0.5) * o, center.y + (sectionWidth * 1.5)
-        );
-
-    }
-    
-    resetBrush();
-
-}
-
-function redraw(){
-    c.clearRect(0,0,innerHeight,innerWidth);
-    drawGrid();
-    grid.forEach(function(item,y){
-        item.forEach(function(piece,x){
-            if(piece==1){
-                drawX(x,y);
-            }if(piece==2){
-                drawO(x,y);
-            }
-        });
-    });
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+// var testVar = new animation();
 
 
 
@@ -539,7 +488,7 @@ function redraw(){
 
 /*#####################################################\
  *|                                                    #
- *| 9. Animation                                       #
+ *| 8. X Animation Function                            #
  *|                                                    #
 \#####################################################*/
 
@@ -574,13 +523,40 @@ function drawFirst(x, y){
 
         resetBrush();
 
-        easingValueX = easeOutCubic(iteration, (x + padding), (sectionWidth - padding*2), totalIterations);
-        easingValueY = easeOutCubic(iteration, (y + padding), (sectionWidth - padding*2), totalIterations);
-        
-        easingValueX1 = easeOutCubic(iteration, (x + sectionWidth - padding), -sectionWidth+(padding*2), totalIterations);
-        easingValueY1 = easeOutCubic(iteration, (y + padding), sectionWidth-(padding*2), totalIterations);
+        easingValueX = easeOutCubic(
+            iteration,
+            (x + padding),
+            (sectionWidth - padding*2),
+            totalIterations
+        );
 
-        drawPath(x + padding, y + padding, easingValueX, easingValueY);
+        easingValueY = easeOutCubic(
+            iteration,
+            (y + padding),
+            (sectionWidth - padding*2),
+            totalIterations
+        );
+        
+        easingValueX1 = easeOutCubic(
+            iteration,
+            (x + sectionWidth - padding),
+            -sectionWidth+(padding*2),
+            totalIterations
+        );
+
+        easingValueY1 = easeOutCubic(
+            iteration,
+            (y + padding),
+            sectionWidth-(padding*2),
+            totalIterations
+        );
+
+        drawPath(
+            x + padding,
+            y + padding,
+            easingValueX,
+            easingValueY
+        );
 
         drawPath(
             x + sectionWidth - padding,
@@ -624,46 +600,32 @@ function drawFirst(x, y){
     draw();
 }
 
-function drawX(x, y, animate=false){
-    
-    x = gridX(x);
-    y = gridY(y);
 
-    // c.lineCap = theme.cross.cap;
-    // c.strokeStyle = theme.cross.color;
-    // c.lineWidth = theme.cross.thickness;
 
-    // console.log(y + sectionWidth - padding);
 
-    if(animate==true){
-        drawFirst(x, y);
 
-        // drawSecond(x, y);
 
-        // setTimeout(function(){drawSecond(x, y);},(xDuration));
 
-    }
-    else{
-        drawPath(x + padding, y + padding,
-            x + sectionWidth - padding,
-            y + sectionWidth - padding
 
-        );
 
-        drawPath(
-            x + sectionWidth - padding,
-            y + padding,
-            x + padding,
-            y + sectionWidth - padding
-        );
-    }
-    
 
-    
 
-    resetBrush();
 
-}
+
+
+
+
+
+
+
+
+
+
+/*#####################################################\
+ *|                                                    #
+ *| 9. O Animation Function                            #
+ *|                                                    #
+\#####################################################*/
 
 function animateCircle(x, y, rawX, rawY){
     var iteration = 0;
@@ -736,6 +698,110 @@ function animateCircle(x, y, rawX, rawY){
     animate();
 }
 
+
+
+
+
+
+
+
+
+
+/*#####################################################\
+ *|                                                    #
+ *| 10. Drawing                                         #
+ *|                                                    #
+\#####################################################*/
+
+function drawGrid(){
+
+    // c.lineCap = theme.grid.cap;
+    // c.strokeStyle = theme.grid.color;
+    // c.lineWidth = theme.grid.thickness;
+    
+    // horizontal lines
+    for(var y = 1, o = 1; y <= 2; y++, o=-1){
+        drawPath(
+            center.x - (sectionWidth * 1.5), center.y + (sectionWidth * -0.5) * o,
+            center.x + (sectionWidth * 1.5), center.y + (sectionWidth * -0.5) * o
+        );
+    }
+
+    // vertical lines
+    for(var x = 1, o = 1; x <= 2; x++, o=-1){
+
+        drawPath(
+            center.x + (sectionWidth * -0.5) * o, center.y - (sectionWidth * 1.5),
+            center.x + (sectionWidth * -0.5) * o, center.y + (sectionWidth * 1.5)
+        );
+
+    }
+    
+    resetBrush();
+
+}
+
+function redraw(){
+    c.clearRect(0,0,innerHeight,innerWidth);
+    drawGrid();
+    grid.forEach(function(item,y){
+        item.forEach(function(piece,x){
+            if(piece==1){
+                drawX(x,y);
+            }if(piece==2){
+                drawO(x,y);
+            }
+        });
+    });
+}
+
+
+
+
+function drawX(x, y, animate=false){
+    
+    x = gridX(x);
+    y = gridY(y);
+
+    // c.lineCap = theme.cross.cap;
+    // c.strokeStyle = theme.cross.color;
+    // c.lineWidth = theme.cross.thickness;
+
+    // console.log(y + sectionWidth - padding);
+
+    if(animate==true){
+        drawFirst(x, y);
+
+        // drawSecond(x, y);
+
+        // setTimeout(function(){drawSecond(x, y);},(xDuration));
+
+    }
+    else{
+        drawPath(x + padding, y + padding,
+            x + sectionWidth - padding,
+            y + sectionWidth - padding
+
+        );
+
+        drawPath(
+            x + sectionWidth - padding,
+            y + padding,
+            x + padding,
+            y + sectionWidth - padding
+        );
+    }
+    
+
+    
+
+    resetBrush();
+
+}
+
+
+
+
 function drawO(x, y, animate=false){
 
     var rawX = x;
@@ -779,10 +845,9 @@ function drawO(x, y, animate=false){
 
 
 
-
 /*#####################################################\
  *|                                                    #
- *| 10. Game                                           #
+ *| 11. Game                                           #
  *|                                                    #
 \#####################################################*/
 
@@ -998,7 +1063,7 @@ function reset(){
 
 /*#####################################################\
  *|                                                    #
- *| 11. Intialize                                       #
+ *| 12. Intialize                                       #
  *|                                                    #
 \#####################################################*/
 
