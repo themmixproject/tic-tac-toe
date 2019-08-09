@@ -282,7 +282,7 @@ function setCombinations(){
     
                 array1.push([y,y]); 
     
-                array.push([x, y]);
+                array.push([y, x]);
     
             }
         
@@ -454,24 +454,27 @@ function easeInOutExpo(t, b, c, d) {
     if (t==d) return b+c;
     if ((t/=d/2) < 1) return c/2 * Math.pow(2, 10 * (t - 1)) + b;
     return c/2 * (-Math.pow(2, -10 * --t) + 2) + b;
-  }
-  
-  function easeInExpo(t, b, c, d) {
+}
+
+function easeInExpo(t, b, c, d) {
     return (t==0) ? b : c * Math.pow(2, 10 * (t/d - 1)) + b;
-  }
+}
 
-  function easeOutQuad(t, b, c, d) {
+function easeOutQuad(t, b, c, d) {
     return -c *(t/=d)*(t-2) + b;
-  }
+}
 
-  function easeOutCubic(t, b, c, d) {
+function easeOutCubic(t, b, c, d) {
     return c*((t=t/d-1)*t*t + 1) + b;
-  }
+}
+
 
 // animation variables
 
-var xDuration = 500;
-var oDuratoin = 500;
+var xDuration = 250;
+var oDuration = 250;
+
+var winLineDuration = 500;
 
 // var animation = class {
 //     constructor(duration, startX, startY, endX, endY, ){
@@ -495,7 +498,7 @@ var oDuratoin = 500;
 function drawFirst(x, y){
 
     var iteration = 0;
-    var totalIterations = toFps(400);
+    // var totalIterations = toFps(400);
 
     var easingValueX;
     var easingValueY;
@@ -527,28 +530,28 @@ function drawFirst(x, y){
             iteration,
             (x + padding),
             (sectionWidth - padding*2),
-            totalIterations
+            toFps(xDuration)
         );
 
         easingValueY = easeOutCubic(
             iteration,
             (y + padding),
             (sectionWidth - padding*2),
-            totalIterations
+            toFps(xDuration)
         );
         
         easingValueX1 = easeOutCubic(
             iteration,
             (x + sectionWidth - padding),
             -sectionWidth+(padding*2),
-            totalIterations
+            toFps(xDuration)
         );
 
         easingValueY1 = easeOutCubic(
             iteration,
             (y + padding),
             sectionWidth-(padding*2),
-            totalIterations
+            toFps(xDuration)
         );
 
         drawPath(
@@ -565,7 +568,7 @@ function drawFirst(x, y){
             easingValueY1
         );
 
-        if(iteration<totalIterations && game.end==false){
+        if(iteration<toFps(xDuration) && game.end==false){
             iteration ++;
             requestAnimationFrame(draw);
         }
@@ -629,7 +632,7 @@ function drawFirst(x, y){
 
 function animateCircle(x, y, rawX, rawY){
     var iteration = 0;
-    var totalIterations = toFps(500);
+    // var totalIterations = toFps(500);
     var easingValue;
 
     function animate(){
@@ -651,7 +654,7 @@ function animateCircle(x, y, rawX, rawY){
         // c.strokeStyle = theme.knot.color;
         // c.lineWidth = theme.knot.thickness;
 
-        easingValue = easeOutCubic(iteration, 0, Math.PI*2, totalIterations);
+        easingValue = easeOutCubic(iteration, 0, Math.PI*2, toFps(oDuration));
 
         c.beginPath();
         
@@ -666,7 +669,7 @@ function animateCircle(x, y, rawX, rawY){
         
         c.stroke();
 
-        if(iteration<totalIterations && game.end==false){
+        if(iteration<toFps(oDuration) && game.end==false){
             // console.log("true");
             
             iteration ++;
@@ -701,7 +704,55 @@ function animateCircle(x, y, rawX, rawY){
 
 
 
+/*#####################################################\
+ *|                                                    #
+ *| 9. WinLine Animation Function                      #
+ *|                                                    #
+\#####################################################*/
 
+function animateWinLine(x, y, x1, y1){
+	
+	// drawPath(x, y, x1, y1);
+    var iteration = 0;
+    var easingValueX;
+    var easingValueY;
+
+    function animate(){
+
+
+        easingValueX = easeOutCubic(
+            iteration,
+            (x),
+            (x1-x),
+            toFps(winLineDuration)
+        );
+
+        easingValueY = easeOutCubic(
+            iteration,
+            (y),
+            (y1-y),
+            toFps(winLineDuration)
+        );
+
+        drawPath(
+            x,
+            y,
+            easingValueX,
+            easingValueY
+        );
+        
+
+        if(iteration<toFps(winLineDuration)){
+            iteration++;
+            window.requestAnimationFrame(animate);
+        }
+        
+
+    }
+
+    animate();
+
+}
 
 
 
@@ -709,7 +760,7 @@ function animateCircle(x, y, rawX, rawY){
 
 /*#####################################################\
  *|                                                    #
- *| 10. Drawing                                         #
+ *| 10. Drawing                                        #
  *|                                                    #
 \#####################################################*/
 
@@ -791,9 +842,7 @@ function drawX(x, y, animate=false){
             y + sectionWidth - padding
         );
     }
-    
 
-    
 
     resetBrush();
 
@@ -831,8 +880,8 @@ function drawO(x, y, animate=false){
     }
     
 
-    
 
+    
     resetBrush();
 }
 
@@ -862,14 +911,16 @@ function playerTurn(x, y){
 
         grid[y][x] = 1;
 
+
         playerClick=false;
         setTimeout(function(){
         checkWin(1);
+
         if(game.end == false){
             computer();
-            playerClick=true;
+            // playerClick=true;
         }
-        },400);
+        },xDuration);
         
 
         
@@ -883,7 +934,11 @@ function computerTurn(x, y){
 
     drawO(x, y, true);
 
-    checkWin(2);
+    setTimeout(function(){
+        checkWin(2);
+        playerClick = true;
+    },oDuration);
+    
 
 }
 
@@ -951,16 +1006,18 @@ function drawWinLine(winArray){
     var y = gridY(winArray[0][1]) + halfSection;
 
     var x1 = gridX(winArray[2][0]) + halfSection;
-    var y1 = gridY(winArray[2][1]) + halfSection;
+	var y1 = gridY(winArray[2][1]) + halfSection;
+	
+	animateWinLine(x, y, x1, y1);
 
-    drawPath(
-        x,
-        y,
-        x1,
-        y1
-    );
+    // drawPath(
+    //     x,
+    //     y,
+    //     x1,
+    //     y1
+    // );
     
-    c.strokeStyle="red"
+    // c.strokeStyle="red";
 }
 
 function checkWin(player){
@@ -986,7 +1043,7 @@ function checkWin(player){
             else{counter=0};
         });
     if(game.win==true && game.end==true){
-        reset();
+        // reset();
     };
 
     counter=0;
