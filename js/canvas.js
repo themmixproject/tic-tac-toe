@@ -30,6 +30,15 @@
  * 
  * MAYBE SPLIT THE CODE INTO DIFFERENT FILES
  * 
+ * ALL YOU NEED TO DO NOW IS ADD THE DRAWINLINE INTO THE FADEOUTRESET FUNCTION, MAKE SURE THERE'S AN ANIMATION BOOLEAN WITHIN IT
+ * 
+ * IF YOU HAVE THE TIME, REMOVE DEFAULT VARIABLES
+ * 
+ */
+
+/**
+ * 01:40:28 10-08-19 the fadeout reset animation worked for the first time
+ * (it was actually 1:39, but I didn't catch the actual seconds so I had to look again)
  */
 
 
@@ -758,6 +767,102 @@ function animateWinLine(x, y, x1, y1){
 
 
 
+
+
+
+
+
+
+
+
+
+
+/*#####################################################\
+ *|                                                    #
+ *| 10. FadeOut reset animation                        #
+ *|                                                    #
+\#####################################################*/
+
+function fadeOutReset(win, winArray){
+
+        var alphaIteration = 1;
+
+        function animate(){
+
+            c.clearRect(0,0,innerWidth,innerHeight);
+
+            c.globalAlpha = 1;
+
+            drawGrid();
+
+            c.globalAlpha = alphaIteration;
+
+            grid.forEach(function(item,y){
+
+                item.forEach(function(piece,x){
+
+                    if(piece==1){
+
+                        c.globalAlpha = alphaIteration;
+                        drawX(x,y, false);
+                        console.log(c.globalAlpha);
+                        
+
+                    }
+                    else if(piece==2){
+
+                        c.globalAlpha = alphaIteration;
+                        drawO(x,y, false);
+                        
+                    }
+                });
+            });
+            
+            if(win==true){
+                console.log(winArray);
+                
+                drawWinLine(winArray);
+            }
+            
+
+            if(alphaIteration>0){
+                
+                alphaIteration=Math.round((alphaIteration-0.1)*10)/10;
+                console.log("true");
+                
+                window.requestAnimationFrame(animate);
+            }
+
+        }
+
+        animate();
+        
+        c.globalAlpha = 1;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /*#####################################################\
  *|                                                    #
  *| 10. Drawing                                        #
@@ -912,14 +1017,14 @@ function playerTurn(x, y){
         grid[y][x] = 1;
 
 
-        playerClick=false;
+        // playerClick=false;
         setTimeout(function(){
         checkWin(1);
 
-        if(game.end == false){
-            computer();
-            // playerClick=true;
-        }
+        // if(game.end == false){
+        //     computer();
+        //     playerClick=true;
+        // }
         },xDuration);
         
 
@@ -992,7 +1097,7 @@ function computer(){
     return;
 }
 
-function drawWinLine(winArray){
+function drawWinLine(winArray, animate){
 
     console.log(winArray);
     
@@ -1000,15 +1105,27 @@ function drawWinLine(winArray){
     
     var halfSection = sectionWidth/2;
     
-    c.strokeStyle="red";
+    // c.strokeStyle="red";
 
     var x = gridX(winArray[0][0]) + halfSection;
     var y = gridY(winArray[0][1]) + halfSection;
 
     var x1 = gridX(winArray[2][0]) + halfSection;
 	var y1 = gridY(winArray[2][1]) + halfSection;
-	
-	animateWinLine(x, y, x1, y1);
+    
+    if(animate==true){
+       animateWinLine(x, y, x1, y1); 
+    }
+    else{
+        drawPath(
+            x,
+            y,
+            x1,
+            y1
+        );
+    }
+    
+	// animateWinLine(x, y, x1, y1);
 
     // drawPath(
     //     x,
@@ -1021,8 +1138,10 @@ function drawWinLine(winArray){
 }
 
 function checkWin(player){
+    var winArray;
     var counter=0;
     
+
         combinations.forEach(function(combination,index){
             if(game.win==false){
                 combination.forEach(function(array,index){
@@ -1038,12 +1157,21 @@ function checkWin(player){
                 game.win=true;
                 game.end=true;
                 console.log("win");
-                drawWinLine(combination);
+
+
+                
+                drawWinLine(combination, true);
+                winArray = combination;
             }
             else{counter=0};
         });
     if(game.win==true && game.end==true){
         // reset();
+        setTimeout(function(){
+            fadeOutReset(true, winArray);
+        }, winLineDuration)
+        
+
     };
 
     counter=0;
@@ -1065,7 +1193,10 @@ function checkWin(player){
     if(counter==9 && game.end==false){
         game.end=true;
         console.log("tie");
-        reset();
+        
+        // reset();
+        fadeOutReset();
+
     };
     
     counter=0;
