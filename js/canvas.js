@@ -39,6 +39,10 @@
 /**
  * 01:40:28 10-08-19 the fadeout reset animation worked for the first time
  * (it was actually 1:39, but I didn't catch the actual seconds so I had to look again)
+ * 
+ * 1:21:46 the first time the winline animation worked with a computer player
+ * 
+ * 22:10:33 12-08-19 after alot of testing, the combination manipulation bug seems to be fixed
  */
 
 
@@ -110,6 +114,8 @@ function resetBrush(){
     c.strokeStyle = "black";
     c.fillStyle = "black";
     c.lineCap = "butt";
+
+    c.globalAlpha = 1;
 }
 
 function toFps(miliseconds){
@@ -477,6 +483,9 @@ function easeOutCubic(t, b, c, d) {
     return c*((t=t/d-1)*t*t + 1) + b;
 }
 
+function linear(t, b, c, d) {
+    return c*t/d + b;
+}
 
 // animation variables
 
@@ -485,6 +494,7 @@ var oDuration = 250;
 
 var winLineDuration = 500;
 
+var fadeDuration = (1/6)*10;
 // var animation = class {
 //     constructor(duration, startX, startY, endX, endY, ){
         
@@ -785,7 +795,12 @@ function animateWinLine(x, y, x1, y1){
 
 function fadeOutReset(win, winArray){
 
-        var alphaIteration = 1;
+        var iteration = 0;
+        var easingVar;
+
+        console.log(winArray);
+
+        // var alphaIteration = 1;
 
         function animate(){
 
@@ -795,7 +810,12 @@ function fadeOutReset(win, winArray){
 
             drawGrid();
 
-            c.globalAlpha = alphaIteration;
+            var easingVar = Math.round(linear(iteration, 1, -1, 10)*10)/10;
+
+            // console.log(easingVar);
+            
+
+            c.globalAlpha = easingVar;
 
             grid.forEach(function(item,y){
 
@@ -803,34 +823,39 @@ function fadeOutReset(win, winArray){
 
                     if(piece==1){
 
-                        c.globalAlpha = alphaIteration;
-                        drawX(x,y, false);
-                        console.log(c.globalAlpha);
+                        c.globalAlpha = easingVar;
+                        drawX(x,y);
+                        // console.log(c.globalAlpha);
                         
 
                     }
                     else if(piece==2){
 
-                        c.globalAlpha = alphaIteration;
-                        drawO(x,y, false);
+                        c.globalAlpha = easingVar;
+                        drawO(x,y);
                         
                     }
                 });
             });
             
             if(win==true){
-                console.log(winArray);
                 
                 drawWinLine(winArray);
             }
             
 
-            if(alphaIteration>0){
+            if(iteration<10){
                 
-                alphaIteration=Math.round((alphaIteration-0.1)*10)/10;
-                console.log("true");
+                iteration++;
+                // alphaIteration=Math.round((alphaIteration-0.1)*10)/10;
+                console.log(iteration);
                 
                 window.requestAnimationFrame(animate);
+            }
+            if(iteration==10){
+                // console.log("true");
+                
+                resetBrush();
             }
 
         }
@@ -1007,25 +1032,27 @@ function drawO(x, y, animate=false){
 
 
 function playerTurn(x, y){
+    // console.log(combinations);
+    
     // console.log(x + " " + y);
     if(game.end==true){game.end=false};
 
     if(grid[y][x] == 0 && playerClick==true){
 
-        drawX(x,y,true);
+        drawX(x,y);
 
         grid[y][x] = 1;
 
 
         // playerClick=false;
-        setTimeout(function(){
+        // setTimeout(function(){
         checkWin(1);
 
-        // if(game.end == false){
-        //     computer();
+        if(game.end == false){
+            computer();
         //     playerClick=true;
-        // }
-        },xDuration);
+        }
+        // },xDuration);
         
 
         
@@ -1035,42 +1062,72 @@ function playerTurn(x, y){
 
 function computerTurn(x, y){
 
+    // console.log(combinations);
+    
+
+    // combinations = [];
+    // setCombinations();
+    // console.log(combinations);
+    
+    // setCombinations();
+
     grid[y][x] = 2;
 
-    drawO(x, y, true);
+    drawO(x, y, false);
 
-    setTimeout(function(){
-        checkWin(2);
-        playerClick = true;
-    },oDuration);
+    checkWin(2);
+
+    // setTimeout(function(){
+    //     checkWin(2);
+    // },oDuration);
     
 
 }
 
 function computer(){
-    
+    var l = combinations.length;
     function computerLoop(player){
+        var item;
         combinations.forEach(function(array,index){
-            for(var i=0; i<3; i++){
+        // for(i=0;i<l;i++){
+            // combinationParse(array, player);
+            // parse = array;
+            item = combinations[i];
+            for(var o=0; o<3; o++){
                 if(
                     grid[ array[0][1] ][ array[0][0] ] == player &&
                     grid[ array[1][1] ][ array[1][0] ] == player &&
                     grid[ array[2][1] ][ array[2][0] ] == 0 &&
                     computerMoved == false
                 ){
+                    console.log("true");
+                    
                     computerTurn( array[2][0] , array[2][1] );
                     computerMoved = true;
+                    
+                    array.unshift(array[2]);
+                    array.pop();
                 }
                 else {
                     array.unshift(array[2]);
                     array.pop();
+                    
                 }
-            }
+            }    
+                
+
+            // array.unshift(array[2]);
+            // array.pop();
+
+            // array = baseArray;
+            
         });
+        // }
     }
     
     computerLoop(2);
     computerLoop(1);
+    
 
     if(computerMoved == false){
 
@@ -1093,13 +1150,15 @@ function computer(){
         }
         randomBox();
     }
+    console.log(combinations);
+    
     computerMoved = false;
     return;
 }
 
 function drawWinLine(winArray, animate){
 
-    console.log(winArray);
+    // console.log(winArray);
     
     // console.log(winArray[0][1]);
     
@@ -1113,8 +1172,13 @@ function drawWinLine(winArray, animate){
     var x1 = gridX(winArray[2][0]) + halfSection;
 	var y1 = gridY(winArray[2][1]) + halfSection;
     
+    // console.log(winArray);
+    
+    // console.log(winArray[0][0] +" "+ winArray[0][1] + " " + winArray[2][0] + " " + winArray[2][1] );
+    
+
     if(animate==true){
-       animateWinLine(x, y, x1, y1); 
+       animateWinLine(x, y, x1, y1);
     }
     else{
         drawPath(
@@ -1156,20 +1220,25 @@ function checkWin(player){
             if(counter===3 && game.win==false){
                 game.win=true;
                 game.end=true;
-                console.log("win");
+                // console.log("win");
 
 
                 
-                drawWinLine(combination, true);
+                // drawWinLine(combination, true);
                 winArray = combination;
+                // drawWinLine(winArray, true);
+                
             }
             else{counter=0};
         });
     if(game.win==true && game.end==true){
         // reset();
+        drawWinLine(winArray, true);
+
         setTimeout(function(){
             fadeOutReset(true, winArray);
-        }, winLineDuration)
+            reset();
+        }, winLineDuration);
         
 
     };
@@ -1194,8 +1263,13 @@ function checkWin(player){
         game.end=true;
         console.log("tie");
         
+        // fadeOutReset();
         // reset();
         fadeOutReset();
+        reset();
+        // setTimeout(function(){
+        //     reset();
+        // }, winLineDuration);
 
     };
     
@@ -1210,31 +1284,32 @@ function reset(){
         grid[index] = [0,0,0];
     })
 
-    for(var x=0; x<3; x++){
-        for(var y=0; y<3; y++){
+    // for(var x=0; x<3; x++){
+    //     for(var y=0; y<3; y++){
 
-            var gridX = x * sectionWidth + topLeft.x + (padding  / 2);
-            var gridY = y * sectionWidth + topLeft.y + (padding / 2);
+    //         var gridX = x * sectionWidth + topLeft.x + (padding  / 2);
+    //         var gridY = y * sectionWidth + topLeft.y + (padding / 2);
 
-            c.clearRect(
-                gridX,
-                gridY, 
-                sectionWidth - padding,
-                sectionWidth - padding
+    //         c.clearRect(
+    //             gridX,
+    //             gridY, 
+    //             sectionWidth - padding,
+    //             sectionWidth - padding
 
-            )
+    //         )
             
-            // c.fillRect(
-            //     gridX,
-            //     gridY, 
-            //     sectionWidth - padding,
-            //     sectionWidth - padding
+    //         // c.fillRect(
+    //         //     gridX,
+    //         //     gridY, 
+    //         //     sectionWidth - padding,
+    //         //     sectionWidth - padding
 
-            // )
-        }
-    }
-    
+    //         // )
+    //     }
+    // }
+
     playerClick=true;
+
 };
 
 
