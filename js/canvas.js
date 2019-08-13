@@ -34,6 +34,18 @@
  * 
  * IF YOU HAVE THE TIME, REMOVE DEFAULT VARIABLES
  * 
+ * 
+ * 
+ * TWEAK FADOUT SO THAT IT DOES THE SAME WHEN THERE IS A TIE
+ * TWEAK COMPUTER FUNCTION SO IT DOESN'T DRAW HALFWAY, AND LATER IT WILL DRAW THE FULL WINLINE
+ * ADD THEME
+ * 
+ * JUST TO HAVE THIS NOTED: 
+ * SO, IF YOU DISABLED THE ANIMATIONS,
+ * NOT INCLUDING THE WINLINE, FOR THE COMPUTER IT WILL GET DRAWN
+ * HALFWAY BECAUSE THE FUNCTIONS IN THE TURN FINISH TOO QUICK BEFORE
+ * THE VARIABLES ARE ALTERED CORRECTLY FOR THE WINLINE TO BE DRAWN IN
+ * THE CORRECT WAY, TRY TO FIX THIS, I DON'T KNOW WHY, BUT STILL.
  */
 
 /**
@@ -494,7 +506,7 @@ var oDuration = 250;
 
 var winLineDuration = 500;
 
-var fadeDuration = (1/6)*10;
+var fadeDuration = 1/6*1000;
 // var animation = class {
 //     constructor(duration, startX, startY, endX, endY, ){
         
@@ -810,7 +822,7 @@ function fadeOutReset(win, winArray){
 
             drawGrid();
 
-            var easingVar = Math.round(linear(iteration, 1, -1, 10)*10)/10;
+            var easingVar = linear(iteration, 1, -1, toFps(fadeDuration));
 
             // console.log(easingVar);
             
@@ -838,17 +850,20 @@ function fadeOutReset(win, winArray){
                 });
             });
             
+            // console.log(c.globalAlpha);
+            
+
             if(win==true){
-                
+                c.globalAlpha = easingVar;
                 drawWinLine(winArray);
             }
             
 
-            if(iteration<10){
+            if(iteration<toFps(fadeDuration)){
                 
                 iteration++;
                 // alphaIteration=Math.round((alphaIteration-0.1)*10)/10;
-                console.log(iteration);
+                // console.log(iteration);
                 
                 window.requestAnimationFrame(animate);
             }
@@ -1009,8 +1024,6 @@ function drawO(x, y, animate=false){
         c.stroke();
     }
     
-
-
     
     resetBrush();
 }
@@ -1071,9 +1084,11 @@ function computerTurn(x, y){
     
     // setCombinations();
 
+    drawO(x, y);
+
     grid[y][x] = 2;
 
-    drawO(x, y, false);
+
 
     checkWin(2);
 
@@ -1086,8 +1101,18 @@ function computerTurn(x, y){
 
 function computer(){
     var l = combinations.length;
+    var item;
+    var turnArray;
+    // var computerMoved;
+
+    function bindVal(array){
+        turnArray = array;
+    }
+
     function computerLoop(player){
-        var item;
+        
+        // var turnArray;
+
         combinations.forEach(function(array,index){
         // for(i=0;i<l;i++){
             // combinationParse(array, player);
@@ -1100,9 +1125,14 @@ function computer(){
                     grid[ array[2][1] ][ array[2][0] ] == 0 &&
                     computerMoved == false
                 ){
-                    console.log("true");
+                    // console.log("true");
+
+                    bindVal(
+                        [array[2][0] , array[2][1]]
+                    );
                     
-                    computerTurn( array[2][0] , array[2][1] );
+                    
+                    // computerTurn( array[2][0] , array[2][1] );
                     computerMoved = true;
                     
                     array.unshift(array[2]);
@@ -1113,21 +1143,26 @@ function computer(){
                     array.pop();
                     
                 }
-            }    
-                
 
+            };
+            
+            
+            
+            
             // array.unshift(array[2]);
             // array.pop();
 
             // array = baseArray;
             
         });
+        // console.log(turnArray);
+        
+
         // }
     }
     
     computerLoop(2);
     computerLoop(1);
-    
 
     if(computerMoved == false){
 
@@ -1144,14 +1179,19 @@ function computer(){
                 randomBox();
             }
             else{
-                computerTurn( x, y);
+                // computerTurn( x, y);
+
+                turnArray = [x , y];
             }
             return;
         }
         randomBox();
     }
-    console.log(combinations);
+
+    console.log(turnArray);
     
+    computerTurn(turnArray[0], turnArray[1]);
+
     computerMoved = false;
     return;
 }
@@ -1199,6 +1239,8 @@ function drawWinLine(winArray, animate){
     // );
     
     // c.strokeStyle="red";
+
+    resetBrush();
 }
 
 function checkWin(player){
@@ -1233,11 +1275,14 @@ function checkWin(player){
         });
     if(game.win==true && game.end==true){
         // reset();
+
+        playerClick = false;
+
         drawWinLine(winArray, true);
 
         setTimeout(function(){
             fadeOutReset(true, winArray);
-            reset();
+            setTimeout(function(){reset();playerClick=true;},fadeDuration);
         }, winLineDuration);
         
 
@@ -1263,13 +1308,16 @@ function checkWin(player){
         game.end=true;
         console.log("tie");
         
+        playerClick = false;
+
         // fadeOutReset();
         // reset();
         fadeOutReset();
-        reset();
-        // setTimeout(function(){
-        //     reset();
-        // }, winLineDuration);
+        // reset();
+        setTimeout(function(){
+            reset();
+            playerClick = true;
+        }, fadeDuration);
 
     };
     
