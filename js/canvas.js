@@ -35,6 +35,10 @@
  * IF YOU HAVE THE TIME, REMOVE DEFAULT VARIABLES
  * 
  * 
+ *
+ * THEME : #D9695F #FFB4A8 #EFCDBF #4F9BA8 #2D3742
+ * 
+ * 
  * 
  * TWEAK FADOUT SO THAT IT DOES THE SAME WHEN THERE IS A TIE
  * TWEAK COMPUTER FUNCTION SO IT DOESN'T DRAW HALFWAY, AND LATER IT WILL DRAW THE FULL WINLINE
@@ -165,24 +169,42 @@ if(innerWidth<gridWidth){
 
 var theme = {
     cross : {
+        // color : "#4F9BA8",
+
         color : "#4F9BA8",
+
+        // color : "#7ECEFC",
+        
         // color : "#74BADD",
         cap : "round",
         thickness : 10
     },
     knot : {
-        color : "#D9695F",
+        // color : "#D9695F",
+
+        color: "#D9695F",
+
+        // color : "#FF8066",
         // color: "#ED7462",
         cap : "round",
         thickness : 10
     },
     grid : {
+        // color : "#2D3742",
         color : "#2D3742",
+        // color : "#3F464D",
         // color : "#0E1C27",
         thickness : 10,
         cap : "round"
     },
+    winLine : {
+        color : "#FFEDE0",
+        thickness : 10,
+        cap : "round"
+    },
+    // background : "#FCF4C9"
     background : "#EFCDBF"
+    // background : "#FFF6E6"
     // background : "#FBC49A"
 };
 
@@ -210,7 +232,7 @@ var padding = 25;
 
 // setting up canvas
 var canvas = document.getElementById("canvas");
-// canvas.style.backgroundColor = theme.background;
+canvas.style.backgroundColor = theme.background;
 var c = canvas.getContext('2d');
 c.translate(0.5,0.5);
 
@@ -536,9 +558,9 @@ function drawFirst(x, y){
 
     function draw(){
 
-        // c.lineCap = theme.cross.cap;
-        // c.strokeStyle = theme.cross.color;
-        // c.lineWidth = theme.cross.thickness;
+        c.lineCap = theme.cross.cap;
+        c.strokeStyle = theme.cross.color;
+        c.lineWidth = theme.cross.thickness;
 
         // c.fillRect(
         //     x + (padding / 2),
@@ -555,7 +577,7 @@ function drawFirst(x, y){
 
         )
 
-        resetBrush();
+        // resetBrush();
 
         easingValueX = easeOutCubic(
             iteration,
@@ -632,6 +654,7 @@ function drawFirst(x, y){
     }
 
     draw();
+    resetBrush();
 }
 
 
@@ -681,9 +704,9 @@ function animateCircle(x, y, rawX, rawY){
 
             );
             
-        // c.lineCap = theme.knot.cap;
-        // c.strokeStyle = theme.knot.color;
-        // c.lineWidth = theme.knot.thickness;
+        c.lineCap = theme.knot.cap;
+        c.strokeStyle = theme.knot.color;
+        c.lineWidth = theme.knot.thickness;
 
         easingValue = easeOutCubic(iteration, 0, Math.PI*2, toFps(oDuration));
 
@@ -750,6 +773,9 @@ function animateWinLine(x, y, x1, y1){
 
     function animate(){
 
+        c.lineCap = theme.winLine.cap;
+        c.strokeStyle = theme.winLine.color;
+        c.lineWidth = theme.winLine.thickness;
 
         easingValueX = easeOutCubic(
             iteration,
@@ -782,6 +808,8 @@ function animateWinLine(x, y, x1, y1){
     }
 
     animate();
+
+    resetBrush();
 
 }
 
@@ -911,9 +939,9 @@ function fadeOutReset(win, winArray){
 
 function drawGrid(){
 
-    // c.lineCap = theme.grid.cap;
-    // c.strokeStyle = theme.grid.color;
-    // c.lineWidth = theme.grid.thickness;
+    c.lineCap = theme.grid.cap;
+    c.strokeStyle = theme.grid.color;
+    c.lineWidth = theme.grid.thickness;
     
     // horizontal lines
     for(var y = 1, o = 1; y <= 2; y++, o=-1){
@@ -959,9 +987,9 @@ function drawX(x, y, animate=false){
     x = gridX(x);
     y = gridY(y);
 
-    // c.lineCap = theme.cross.cap;
-    // c.strokeStyle = theme.cross.color;
-    // c.lineWidth = theme.cross.thickness;
+    c.lineCap = theme.cross.cap;
+    c.strokeStyle = theme.cross.color;
+    c.lineWidth = theme.cross.thickness;
 
     // console.log(y + sectionWidth - padding);
 
@@ -1004,9 +1032,9 @@ function drawO(x, y, animate=false){
     y = gridY(y);
     
 
-    // c.lineCap = theme.knot.cap;
-    // c.strokeStyle = theme.knot.color;
-    // c.lineWidth = theme.knot.thickness;
+    c.lineCap = theme.knot.cap;
+    c.strokeStyle = theme.knot.color;
+    c.lineWidth = theme.knot.thickness;
 
     if(animate == true){
         animateCircle(x, y, rawX, rawY);   
@@ -1202,6 +1230,7 @@ function drawWinLine(winArray, animate){
     
     // console.log(winArray[0][1]);
     
+    
     var halfSection = sectionWidth/2;
     
     // c.strokeStyle="red";
@@ -1212,6 +1241,11 @@ function drawWinLine(winArray, animate){
     var x1 = gridX(winArray[2][0]) + halfSection;
 	var y1 = gridY(winArray[2][1]) + halfSection;
     
+
+    c.lineCap = theme.winLine.cap;
+    c.strokeStyle = theme.winLine.color;
+    c.lineWidth = theme.winLine.thickness;
+
     // console.log(winArray);
     
     // console.log(winArray[0][0] +" "+ winArray[0][1] + " " + winArray[2][0] + " " + winArray[2][1] );
