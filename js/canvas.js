@@ -50,7 +50,9 @@
  * HALFWAY BECAUSE THE FUNCTIONS IN THE TURN FINISH TOO QUICK BEFORE
  * THE VARIABLES ARE ALTERED CORRECTLY FOR THE WINLINE TO BE DRAWN IN
  * THE CORRECT WAY, TRY TO FIX THIS, I DON'T KNOW WHY, BUT STILL.
- */
+ * 
+ * TO FIX THE ISSUE THAT THE X ISN'T BEING DRAWN ON MOBILE IS BECAUSE IN THE ANIMATOIN FUNCTION THERE IS NO CONDITION OF IF WIN==TRUE AND GAME.END==TRUE, THEN THE X SHOULD JUST BE DRAWN ON THE BOARD
+ * /
 
 /**
  * 01:40:28 10-08-19 the fadeout reset animation worked for the first time
@@ -626,16 +628,31 @@ function drawFirst(x, y){
                 y + sectionWidth - padding
             );
         }
-        else if(game.end==true){
-            c.clearRect(
-                x + (padding / 2),
-                y + (padding / 2), 
-                sectionWidth - padding,
-                sectionWidth - padding
+        else if(game.end==true && game.win==true){
+            drawPath(x + padding, y + padding,
+                x + sectionWidth - padding,
+                y + sectionWidth - padding
+    
             );
     
-            
+            drawPath(
+                x + sectionWidth - padding,
+                y + padding,
+                x + padding,
+                y + sectionWidth - padding
+            );
         }
+
+
+
+
+
+
+
+
+
+
+
         
     }
 
