@@ -169,31 +169,17 @@ if(innerWidth<gridWidth){
 
 var theme = {
     cross : {
-        // color : "#4F9BA8",
-
         color : "#4F9BA8",
-
-        // color : "#7ECEFC",
-        
-        // color : "#74BADD",
         cap : "round",
         thickness : 10
     },
     knot : {
-        // color : "#D9695F",
-
         color: "#D9695F",
-
-        // color : "#FF8066",
-        // color: "#ED7462",
         cap : "round",
         thickness : 10
     },
     grid : {
-        // color : "#2D3742",
         color : "#2D3742",
-        // color : "#3F464D",
-        // color : "#0E1C27",
         thickness : 10,
         cap : "round"
     },
@@ -773,6 +759,10 @@ function animateWinLine(x, y, x1, y1){
 
     function animate(){
 
+        // c.clearRect(0,0, innerWidth, innerHeight);
+
+        // redraw();
+
         c.lineCap = theme.winLine.cap;
         c.strokeStyle = theme.winLine.color;
         c.lineWidth = theme.winLine.thickness;
@@ -845,59 +835,34 @@ function fadeOutReset(win, winArray){
         function animate(){
 
             c.clearRect(0,0,innerWidth,innerHeight);
-
             c.globalAlpha = 1;
-
             drawGrid();
-
             var easingVar = linear(iteration, 1, -1, toFps(fadeDuration));
-
-            // console.log(easingVar);
-            
-
             c.globalAlpha = easingVar;
-
             grid.forEach(function(item,y){
-
                 item.forEach(function(piece,x){
-
                     if(piece==1){
-
                         c.globalAlpha = easingVar;
                         drawX(x,y);
-                        // console.log(c.globalAlpha);
-                        
-
                     }
                     else if(piece==2){
-
                         c.globalAlpha = easingVar;
                         drawO(x,y);
-                        
                     }
                 });
             });
-            
-            // console.log(c.globalAlpha);
-            
 
             if(win==true){
                 c.globalAlpha = easingVar;
                 drawWinLine(winArray);
             }
-            
 
             if(iteration<toFps(fadeDuration)){
-                
                 iteration++;
-                // alphaIteration=Math.round((alphaIteration-0.1)*10)/10;
-                // console.log(iteration);
-                
                 window.requestAnimationFrame(animate);
             }
+
             if(iteration==10){
-                // console.log("true");
-                
                 resetBrush();
             }
 
@@ -1080,14 +1045,14 @@ function playerTurn(x, y){
 
     if(grid[y][x] == 0 && playerClick==true){
 
-        drawX(x,y, true);
-
         grid[y][x] = 1;
-
+        
+        drawX(x,y, true);
 
         playerClick=false;
         setTimeout(function(){
-        checkWin(1);
+
+            checkWin(1);
 
         if(game.end == false){
             computer();
@@ -1112,9 +1077,11 @@ function computerTurn(x, y){
     
     // setCombinations();
 
+    grid[y][x] = 2;
+
     drawO(x, y, true);
 
-    grid[y][x] = 2;
+    
 
 
 
