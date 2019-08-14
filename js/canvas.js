@@ -1052,20 +1052,20 @@ function playerTurn(x, y){
 
     if(grid[y][x] == 0 && playerClick==true){
 
-        drawX(x,y);
+        drawX(x,y, true);
 
         grid[y][x] = 1;
 
 
-        // playerClick=false;
-        // setTimeout(function(){
+        playerClick=false;
+        setTimeout(function(){
         checkWin(1);
 
         if(game.end == false){
             computer();
-        //     playerClick=true;
+            playerClick=true;
         }
-        // },xDuration);
+        },xDuration);
         
 
         
@@ -1084,17 +1084,17 @@ function computerTurn(x, y){
     
     // setCombinations();
 
-    drawO(x, y);
+    drawO(x, y, true);
 
     grid[y][x] = 2;
 
 
 
-    checkWin(2);
+    // checkWin(2);
 
-    // setTimeout(function(){
-    //     checkWin(2);
-    // },oDuration);
+    setTimeout(function(){
+        checkWin(2);
+    },oDuration);
     
 
 }
