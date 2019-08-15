@@ -504,9 +504,18 @@ function easeOutQuad(t, b, c, d) {
     return -c *(t/=d)*(t-2) + b;
 }
 
+
+function easeOutQuart(t, b, c, d) {
+    return -c * ((t=t/d-1)*t*t*t - 1) + b;
+}
+
 function easeOutCubic(t, b, c, d) {
     return c*((t=t/d-1)*t*t + 1) + b;
 }
+
+function easeOutQuint(t, b, c, d) {
+    return c*((t=t/d-1)*t*t*t*t + 1) + b;
+  }
 
 function linear(t, b, c, d) {
     return c*t/d + b;
@@ -514,8 +523,8 @@ function linear(t, b, c, d) {
 
 // animation variables
 
-var xDuration = 250;
-var oDuration = 250;
+var xDuration = 300;
+var oDuration = 300;
 
 var winLineDuration = 500;
 
@@ -570,28 +579,28 @@ function drawFirst(x, y){
 
         // resetBrush();
 
-        easingValueX = easeOutCubic(
+        easingValueX = easeOutQuart(
             iteration,
             (x + padding),
             (sectionWidth - padding*2),
             toFps(xDuration)
         );
 
-        easingValueY = easeOutCubic(
+        easingValueY = easeOutQuart(
             iteration,
             (y + padding),
             (sectionWidth - padding*2),
             toFps(xDuration)
         );
         
-        easingValueX1 = easeOutCubic(
+        easingValueX1 = easeOutQuart(
             iteration,
             (x + sectionWidth - padding),
             -sectionWidth+(padding*2),
             toFps(xDuration)
         );
 
-        easingValueY1 = easeOutCubic(
+        easingValueY1 = easeOutQuart(
             iteration,
             (y + padding),
             sectionWidth-(padding*2),
@@ -704,7 +713,7 @@ function animateCircle(x, y, rawX, rawY){
         c.strokeStyle = theme.knot.color;
         c.lineWidth = theme.knot.thickness;
 
-        easingValue = easeOutCubic(iteration, 0, Math.PI*2, toFps(oDuration));
+        easingValue = easeOutQuart(iteration, 0, Math.PI*2, toFps(oDuration));
 
         c.beginPath();
         
@@ -777,14 +786,14 @@ function animateWinLine(x, y, x1, y1){
         c.strokeStyle = theme.winLine.color;
         c.lineWidth = theme.winLine.thickness;
 
-        easingValueX = easeOutCubic(
+        easingValueX = easeOutQuart(
             iteration,
             (x),
             (x1-x),
             toFps(winLineDuration)
         );
 
-        easingValueY = easeOutCubic(
+        easingValueY = easeOutQuart(
             iteration,
             (y),
             (y1-y),
