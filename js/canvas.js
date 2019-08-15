@@ -629,6 +629,7 @@ function drawFirst(x, y){
             );
         }
         else if(game.end==true && game.win==true){
+
             drawPath(x + padding, y + padding,
                 x + sectionWidth - padding,
                 y + sectionWidth - padding
@@ -641,19 +642,8 @@ function drawFirst(x, y){
                 x + padding,
                 y + sectionWidth - padding
             );
+
         }
-
-
-
-
-
-
-
-
-
-
-
-        
     }
 
     draw();
@@ -776,9 +766,9 @@ function animateWinLine(x, y, x1, y1){
 
     function animate(){
 
-        // c.clearRect(0,0, innerWidth, innerHeight);
+        c.clearRect(0,0, innerWidth, innerHeight);
 
-        // redraw();
+        redraw();
 
         c.lineCap = theme.winLine.cap;
         c.strokeStyle = theme.winLine.color;
