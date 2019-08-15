@@ -420,6 +420,31 @@ if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(naviga
 
         canvasEvent(clientX, clientY);
     });
+
+    window.addEventListener("resize",function(){
+
+        // console.log("resize");
+            
+        // innerWidth = window.innerWidth;
+        // innerHeight = window.innerHeight;
+    
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    
+        center = {
+            x: canvas.width / 2,
+            y: canvas.height / 2
+        };
+    
+        topLeft = {
+            x: center.x - sectionWidth * 1.5,
+            y: center.y - sectionWidth * 1.5
+        };
+    
+        // drawGrid();
+        redraw(); 
+    });
+
 }
 else{
     document.addEventListener("click",function(event) {
@@ -428,29 +453,7 @@ else{
 }
 
 
-window.addEventListener("resize",function(){
 
-    // console.log("resize");
-        
-    // innerWidth = window.innerWidth;
-    // innerHeight = window.innerHeight;
-
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-
-    center = {
-        x: canvas.width / 2,
-        y: canvas.height / 2
-    };
-
-    topLeft = {
-        x: center.x - sectionWidth * 1.5,
-        y: center.y - sectionWidth * 1.5
-    };
-
-    // drawGrid();
-    redraw(); 
-});
 
 
 
