@@ -222,6 +222,11 @@ var padding = 25;
 var canvas = document.getElementById("canvas");
 canvas.style.backgroundColor = theme.background;
 var c = canvas.getContext('2d');
+
+var dpi = window.devicePixelRatio;
+
+c.scale(dpi,dpi);
+
 // c.translate(0.5,0.5);
 
 // var innerWidth = window.innerWidth;
