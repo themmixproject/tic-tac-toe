@@ -222,13 +222,13 @@ var padding = 25;
 var canvas = document.getElementById("canvas");
 canvas.style.backgroundColor = theme.background;
 var c = canvas.getContext('2d');
-c.translate(0.5,0.5);
+// c.translate(0.5,0.5);
 
 // var innerWidth = window.innerWidth;
 // var innerHeight = window.innerHeight;
 
-canvas.width = innerWidth;
-canvas.height = innerHeight;
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 
 var center = {
     x: canvas.width / 2,
@@ -421,38 +421,40 @@ if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(naviga
         canvasEvent(clientX, clientY);
     });
 
-    window.addEventListener("resize",function(){
 
-        // console.log("resize");
-            
-        // innerWidth = window.innerWidth;
-        // innerHeight = window.innerHeight;
-    
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-    
-        center = {
-            x: canvas.width / 2,
-            y: canvas.height / 2
-        };
-    
-        topLeft = {
-            x: center.x - sectionWidth * 1.5,
-            y: center.y - sectionWidth * 1.5
-        };
-    
-        // drawGrid();
-        redraw(); 
-    });
 
 }
 else{
     document.addEventListener("click",function(event) {
         canvasEvent(event.clientX, event.clientY);
     })
+
+
 }
 
+window.addEventListener("resize",function(){
 
+    // console.log("resize");
+        
+    // innerWidth = window.innerWidth;
+    // innerHeight = window.innerHeight;
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    center = {
+        x: canvas.width / 2,
+        y: canvas.height / 2
+    };
+
+    topLeft = {
+        x: center.x - sectionWidth * 1.5,
+        y: center.y - sectionWidth * 1.5
+    };
+
+    // drawGrid();
+    redraw(); 
+});
 
 
 
