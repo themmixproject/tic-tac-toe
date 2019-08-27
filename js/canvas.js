@@ -1209,7 +1209,7 @@ function computer(){
         randomBox();
     }
 
-    console.log(turnArray);
+    // console.log(turnArray);
     
     computerTurn(turnArray[0], turnArray[1]);
 
