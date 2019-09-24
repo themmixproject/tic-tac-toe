@@ -1125,10 +1125,7 @@ function computer(){
     var turnArray;
     // var computerMoved;
 
-    function bindVal(array){
-        turnArray = array;
-    }
-
+    
     function computerLoop(player){
         
         // var turnArray;
@@ -1147,14 +1144,12 @@ function computer(){
                 ){
                     // console.log("true");
 
-                    bindVal(
-                        [array[2][0] , array[2][1]]
-                    );
+                    turnArray = [array[2][0] , array[2][1]];
                     
-                    
+
                     // computerTurn( array[2][0] , array[2][1] );
                     computerMoved = true;
-                    
+
                     array.unshift(array[2]);
                     array.pop();
                 }
