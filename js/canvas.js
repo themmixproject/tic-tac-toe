@@ -854,7 +854,6 @@ function fadeOutReset(win, winArray){
         var iteration = 0;
         var easingVar;
 
-        console.log(winArray);
 
         // var alphaIteration = 1;
 

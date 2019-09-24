@@ -25,3 +25,5 @@ TO DO LIST:
 12. TOP PRIORITY start adding setTimeout functions so that the winCheck function works again
 
 13. split canvas.js into two documents, because right now it's a bit too long, and a bit tedious to work on.
+
+14. Stop being an unicode character! utf-8!!
