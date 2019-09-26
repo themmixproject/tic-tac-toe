@@ -1063,9 +1063,7 @@ function drawO(x, y, animate=false){
 
 
 function playerTurn(x, y){
-    // console.log(combinations);
-    
-    // console.log(x + " " + y);
+
     if(game.end==true){game.end=false};
 
     if(grid[y][x] == 0 && playerClick==true){
@@ -1075,6 +1073,7 @@ function playerTurn(x, y){
         drawX(x,y, true);
 
         playerClick=false;
+
         setTimeout(function(){
 
             checkWin(1);
@@ -1083,58 +1082,36 @@ function playerTurn(x, y){
             computer();
             playerClick=true;
         }
+        
         },xDuration);
-        
 
-        
     }
     
 };
 
 function computerTurn(x, y){
 
-    // console.log(combinations);
-    
-
-    // combinations = [];
-    // setCombinations();
-    // console.log(combinations);
-    
-    // setCombinations();
-
     grid[y][x] = 2;
 
     drawO(x, y, true);
-
-    
-
-
-
-    // checkWin(2);
 
     setTimeout(function(){
         checkWin(2);
     },oDuration);
     
-
 }
 
 function computer(){
     var l = combinations.length;
     var item;
     var turnArray;
-    // var computerMoved;
-
     
     function computerLoop(player){
-        
-        // var turnArray;
 
         combinations.forEach(function(array,index){
-        // for(i=0;i<l;i++){
-            // combinationParse(array, player);
-            // parse = array;
+
             item = combinations[i];
+
             for(var o=0; o<3; o++){
                 if(
                     grid[ array[0][1] ][ array[0][0] ] == player &&
@@ -1142,38 +1119,25 @@ function computer(){
                     grid[ array[2][1] ][ array[2][0] ] == 0 &&
                     computerMoved == false
                 ){
-                    // console.log("true");
 
                     turnArray = [array[2][0] , array[2][1]];
-                    
 
-                    // computerTurn( array[2][0] , array[2][1] );
                     computerMoved = true;
 
                     array.unshift(array[2]);
                     array.pop();
+
                 }
                 else {
+
                     array.unshift(array[2]);
                     array.pop();
-                    
                 }
 
             };
             
-            
-            
-            
-            // array.unshift(array[2]);
-            // array.pop();
-
-            // array = baseArray;
-            
         });
-        // console.log(turnArray);
-        
 
-        // }
     }
     
     computerLoop(2);
@@ -1182,32 +1146,36 @@ function computer(){
     if(computerMoved == false){
 
         function randomBox(){
+
             function randomX(){
                 return Math.floor(Math.random()*3);
             }
+
             function randomY(){
                 return Math.floor(Math.random() * 3);
             }
+            
             var x = randomX();
             var y = randomY();
+
             if( grid[y][x] != 0 ){
                 randomBox();
             }
             else{
-                // computerTurn( x, y);
-
                 turnArray = [x , y];
             }
+
             return;
         }
+        
         randomBox();
-    }
 
-    // console.log(turnArray);
+    }
     
     computerTurn(turnArray[0], turnArray[1]);
 
     computerMoved = false;
+
     return;
 }
 
