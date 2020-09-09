@@ -1,8 +1,8 @@
 TO DO LIST:
 
-1. let the JS draw a psuedo-grid so when you hover over a squar the cursor turns to a pointer
+1. let the JS draw a psuedo-grid so when you hover over a square the cursor turns to a pointer
 
-2. add animations
+# 2. add animations
 
 3. make for the X animations that they go after eachother
 
@@ -16,14 +16,14 @@ TO DO LIST:
 
 8. draw line after a player wins so that the player can see that he/she has won
 
-9. make congratualtions or something screen
+X 9. make congratualtions or something screen
 
 10. make function that converts miliseconds to FPS
 
 11. make delays, or some buffer so that the reset function works (basically fix reset function)
 
-12. TOP PRIORITY start adding setTimeout functions so that the winCheck function works again
+# 12. TOP PRIORITY start adding setTimeout functions so that the winCheck function works again
 
 13. split canvas.js into two documents, because right now it's a bit too long, and a bit tedious to work on.
 
-14. Stop being an unicode character! utf-8!!
+# 14. Stop being an unicode character! utf-8!!

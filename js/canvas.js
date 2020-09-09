@@ -318,19 +318,18 @@ function setCombinations(){
     }
 
     for(i=0;i<1;i++){
+        
         var array = [];
         var array1 = [];
-            for(var x=2, y=0; x >= 0; x--, y++){
-    
-                array1.push([y,y]); 
-    
-                array.push([y, x]);
-    
-            }
+
+        for(var x=2, y=0; x >= 0; x--, y++){
+            array1.push([y,y]); 
+            array.push([y, x]);
+        }
         
         combinations.push(array1,array);
+    
     }
-
 }
 
 
@@ -358,33 +357,6 @@ function setCombinations(){
  *|                                                    #
 \#####################################################*/
 
-// document.addEventListener("click",function(event){
-
-//     mouse.x = event.clientX;
-//     mouse.y = event.clientY;
-
-//     for(x=0; x<3;x++){
-//         for(y=0;y<3;y++){
-
-//             // var gridX = x * sectionWidth + topLeft.x;
-//             // var gridY = y * sectionWidth + topLeft.y;
-
-//             if(
-//                 mouse.x >= gridX(x) && mouse.x <= gridX(x) + sectionWidth &&
-//                 mouse.y >= gridY(y) && mouse.y <= gridY(y) + sectionWidth
-//             ){
-
-//                 // index = x + (y * 3);
-
-//                 playerTurn(x, y);
-
-//                 // console.log(x + " " + y);
-
-//             }
-//         }
-//     }
-
-// });
 
 
 // event that gets execute on tap or click
@@ -569,13 +541,6 @@ function drawFirst(x, y){
         c.strokeStyle = theme.cross.color;
         c.lineWidth = theme.cross.thickness;
 
-        // c.fillRect(
-        //     x + (padding / 2),
-        //     y + (padding / 2),
-        //     sectionWidth - padding,
-        //     sectionWidth - padding
-        // )
-
         c.clearRect(
             x + (padding / 2),
             y + (padding / 2), 
@@ -584,49 +549,14 @@ function drawFirst(x, y){
 
         )
 
-        // resetBrush();
-
-        easingValueX = easeOutQuart(
-            iteration,
-            (x + padding),
-            (sectionWidth - padding*2),
-            toFps(xDuration)
-        );
-
-        easingValueY = easeOutQuart(
-            iteration,
-            (y + padding),
-            (sectionWidth - padding*2),
-            toFps(xDuration)
-        );
+        easingValueX = easeOutQuart(iteration, (x + padding), (sectionWidth - padding*2), toFps(xDuration));
+        easingValueY = easeOutQuart(iteration, (y + padding), (sectionWidth - padding*2), toFps(xDuration));
         
-        easingValueX1 = easeOutQuart(
-            iteration,
-            (x + sectionWidth - padding),
-            -sectionWidth+(padding*2),
-            toFps(xDuration)
-        );
+        easingValueX1 = easeOutQuart(iteration, (x + sectionWidth - padding), -sectionWidth+(padding*2), toFps(xDuration));
+        easingValueY1 = easeOutQuart(iteration, (y + padding), sectionWidth-(padding*2), toFps(xDuration));
 
-        easingValueY1 = easeOutQuart(
-            iteration,
-            (y + padding),
-            sectionWidth-(padding*2),
-            toFps(xDuration)
-        );
-
-        drawPath(
-            x + padding,
-            y + padding,
-            easingValueX,
-            easingValueY
-        );
-
-        drawPath(
-            x + sectionWidth - padding,
-            y + padding,
-            easingValueX1,
-            easingValueY1
-        );
+        drawPath(x + padding, y + padding, easingValueX, easingValueY);
+        drawPath(x + sectionWidth - padding, y + padding, easingValueX1, easingValueY1);
 
         if(iteration<toFps(xDuration) && game.end==false){
             iteration ++;
@@ -807,13 +737,7 @@ function animateWinLine(x, y, x1, y1){
             toFps(winLineDuration)
         );
 
-        drawPath(
-            x,
-            y,
-            easingValueX,
-            easingValueY
-        );
-        
+        drawPath(x, y, easingValueX, easingValueY);
 
         if(iteration<toFps(winLineDuration)){
             iteration++;
@@ -1067,22 +991,15 @@ function playerTurn(x, y){
     if(game.end==true){game.end=false};
 
     if(grid[y][x] == 0 && playerClick==true){
-
         grid[y][x] = 1;
-        
         drawX(x,y, true);
-
         playerClick=false;
-
         setTimeout(function(){
-
             checkWin(1);
-
-        if(game.end == false){
-            computer();
-            playerClick=true;
-        }
-
+            if(game.end == false){
+                computer();
+                playerClick=true;
+            }
         },xDuration);
 
     }
@@ -1167,9 +1084,9 @@ function computer(){
 
             return;
         }
+
         
         randomBox();
-
     }
     
     computerTurn(turnArray[0], turnArray[1]);
@@ -1197,12 +1114,7 @@ function drawWinLine(winArray, animate){
        animateWinLine(x, y, x1, y1);
     }
     else{
-        drawPath(
-            x,
-            y,
-            x1,
-            y1
-        );
+        drawPath(x, y, x1, y1);
     }
 
     resetBrush();
@@ -1256,7 +1168,6 @@ function checkWin(player){
 
         }, winLineDuration);
         
-
     };
 
     counter=0;
@@ -1272,23 +1183,17 @@ function checkWin(player){
     });
        
     if(counter==9 && game.end==false){
-
         game.end=true;
-
-        console.log("tie");
-        
+        // console.log("tie");
         playerClick = false;
-
         fadeOutReset();
-
         setTimeout(function(){
             reset();
             playerClick = true;
         }, fadeDuration);
-
     };
-    
-    counter=0;
+
+    // counter=0;
 }
 
 function reset(){
@@ -1318,7 +1223,7 @@ function reset(){
 
 /*#####################################################\
  *|                                                    #
- *| 12. Intialize                                       #
+ *| 12. Intialize                                      #
  *|                                                    #
 \#####################################################*/
 
