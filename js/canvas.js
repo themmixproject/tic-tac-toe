@@ -997,3 +997,5 @@ function init() {
 }
 
 init();
+
+animateX(0,0);
