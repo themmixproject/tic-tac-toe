@@ -998,4 +998,4 @@ function init() {
 
 init();
 
-animateX(0,0);
+animateO(0,0);
