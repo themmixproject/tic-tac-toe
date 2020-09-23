@@ -768,8 +768,8 @@ function computerTurn(x, y){
 
     grid[y][x] = 2;
 
-    drawO(x, y, true);
-
+    animateO(x, y);
+    
     setTimeout(function(){
         checkWin(2);
     },oDuration);

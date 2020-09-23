@@ -1,30 +1,22 @@
-function drawO(x, y, animate=false){
+function drawO(x, y){
 
-    var rawX = x;
-    var rawY = y;
     x = gridX(x);
     y = gridY(y);
     
-
     c.lineCap = theme.knot.cap;
     c.strokeStyle = theme.knot.color;
     c.lineWidth = theme.knot.thickness;
 
-    if(animate == true){
-        animateCircle(x, y, rawX, rawY);   
-    }
-    else{
-        c.beginPath();
-        c.arc(
-            x + sectionWidth / 2,
-            y + sectionWidth / 2,
-            sectionWidth / 2 - padding,
-            0,
-            Math.PI*2,
-            false
-        );
-        c.stroke();
-    }
+    c.beginPath();
+    c.arc(
+        x + sectionWidth / 2,
+        y + sectionWidth / 2,
+        sectionWidth / 2 - padding,
+        0,
+        Math.PI*2,
+        false
+    );
+    c.stroke();
     
     
     resetBrush();
@@ -138,6 +130,10 @@ function animateO(x, y){
     }
 
     function draw(){
+        c.lineCap = theme.knot.cap;
+        c.strokeStyle = theme.knot.color;
+        c.lineWidth = theme.knot.thickness;
+    
         c.clearRect(x + (padding / 2), y+(padding/2), sectionWidth - padding, sectionWidth-padding);
         c.beginPath()
         c.arc(
