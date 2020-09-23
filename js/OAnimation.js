@@ -53,7 +53,6 @@ function animateCircle(x, y, rawX, rawY){
                 gridPosY, 
                 sectionWidth - padding,
                 sectionWidth - padding
-
             );
             
         c.lineCap = theme.knot.cap;

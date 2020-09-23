@@ -750,7 +750,7 @@ function playerTurn(x, y){
 
     if(grid[y][x] == 0 && playerClick==true){
         grid[y][x] = 1;
-        drawX(x,y, true);
+        animateX(x, y);
         playerClick=false;
         setTimeout(function(){
             checkWin(1);
@@ -997,5 +997,3 @@ function init() {
 }
 
 init();
-
-animateO(0,0);

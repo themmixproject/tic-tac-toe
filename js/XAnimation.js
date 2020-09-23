@@ -1,4 +1,4 @@
-function drawX(x, y, animate=false){
+function drawX(x, y){
     
     x = gridX(x);
     y = gridY(y);
@@ -7,31 +7,19 @@ function drawX(x, y, animate=false){
     c.strokeStyle = theme.cross.color;
     c.lineWidth = theme.cross.thickness;
 
-    // console.log(y + sectionWidth - padding);
+    drawPath(
+        x + padding,
+        y + padding,
+        x + sectionWidth - padding,
+        y + sectionWidth - padding
+    );
 
-    if(animate==true){
-        drawFirst(x, y);
-
-        // drawSecond(x, y);
-
-        // setTimeout(function(){drawSecond(x, y);},(xDuration));
-
-    }
-    else{
-        drawPath(x + padding, y + padding,
-            x + sectionWidth - padding,
-            y + sectionWidth - padding
-
-        );
-
-        drawPath(
-            x + sectionWidth - padding,
-            y + padding,
-            x + padding,
-            y + sectionWidth - padding
-        );
-    }
-
+    drawPath(
+        x + sectionWidth - padding,
+        y + padding,
+        x + padding,
+        y + sectionWidth - padding
+    );
 
     resetBrush();
 
