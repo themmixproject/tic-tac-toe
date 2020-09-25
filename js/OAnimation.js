@@ -120,7 +120,7 @@ function animateO(x, y){
 
     function update(secondsPassed){
         timePassed += secondsPassed;
-        tc = easeOutQuart(timePassed, 0, Math.PI*2, 1.5);
+        tc = easeOutQuart(timePassed, 0, Math.PI*2, oDuration/1000);
         if(tc<oldTc){
             animationFinish=true;
             tc = finalC;

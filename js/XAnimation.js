@@ -129,9 +129,9 @@ function animateX(x, y){
     function update(secondsPassed){
         timePassed += secondsPassed;
 
-        ty = easeOutQuart(timePassed, (y + padding), sectionWidth-(padding*2), 1);
-        txLeft = easeOutQuart(timePassed, (x + padding), (sectionWidth - padding*2), 1);
-        txRight = easeOutQuart(timePassed, (x + sectionWidth - padding), -sectionWidth+(padding*2), 1);
+        ty = easeOutQuart(timePassed, (y + padding), sectionWidth-(padding*2), xDuration/1000);
+        txLeft = easeOutQuart(timePassed, (x + padding), (sectionWidth - padding*2), xDuration/1000);
+        txRight = easeOutQuart(timePassed, (x + sectionWidth - padding), -sectionWidth+(padding*2), xDuration/1000);
 
         if(oldTy > ty){
             animationFinish = true;

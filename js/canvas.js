@@ -44,12 +44,6 @@
  * TWEAK COMPUTER FUNCTION SO IT DOESN'T DRAW HALFWAY, AND LATER IT WILL DRAW THE FULL WINLINE
  * ADD THEME
  * 
- * JUST TO HAVE THIS NOTED: 
- * SO, IF YOU DISABLED THE ANIMATIONS,
- * NOT INCLUDING THE WINLINE, FOR THE COMPUTER IT WILL GET DRAWN
- * HALFWAY BECAUSE THE FUNCTIONS IN THE TURN FINISH TOO QUICK BEFORE
- * THE VARIABLES ARE ALTERED CORRECTLY FOR THE WINLINE TO BE DRAWN IN
- * THE CORRECT WAY, TRY TO FIX THIS, I DON'T KNOW WHY, BUT STILL.
  * 
  * TO FIX THE ISSUE THAT THE X ISN'T BEING DRAWN ON MOBILE IS BECAUSE IN THE ANIMATOIN FUNCTION THERE IS NO CONDITION OF IF WIN==TRUE AND GAME.END==TRUE, THEN THE X SHOULD JUST BE DRAWN ON THE BOARD
  * /
@@ -366,23 +360,11 @@ function canvasEvent(clientX, clientY){
 
     for(x=0; x<3;x++){
         for(y=0;y<3;y++){
-
-            // var gridX = x * sectionWidth + topLeft.x;
-            // var gridY = y * sectionWidth + topLeft.y;
-
             if(
                 mouse.x >= gridX(x) && mouse.x <= gridX(x) + sectionWidth &&
                 mouse.y >= gridY(y) && mouse.y <= gridY(y) + sectionWidth
             ){
-
-                // console.log(mouse.x);
-                
-                // index = x + (y * 3);
-
                 playerTurn(x, y);
-
-                // console.log(x + " " + y);
-
             }
         }
     }
@@ -410,8 +392,6 @@ else{
 }
 
 window.addEventListener("resize",function(){
-
-    // console.log("resize");
         
     // innerWidth = window.innerWidth;
     // innerHeight = window.innerHeight;
@@ -502,19 +482,11 @@ function linear(t, b, c, d) {
 
 // animation variables
 
-var xDuration = 300;
-var oDuration = 300;
-
+var xDuration = 1000;
+var oDuration = 1000;
 var winLineDuration = 500;
-
 var fadeDuration = 1/6*1000;
-// var animation = class {
-//     constructor(duration, startX, startY, endX, endY, ){
-        
-//     }
-// }
 
-// var testVar = new animation();
 
 
 
@@ -758,7 +730,7 @@ function playerTurn(x, y){
                 computer();
                 playerClick=true;
             }
-        },xDuration);
+        },xDuration-100);
 
     }
     
@@ -794,21 +766,15 @@ function computer(){
                     grid[ array[2][1] ][ array[2][0] ] == 0 &&
                     computerMoved == false
                 ){
-
                     turnArray = [array[2][0] , array[2][1]];
-
                     computerMoved = true;
-
                     array.unshift(array[2]);
                     array.pop();
-
                 }
                 else {
-
                     array.unshift(array[2]);
                     array.pop();
                 }
-
             };
             
         });
@@ -825,7 +791,6 @@ function computer(){
             function randomX(){
                 return Math.floor(Math.random()*3);
             }
-
             function randomY(){
                 return Math.floor(Math.random() * 3);
             }
@@ -843,12 +808,11 @@ function computer(){
             return;
         }
 
-        
         randomBox();
+
     }
     
     computerTurn(turnArray[0], turnArray[1]);
-
     computerMoved = false;
 
     return;
@@ -884,18 +848,14 @@ function checkWin(player){
     var winArray;
     var counter=0;
     
-    combinations.forEach(function(combination,index){
+    combinations.forEach(function(combination){
 
         if(game.win==false){
-
-            combination.forEach(function(array,index){
-
+            combination.forEach(function(array){
                 if(grid[ array[1] ][ array[0] ] == player){
                     counter++
                 };
-                
             });
-
         }
 
         if(counter===3 && game.win==false){
@@ -912,20 +872,17 @@ function checkWin(player){
     if(game.win==true && game.end==true){
 
         playerClick = false;
-
         drawWinLine(winArray, true);
 
         setTimeout(function(){
-
             fadeOutReset(true, winArray);
-            
+
             setTimeout(function(){
                 reset();
                 playerClick=true;
             },fadeDuration);
 
         }, winLineDuration);
-        
     };
 
     counter=0;
@@ -942,7 +899,6 @@ function checkWin(player){
        
     if(counter==9 && game.end==false){
         game.end=true;
-        // console.log("tie");
         playerClick = false;
         fadeOutReset();
         setTimeout(function(){
@@ -986,14 +942,5 @@ function reset(){
 \#####################################################*/
 
 // Implementation
-function init() {
-
-    setCombinations();
-    drawGrid();
-
-    console.log(combinations);
-    console.log(grid);
-
-}
-
-init();
+setCombinations();
+drawGrid();
