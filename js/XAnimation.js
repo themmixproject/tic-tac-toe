@@ -133,7 +133,7 @@ function animateX(x, y){
         txLeft = easeOutQuart(timePassed, (x + padding), (sectionWidth - padding*2), xDuration/1000);
         txRight = easeOutQuart(timePassed, (x + sectionWidth - padding), -sectionWidth+(padding*2), xDuration/1000);
 
-        if(oldTy > ty){
+        if(oldTy > ty || game.end==true){
             animationFinish = true;
             ty = finalY;
             txLeft = finalXLeft;

@@ -121,7 +121,7 @@ function animateO(x, y){
     function update(secondsPassed){
         timePassed += secondsPassed;
         tc = easeOutQuart(timePassed, 0, Math.PI*2, oDuration/1000);
-        if(tc<oldTc){
+        if(tc<oldTc || game.end==true){
             animationFinish=true;
             tc = finalC;
             draw();
