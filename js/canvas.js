@@ -472,6 +472,10 @@ function easeOutCubic(t, b, c, d) {
     return c*((t=t/d-1)*t*t + 1) + b;
 }
 
+function easeInCubic (t, b, c, d) {
+    return c * (t /= d) * t * t + b;
+}
+
 function easeOutQuint(t, b, c, d) {
     return c*((t=t/d-1)*t*t*t*t + 1) + b;
   }
@@ -482,8 +486,8 @@ function linear(t, b, c, d) {
 
 // animation variables
 
-var xDuration = 1000;
-var oDuration = 1000;
+var xDuration = 250;
+var oDuration = 250;
 var winLineDuration = 500;
 var fadeDuration = 1/6*1000;
 
@@ -671,14 +675,17 @@ function playerTurn(x, y){
     if(grid[y][x] == 0 && playerClick==true){
         grid[y][x] = 1;
         animateX(x, y);
-        playerClick=false;
         setTimeout(function(){
             checkWin(1);
-            if(game.end == false){
-                computer();
-                playerClick=true;
-            }
-        },xDuration-100);
+        }, xDuration-100);
+        // playerClick=false;
+        // setTimeout(function(){
+        //     checkWin(1);
+        //     if(game.end == false){
+        //         computer();
+        //         playerClick=true;
+        //     }
+        // },xDuration-100);
 
     }
     
@@ -796,7 +803,20 @@ function checkWin(player){
     if(game.win==true && game.end==true){
 
         playerClick = false;
-        drawWinLine(winArray, true);
+
+        var halfSection = sectionWidth/2;
+
+        var x = gridX(winArray[0][0]) + halfSection;
+        var y = gridY(winArray[0][1]) + halfSection;
+    
+        var x1 = gridX(winArray[2][0]) + halfSection;
+        var y1 = gridY(winArray[2][1]) + halfSection;
+    
+        c.lineCap = theme.winLine.cap;
+        c.strokeStyle = theme.winLine.color;
+        c.lineWidth = theme.winLine.thickness;
+
+        animateWinLine(x, y, x1, y1);
 
         setTimeout(function(){
             fadeOutReset(true, winArray);
@@ -806,7 +826,7 @@ function checkWin(player){
                 playerClick=true;
             },fadeDuration);
 
-        }, winLineDuration);
+        }, winLineDuration+150);
     };
 
     counter=0;
@@ -868,3 +888,11 @@ function reset(){
 // Implementation
 setCombinations();
 drawGrid();
+
+// drawX(0,0);
+// drawX(1,0);
+// drawX(2,0);
+// grid[0][0] = 1;
+// grid[0][1] = 1;
+// grid[0][2] = 1;
+// checkWin(1);
