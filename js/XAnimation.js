@@ -103,6 +103,9 @@ function drawFirst(x, y){
     resetBrush();
 }
 
+
+var xDuration = 500;
+
 function animateX(x, y){
 
     x = gridX(x);
@@ -129,11 +132,11 @@ function animateX(x, y){
     function update(secondsPassed){
         timePassed += secondsPassed;
 
-        ty = easeOutQuart(timePassed, (y + padding), sectionWidth-(padding*2), xDuration/1000);
-        txLeft = easeOutQuart(timePassed, (x + padding), (sectionWidth - padding*2), xDuration/1000);
-        txRight = easeOutQuart(timePassed, (x + sectionWidth - padding), -sectionWidth+(padding*2), xDuration/1000);
+        ty = easeOutExpo(timePassed, (y + padding), sectionWidth-(padding*2), xDuration/1000);
+        txLeft = easeOutExpo(timePassed, (x + padding), (sectionWidth - padding*2), xDuration/1000);
+        txRight = easeOutExpo(timePassed, (x + sectionWidth - padding), -sectionWidth+(padding*2), xDuration/1000);
 
-        if(oldTy > ty || game.end==true){
+        if(timePassed>xDuration/1000){
             animationFinish = true;
             ty = finalY;
             txLeft = finalXLeft;

@@ -77,6 +77,8 @@ function drawWinLine(winArray, animate){
 
 // }
 
+var winLineDuration = 500;
+
 function animateWinLine(startX, startY, endX, endY){
     var secondsPassed = 0;
     var oldTimeStamp = 0;

@@ -484,11 +484,38 @@ function linear(t, b, c, d) {
     return c*t/d + b;
 }
 
+function easeInOutQuint(t, b, c, d) {
+    if ((t/=d/2) < 1) return c/2*t*t*t*t*t + b;
+    return c/2*((t-=2)*t*t*t*t + 2) + b;
+}
+
+function easeInOutQuad (t, b, c, d) {
+    if ((t /= d / 2) < 1) return c / 2 * t * t + b;
+    return -c / 2 * ((--t) * (t - 2) - 1) + b;
+}
+
+function easeOutSine(t, b, c, d) {
+    return c * Math.sin(t/d * (Math.PI/2)) + b;
+  }
+
+function easeOutCirc(t, b, c, d) {
+    return c * Math.sqrt(1 - (t=t/d-1)*t) + b;
+}
+
+function easeOutExpo (t, b, c, d) {
+    return (t == d) ? b + c : c * (-Math.pow(2, -10 * t / d) + 1) + b;
+}
+
+function easeInOutCubic (t, b, c, d) {
+    if ((t /= d / 2) < 1) return c / 2 * t * t * t + b;
+    return c / 2 * ((t -= 2) * t * t + 2) + b;
+}
+
 // animation variables
 
-var xDuration = 250;
-var oDuration = 250;
-var winLineDuration = 500;
+
+
+
 var fadeDuration = 1/6*1000;
 
 
@@ -675,17 +702,14 @@ function playerTurn(x, y){
     if(grid[y][x] == 0 && playerClick==true){
         grid[y][x] = 1;
         animateX(x, y);
+        playerClick=false;
         setTimeout(function(){
             checkWin(1);
-        }, xDuration-100);
-        // playerClick=false;
-        // setTimeout(function(){
-        //     checkWin(1);
-        //     if(game.end == false){
-        //         computer();
-        //         playerClick=true;
-        //     }
-        // },xDuration-100);
+            if(game.end == false){
+                computer();
+                playerClick=true;
+            }
+        },xDuration-100);
 
     }
     
@@ -889,10 +913,3 @@ function reset(){
 setCombinations();
 drawGrid();
 
-// drawX(0,0);
-// drawX(1,0);
-// drawX(2,0);
-// grid[0][0] = 1;
-// grid[0][1] = 1;
-// grid[0][2] = 1;
-// checkWin(1);
