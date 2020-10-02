@@ -709,7 +709,7 @@ function playerTurn(x, y){
                 computer();
                 playerClick=true;
             }
-        },xDuration-100);
+        },xDuration);
 
     }
     
