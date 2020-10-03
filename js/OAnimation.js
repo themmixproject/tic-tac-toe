@@ -98,7 +98,7 @@ function animateCircle(x, y, rawX, rawY){
     animate();
 }
 
-var oDuration = 800;
+var oDuration = 900;
 
 function animateO(x, y){
 
@@ -121,8 +121,8 @@ function animateO(x, y){
 
     function update(secondsPassed){
         timePassed += secondsPassed;
-        tc = easeOutExpo(timePassed, 0, Math.PI*2, oDuration/1000);
-        if(tc<oldTc || game.end==true){
+        tc = easing.easeOutExpo(timePassed, 0, Math.PI*2, oDuration/1000);
+        if(timePassed>oDuration/1000 || game.end==true){
             animationFinish=true;
             tc = finalC;
             draw();
@@ -134,7 +134,7 @@ function animateO(x, y){
         c.lineCap = theme.knot.cap;
         c.strokeStyle = theme.knot.color;
         c.lineWidth = theme.knot.thickness;
-    
+
         c.clearRect(x + (padding / 2), y+(padding/2), sectionWidth - padding, sectionWidth-padding);
         c.beginPath()
         c.arc(

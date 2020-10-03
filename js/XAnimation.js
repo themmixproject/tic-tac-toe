@@ -104,7 +104,7 @@ function drawFirst(x, y){
 }
 
 
-var xDuration = 500;
+var xDuration = 600;
 
 function animateX(x, y){
 
@@ -132,9 +132,9 @@ function animateX(x, y){
     function update(secondsPassed){
         timePassed += secondsPassed;
 
-        ty = easeOutExpo(timePassed, (y + padding), sectionWidth-(padding*2), xDuration/1000);
-        txLeft = easeOutExpo(timePassed, (x + padding), (sectionWidth - padding*2), xDuration/1000);
-        txRight = easeOutExpo(timePassed, (x + sectionWidth - padding), -sectionWidth+(padding*2), xDuration/1000);
+        ty = easing.easeOutExpo(timePassed, (y + padding), sectionWidth-(padding*2), xDuration/1000);
+        txLeft = easing.easeOutExpo(timePassed, (x + padding), (sectionWidth - padding*2), xDuration/1000);
+        txRight = easing.easeOutExpo(timePassed, (x + sectionWidth - padding), -sectionWidth+(padding*2), xDuration/1000);
 
         if(timePassed>xDuration/1000){
             animationFinish = true;

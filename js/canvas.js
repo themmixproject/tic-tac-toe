@@ -912,4 +912,3 @@ function reset(){
 // Implementation
 setCombinations();
 drawGrid();
-

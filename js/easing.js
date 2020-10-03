@@ -1,4 +1,7 @@
 var easing = {
+    linear: function(t, b, c, d) {
+        return c*t/d + b;
+    },
     easeInQuad: function (t, b, c, d) {
         return c*(t/=d)*t + b;
     },
@@ -117,10 +120,10 @@ var easing = {
         }
     },
     easeInBounce: function(t, b, c, d) {
-        return c - easeOutBounce(d-t, 0, c, d) + b;
+        return c - this.easeOutBounce(d-t, 0, c, d) + b;
     },
-    easeInOutBounce: function (t, b, c, d) {
-        if (t < d/2) return jQuery.easing.easeInBounce (t*2, 0, c, d) * .5 + b;
-        return jQuery.easing.easeOutBounce (t*2-d, 0, c, d) * .5 + c*.5 + b;
+    easeInOutBounce: function(t, b, c, d) {
+    if (t < d/2) return this.easeInBounce(t*2, 0, c, d) * .5 + b;
+    return this.easeOutBounce(t*2-d, 0, c, d) * .5 + c*.5 + b;
     }
 }
