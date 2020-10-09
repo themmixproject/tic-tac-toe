@@ -100,6 +100,21 @@ function animateX(x, y){
         }
         else{
             resetBrush();
+        //     if(game.win==true){
+                
+        //         var halfSection = sectionWidth/2;
+
+        //         var x = gridX(game.winArray[0][0]) + halfSection;
+        //         var y = gridY(game.winArray[0][1]) + halfSection;
+        //         var x1 = gridX(game.winArray[2][0]) + halfSection;
+        //         var y1 = gridY(game.winArray[2][1]) + halfSection;
+
+        //         c.lineCap = theme.winLine.cap;
+        //         c.strokeStyle = theme.winLine.color;
+        //         c.lineWidth = theme.winLine.thickness;
+        
+        //         animateWinLine(x, y, x1, y1);
+        //     }
         }
         
     }

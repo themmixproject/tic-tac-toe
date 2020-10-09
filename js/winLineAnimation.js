@@ -30,56 +30,18 @@ function drawWinLine(winArray, animate){
  *|                                                    #
 \#####################################################*/
 
-// function animateWinLine(x, y, x1, y1){
-	
-// 	// drawPath(x, y, x1, y1);
-//     var iteration = 0;
-//     var easingValueX;
-//     var easingValueY;
-
-//     function animate(){
-
-//         c.clearRect(0,0, innerWidth, innerHeight);
-
-//         redraw();
-
-//         c.lineCap = theme.winLine.cap;
-//         c.strokeStyle = theme.winLine.color;
-//         c.lineWidth = theme.winLine.thickness;
-
-//         easingValueX = easeOutQuart(
-//             iteration,
-//             (x),
-//             (x1-x),
-//             toFps(winLineDuration)
-//         );
-
-//         easingValueY = easeOutQuart(
-//             iteration,
-//             (y),
-//             (y1-y),
-//             toFps(winLineDuration)
-//         );
-
-//         drawPath(x, y, easingValueX, easingValueY);
-
-//         if(iteration<toFps(winLineDuration)){
-//             iteration++;
-//             window.requestAnimationFrame(animate);
-//         }
-        
-
-//     }
-
-//     animate();
-
-//     resetBrush();
-
-// }
-
 var winLineDuration = 500;
 
-function animateWinLine(startX, startY, endX, endY){
+function animateWinLine(winArray){
+
+    var halfSection = sectionWidth/2;
+
+    var startX = gridX(winArray[0][0]) + halfSection;
+    var startY = gridY(winArray[0][1]) + halfSection;
+
+    var endX = gridX(winArray[2][0]) + halfSection;
+    var endY = gridY(winArray[2][1]) + halfSection;
+
     var secondsPassed = 0;
     var oldTimeStamp = 0;
     var timePassed = 0;

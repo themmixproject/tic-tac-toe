@@ -52,7 +52,7 @@ function animateO(x, y){
     function update(secondsPassed){
         timePassed += secondsPassed;
         tc = easing.easeOutExpo(timePassed, 0, Math.PI*2, oDuration/1000);
-        if(timePassed>oDuration/1000 || game.end==true){
+        if(timePassed>oDuration/1000){
             animationFinish=true;
             tc = finalC;
             draw();
