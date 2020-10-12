@@ -703,27 +703,6 @@ function playerTurn(x, y){
         animateX(x, y);
         playerClick=false;
         winCheck(1);
-        // if(game.win==true){
-        //     setTimeout(function(){
-        //         animateWinLine(game.winArray);
-        //         setTimeout(function(){
-        //             playerClick = false;
-        //             fadeOutReset(true, game.winArray);
-        //             setTimeout(function(){
-        //                 reset();
-        //             }, fadeDuration)
-        //         }, winLineDuration-200)
-        //     }, xDuration)
-        // }
-        // if(game.win==false && game.end==true){
-        //     playerClick=false;
-        //     setTimeout(function(){
-        //         fadeOutReset();
-        //         setTimeout(function(){
-        //             reset();
-        //         }, fadeDuration)
-        //     },xDuration);
-        // }
         if(game.end==true || game.win==true){
             gameEndDelay(1);
         }
@@ -733,32 +712,6 @@ function playerTurn(x, y){
                 playerClick=true;
             }, xDuration-350)
         }
-        // setTimeout(function(){
-        //     if(game.win==true){
-        //         animateWinLine(game.winArray);
-        //         setTimeout(function(){
-        //             playerClick = false;
-        //             fadeOutReset(true, game.winArray);
-        //             setTimeout(function(){
-        //                 reset();
-        //             }, fadeDuration)
-        //         }, winLineDuration-200)
-        //     }
-        //     if(game.end == false){
-        //         // computer();
-        //         playerClick=true;
-        //     }
-        // },xDuration-350);
-        // if(game.win==false && game.end==true){
-        //     playerClick=false;
-        //     setTimeout(function(){
-        //         fadeOutReset();
-        //         setTimeout(function(){
-        //             reset();
-        //         }, fadeDuration)
-        //     },xDuration);
-        // }
-
     }
     
 };
@@ -768,18 +721,7 @@ function computerTurn(x, y){
     animateO(x, y);
     winCheck(2);
     if(game.win==true){
-        // playerClick = false;
-        // setTimeout(function(){
-        //     animateWinLine(game.winArray);
-        //     setTimeout(function(){
-        //         fadeOutReset(true, game.winArray);
-        //         setTimeout(function(){
-        //             reset();
-        //         }, fadeDuration)
-        //     }, winLineDuration+50)
-        // }, oDuration-200);
         gameEndDelay(2);
-        
     }
 }
 
