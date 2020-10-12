@@ -703,8 +703,8 @@ function playerTurn(x, y){
         animateX(x, y);
         playerClick=false;
         winCheck(1);
-        setTimeout(function(){
-            if(game.win==true){
+        if(game.win==true){
+            setTimeout(function(){
                 animateWinLine(game.winArray);
                 setTimeout(function(){
                     playerClick = false;
@@ -712,13 +712,9 @@ function playerTurn(x, y){
                     setTimeout(function(){
                         reset();
                     }, fadeDuration)
-                }, winLineDuration+100)
-            }
-            if(game.end == false){
-                computer();
-                playerClick=true;
-            }
-        },xDuration-350);
+                }, winLineDuration-200)
+            }, xDuration)
+        }
         if(game.win==false && game.end==true){
             playerClick=false;
             setTimeout(function(){
@@ -728,6 +724,37 @@ function playerTurn(x, y){
                 }, fadeDuration)
             },xDuration);
         }
+        else if(game.end == false){
+            setTimeout(function(){
+                // computer();
+                playerClick=true;
+            }, xDuration-350)
+        }
+        // setTimeout(function(){
+        //     if(game.win==true){
+        //         animateWinLine(game.winArray);
+        //         setTimeout(function(){
+        //             playerClick = false;
+        //             fadeOutReset(true, game.winArray);
+        //             setTimeout(function(){
+        //                 reset();
+        //             }, fadeDuration)
+        //         }, winLineDuration-200)
+        //     }
+        //     if(game.end == false){
+        //         // computer();
+        //         playerClick=true;
+        //     }
+        // },xDuration-350);
+        // if(game.win==false && game.end==true){
+        //     playerClick=false;
+        //     setTimeout(function(){
+        //         fadeOutReset();
+        //         setTimeout(function(){
+        //             reset();
+        //         }, fadeDuration)
+        //     },xDuration);
+        // }
 
     }
     
@@ -738,16 +765,17 @@ function computerTurn(x, y){
     animateO(x, y);
     winCheck(2);
     if(game.win==true){
-        playerClick = false;
-        setTimeout(function(){
-            animateWinLine(game.winArray);
-            setTimeout(function(){
-                fadeOutReset(true, game.winArray);
-                setTimeout(function(){
-                    reset();
-                }, fadeDuration)
-            }, winLineDuration+100)
-        }, oDuration);
+        // playerClick = false;
+        // setTimeout(function(){
+        //     animateWinLine(game.winArray);
+        //     setTimeout(function(){
+        //         fadeOutReset(true, game.winArray);
+        //         setTimeout(function(){
+        //             reset();
+        //         }, fadeDuration)
+        //     }, winLineDuration+50)
+        // }, oDuration-200);
+        gameEndDelay(2);
         
     }
 }
@@ -851,29 +879,6 @@ function winCheck(player){
     });
 
     if(game.win==true && game.end==true){
-
-        // var halfSection = sectionWidth/2;
-
-        // var x = gridX(winArray[0][0]) + halfSection;
-        // var y = gridY(winArray[0][1]) + halfSection;
-    
-        // var x1 = gridX(winArray[2][0]) + halfSection;
-        // var y1 = gridY(winArray[2][1]) + halfSection;
-    
-        // c.lineCap = theme.winLine.cap;
-        // c.strokeStyle = theme.winLine.color;
-        // c.lineWidth = theme.winLine.thickness;
-
-        // animateWinLine(x, y, x1, y1);
-
-        // setTimeout(function(){
-        //     fadeOutReset(true, winArray);
-        //     setTimeout(function(){
-        //         reset();
-        //         playerClick=true;
-        //         }, fadeDuration);
-        // }, winLineDuration);
-
         game.winArray = winArray;
     };
 
@@ -890,10 +895,6 @@ function winCheck(player){
     if(counter==9 && game.end==false && game.win==false){
         game.end=true;
         playerClick = false;
-        // fadeOutReset();
-        // setTimeout(function(){
-        //     reset();
-        // }, fadeDuration);
     };
 
     // counter=0;
@@ -913,7 +914,23 @@ function reset(){
     return;
 };
 
-
+function gameEndDelay(player){
+    if(player==1){
+        
+    }
+    else{
+        playerClick = false;
+        setTimeout(function(){
+            animateWinLine(game.winArray);
+            setTimeout(function(){
+                fadeOutReset(true, game.winArray);
+                setTimeout(function(){
+                    reset();
+                }, fadeDuration)
+            }, winLineDuration+50)
+        }, oDuration-200);
+    }
+}
 
 
 
