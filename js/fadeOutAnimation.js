@@ -45,7 +45,8 @@ function fadeOutReset(win, winArray){
             window.requestAnimationFrame(animate);
         }
 
-        if(iteration==10){
+        if(iteration==toFps(fadeDuration)){
+            console.log(toFps(fadeDuration));
             resetBrush();
         }
 
@@ -55,3 +56,55 @@ function fadeOutReset(win, winArray){
     
     c.globalAlpha = 1;
 }
+
+// function fadeOutReset(win, winArray){
+    
+//     var secondsPassed = 0;
+//     var oldTimeStamp  = 0;
+//     var timePassed  = 0;
+//     var animationFinish = false;
+
+//     var startOpacity = 1;
+//     var to = 0;
+
+//     var finalOpacity = 0;
+
+//     function update(secondsPassed){
+//         timePassed += secondsPassed;
+
+//         if(timePassed>fadeDuration/1000){
+//             animationFinish = true;
+//             to = finalOpacity;
+//             draw();
+//         }
+        
+//     }
+
+//     function draw(){
+//         c.clearRect(0,0,innerWidth,innerHeight);
+//         drawGrid();
+//     }
+
+//     function animate(timeStamp){
+//         // Calculate how much time has passed
+//         secondsPassed = (timeStamp - oldTimeStamp) / 1000;
+//         oldTimeStamp = timeStamp;
+
+//         // Move forward in time with a maximum amount
+//         secondsPassed = Math.min(secondsPassed, 0.1);
+
+//         // Pass the time to the update
+//         update(secondsPassed);
+//         if(!animationFinish){
+//             draw();
+//             window.requestAnimationFrame(animate);
+//         }
+//         else{
+//             resetBrush();
+//         }
+//     }
+
+//     animate(timePassed);
+//     resetBrush();
+
+// }

@@ -62,6 +62,7 @@ function animateWinLine(winArray){
     }
 
     function endAnimation(){
+        console.log("winline ended");
         animationFinish = true;
         ty = endY;
         tx = endX;
