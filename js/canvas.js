@@ -792,7 +792,6 @@ function winCheck(player){
 }
 
 function reset(){
-    // console.log("reset");
     game.win = false;
     game.end=false;
 
@@ -816,7 +815,7 @@ function gameEndDelay(player){
                     setTimeout(function(){
                         reset();
                     }, fadeDuration)
-                }, winLineDuration-200)
+                }, winLineDuration)
             }
             else if(game.win==false && game.end==true){
                 fadeOutReset();
