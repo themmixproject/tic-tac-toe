@@ -130,9 +130,6 @@ function resetBrush(){
     c.globalAlpha = 1;
 }
 
-function toFps(miliseconds){
-    return (miliseconds*60)/1000;
-}
 
 
 
@@ -448,59 +445,16 @@ window.addEventListener("resize",function(){
 
 
 
-// animation variables
-
-
-
-
-
-
-
-
 // X animation function position
-
 
 
 // O animation function position
 
+
 // animate winLine function position
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 // fadeOutRest() animation method position
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
