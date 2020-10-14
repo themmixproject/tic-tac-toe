@@ -69,7 +69,7 @@ function animateWinLine(winArray){
     }
     
     function update(secondsPassed){
-        console.log("winline-iteration");
+        
         timePassed+=secondsPassed;
 
         if(startX!=endX){

@@ -71,8 +71,6 @@ function fadeOutReset(win, winArray){
     var finalOpacity = 0;
 
     function update(secondsPassed){
-        
-        console.log("fade-iteration");
 
         timePassed += secondsPassed;
         

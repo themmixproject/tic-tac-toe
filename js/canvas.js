@@ -860,10 +860,10 @@ setCombinations();
 drawGrid();
 
 
-drawX(0,0);
-drawX(1,0);
+// drawX(0,0);
+// drawX(1,0);
 // drawX(2,0)
-grid[0][0]=1;
-grid[0][1]=1;
+// grid[0][0]=1;
+// grid[0][1]=1;
 // grid[0][2]=1;
 // setTimeout(function(){checkWin(1);},winLineDuration);
