@@ -73,13 +73,13 @@ function animateWinLine(winArray){
         timePassed+=secondsPassed;
 
         if(startX!=endX){
-            tx = easeOutQuart(timePassed, startX, endX-startX, winLineDuration/1000);
+            tx = easing.easeOutQuart(timePassed, startX, endX-startX, winLineDuration/1000);
         }
         else{
             tx = startX
         }
         if(startY!=endY){
-            ty = easeOutQuart(timePassed, startY, endY-startY, winLineDuration/1000);
+            ty = easing.easeOutQuart(timePassed, startY, endY-startY, winLineDuration/1000);
         }
         else{
             ty = startY
