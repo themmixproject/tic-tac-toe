@@ -154,6 +154,7 @@ var gridWidth = 350.5;
 var maxGridWidth = 350.5;
 var sectionWidth = gridWidth / 3;
 var gridPadding = 15;
+var minGridWidth = 200;
 
 // sets grid smaller in case the window is smaller
 // than the default gridWidth
@@ -399,11 +400,14 @@ window.addEventListener("resize",function(){
     // innerWidth = window.innerWidth;
     // innerHeight = window.innerHeight;
 
-    if(innerWidth<maxGridWidth+gridPadding){
+    if(innerWidth<minGridWidth+gridPadding || innerHeight<minGridWidth+padding){
+        gridWidth = minGridWidth;
+    }
+    else if(innerWidth<maxGridWidth+gridPadding && innerHeight>innerWidth){
         gridWidth = innerWidth-gridPadding*2;
     }
-    else if(innerHeight<maxGridWidth+gridPadding){
-        gridWidth = innerWidth-gridPadding*2;
+    else if(innerHeight<maxGridWidth+gridPadding && innerWidth>innerHeight){
+        gridWidth = innerHeight-gridPadding*2;
     }
     else if(innerWidth>maxGridWidth && innerHeight>maxGridWidth){
         gridWidth = maxGridWidth;
