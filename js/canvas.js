@@ -151,12 +151,17 @@ function resetBrush(){
 \#####################################################*/
 
 var gridWidth = 350.5;
+var maxGridWidth = 350.5;
 var sectionWidth = gridWidth / 3;
+var gridPadding = 15;
 
-if(innerWidth<gridWidth){
-    gridWidth = (innerWidth*0.9);
+// sets grid smaller in case the window is smaller
+// than the default gridWidth
+if(innerWidth<gridWidth+gridPadding){
+    // gridWidth = (innerWidth*0.9);
+    gridWidth = innerWidth-gridPadding*2;
     sectionWidth = gridWidth / 3;
-    console.log(gridWidth);
+
     
 }
 
@@ -393,6 +398,18 @@ window.addEventListener("resize",function(){
         
     // innerWidth = window.innerWidth;
     // innerHeight = window.innerHeight;
+
+    if(innerWidth<maxGridWidth+gridPadding){
+        gridWidth = innerWidth-gridPadding*2;
+    }
+    else if(innerHeight<maxGridWidth+gridPadding){
+        gridWidth = innerWidth-gridPadding*2;
+    }
+    else if(innerWidth>maxGridWidth && innerHeight>maxGridWidth){
+        gridWidth = maxGridWidth;
+    }
+
+    sectionWidth = gridWidth / 3;
 
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
