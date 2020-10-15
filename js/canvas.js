@@ -400,13 +400,13 @@ window.addEventListener("resize",function(){
     // innerWidth = window.innerWidth;
     // innerHeight = window.innerHeight;
 
-    if(innerWidth<minGridWidth+gridPadding || innerHeight<minGridWidth+padding){
+    if(innerWidth<minGridWidth+gridPadding*2 || innerHeight<minGridWidth+gridPadding*2){
         gridWidth = minGridWidth;
     }
-    else if(innerWidth<maxGridWidth+gridPadding && innerHeight>innerWidth){
+    else if(innerWidth<maxGridWidth+gridPadding*2 && innerHeight>innerWidth){
         gridWidth = innerWidth-gridPadding*2;
     }
-    else if(innerHeight<maxGridWidth+gridPadding && innerWidth>innerHeight){
+    else if(innerHeight<maxGridWidth+gridPadding*2 && innerWidth>innerHeight){
         gridWidth = innerHeight-gridPadding*2;
     }
     else if(innerWidth>maxGridWidth && innerHeight>maxGridWidth){
