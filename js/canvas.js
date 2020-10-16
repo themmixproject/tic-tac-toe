@@ -196,6 +196,7 @@ if(innerWidth<gridWidth+gridPadding){
     theme.grid.thickness = Math.round((0.0285*gridWidth)*10)/10;
     theme.knot.thickness = Math.round((0.0285*gridWidth)*10)/10;
     theme.cross.thickness = Math.round((0.0285*gridWidth)*10)/10;
+    theme.winLine.thickness = Math.round((0.0285*gridWidth)*10)/10;
 
     padding = Math.round((0.0713*gridWidth)*10)/10;
     
@@ -409,19 +410,21 @@ window.addEventListener("resize",function(){
     }
     else if(innerWidth<maxGridWidth+gridPadding*2 && innerHeight>innerWidth){
         gridWidth = innerWidth-gridPadding*2;
-        test =Math.round((0.0285*gridWidth)*10)/10;
+        
         theme.grid.thickness = Math.round((0.0285*gridWidth)*10)/10;
         theme.knot.thickness = Math.round((0.0285*gridWidth)*10)/10;
         theme.cross.thickness = Math.round((0.0285*gridWidth)*10)/10;
+        theme.winLine.thickness = Math.round((0.0285*gridWidth)*10)/10;
 
         padding = Math.round((0.0713*gridWidth)*10)/10;
     }
     else if(innerHeight<maxGridWidth+gridPadding*2 && innerWidth>innerHeight){
         gridWidth = innerHeight-gridPadding*2;
-        test =Math.round((0.0285*gridWidth)*10)/10;
+
         theme.grid.thickness = Math.round((0.0285*gridWidth)*10)/10;
         theme.knot.thickness = Math.round((0.0285*gridWidth)*10)/10;
         theme.cross.thickness = Math.round((0.0285*gridWidth)*10)/10;
+        theme.winLine.thickness = Math.round((0.0285*gridWidth)*10)/10;
 
         padding = Math.round((0.0713*gridWidth)*10)/10;
     }
@@ -430,6 +433,7 @@ window.addEventListener("resize",function(){
         theme.grid.thickness = 10;
         theme.knot.thickness = 10;
         theme.cross.thickness = 10;
+        theme.winLine.thickness = 10;
         padding = 25;
     }
 
