@@ -150,21 +150,6 @@ function resetBrush(){
  *|                                                    #
 \#####################################################*/
 
-var gridWidth = 350.5;
-var maxGridWidth = 350.5;
-var sectionWidth = gridWidth / 3;
-var gridPadding = 15;
-var minGridWidth = 200;
-
-// sets grid smaller in case the window is smaller
-// than the default gridWidth
-if(innerWidth<gridWidth+gridPadding){
-    // gridWidth = (innerWidth*0.9);
-    gridWidth = innerWidth-gridPadding*2;
-    sectionWidth = gridWidth / 3;
-
-    
-}
 
 var theme = {
     cross : {
@@ -195,7 +180,26 @@ var theme = {
 
 var padding = 25;
  
+var gridWidth = 350.5;
+var maxGridWidth = 350.5;
+var sectionWidth = gridWidth / 3;
+var gridPadding = 15;
+var minGridWidth = 200;
 
+// sets grid smaller in case the window is smaller
+// than the default gridWidth
+if(innerWidth<gridWidth+gridPadding){
+    // gridWidth = (innerWidth*0.9);
+    gridWidth = innerWidth-gridPadding*2;
+    sectionWidth = gridWidth / 3;
+    
+    theme.grid.thickness = Math.round((0.0285*gridWidth)*10)/10;
+    theme.knot.thickness = Math.round((0.0285*gridWidth)*10)/10;
+    theme.cross.thickness = Math.round((0.0285*gridWidth)*10)/10;
+
+    padding = Math.round((0.0713*gridWidth)*10)/10;
+    
+}
 
 
 
@@ -405,12 +409,28 @@ window.addEventListener("resize",function(){
     }
     else if(innerWidth<maxGridWidth+gridPadding*2 && innerHeight>innerWidth){
         gridWidth = innerWidth-gridPadding*2;
+        test =Math.round((0.0285*gridWidth)*10)/10;
+        theme.grid.thickness = Math.round((0.0285*gridWidth)*10)/10;
+        theme.knot.thickness = Math.round((0.0285*gridWidth)*10)/10;
+        theme.cross.thickness = Math.round((0.0285*gridWidth)*10)/10;
+
+        padding = Math.round((0.0713*gridWidth)*10)/10;
     }
     else if(innerHeight<maxGridWidth+gridPadding*2 && innerWidth>innerHeight){
         gridWidth = innerHeight-gridPadding*2;
+        test =Math.round((0.0285*gridWidth)*10)/10;
+        theme.grid.thickness = Math.round((0.0285*gridWidth)*10)/10;
+        theme.knot.thickness = Math.round((0.0285*gridWidth)*10)/10;
+        theme.cross.thickness = Math.round((0.0285*gridWidth)*10)/10;
+
+        padding = Math.round((0.0713*gridWidth)*10)/10;
     }
     else if(innerWidth>maxGridWidth && innerHeight>maxGridWidth){
         gridWidth = maxGridWidth;
+        theme.grid.thickness = 10;
+        theme.knot.thickness = 10;
+        theme.cross.thickness = 10;
+        padding = 25;
     }
 
     sectionWidth = gridWidth / 3;
