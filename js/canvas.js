@@ -21,31 +21,8 @@
 
 /** TO MORE AWAKE STEVEN
  * 
- * SPLIT THE FUNCTIONS CHAPTER INTO TWO OR THREE SEPERATE CHAPTERS
- * SPLIT THE VARABLES TO THE PROPERLY ASSIGNED CHAPTERS
- * 
- * REORGANIZE CHAPTERS
- * 
- * CREATE ANIMATION CLASS TO MINIMIZE ANIMATION CHAPTER
- * 
- * MAYBE SPLIT THE CODE INTO DIFFERENT FILES
- * 
- * ALL YOU NEED TO DO NOW IS ADD THE DRAWINLINE INTO THE FADEOUTRESET FUNCTION, MAKE SURE THERE'S AN ANIMATION BOOLEAN WITHIN IT
- * 
- * IF YOU HAVE THE TIME, REMOVE DEFAULT VARIABLES
  * 
  * 
- *
- * THEME : #D9695F #FFB4A8 #EFCDBF #4F9BA8 #2D3742
- * 
- * 
- * 
- * TWEAK FADOUT SO THAT IT DOES THE SAME WHEN THERE IS A TIE
- * TWEAK COMPUTER FUNCTION SO IT DOESN'T DRAW HALFWAY, AND LATER IT WILL DRAW THE FULL WINLINE
- * ADD THEME
- * 
- * 
- * TO FIX THE ISSUE THAT THE X ISN'T BEING DRAWN ON MOBILE IS BECAUSE IN THE ANIMATOIN FUNCTION THERE IS NO CONDITION OF IF WIN==TRUE AND GAME.END==TRUE, THEN THE X SHOULD JUST BE DRAWN ON THE BOARD
  * /
 
 /**
@@ -55,6 +32,9 @@
  * 1:21:46 the first time the winline animation worked with a computer player
  * 
  * 22:10:33 12-08-19 after alot of testing, the combination manipulation bug seems to be fixed
+ * 
+ * 
+ * THEME : #D9695F #FFB4A8 #EFCDBF #4F9BA8 #2D3742
  */
 
 
@@ -262,24 +242,11 @@ var center = {
     y: canvas.height / 2
 };
 
-// can be removed
-// (don't know what this does either)
-const mouse = {
-    x: innerWidth / 2,
-    y: innerHeight / 2
-};
-
 // coordinates for the top left of the game grid
 var topLeft = {
     x: center.x - sectionWidth * 1.5,
     y: center.y - sectionWidth * 1.5
 };
-
-
-// can be removed
-// stored colors of old project (don't know why I didn't delete this earlier)
-const colors = ['#2185C5', '#7ECEFD', '#FFF6E5', '#FF7F66'];
-
 
 // sets if player is able to put a piece down
 var playerClick = true;
@@ -410,14 +377,12 @@ function setCombinations(){
  * @param {number} clientY - Y-Coordinate or where user taps or clicks
  */
 function canvasEvent(clientX, clientY){
-    mouse.x = clientX;
-    mouse.y = clientY;
-
+    
     for(x=0; x<3;x++){
         for(y=0;y<3;y++){
             if(
-                mouse.x >= gridX(x) && mouse.x <= gridX(x) + sectionWidth &&
-                mouse.y >= gridY(y) && mouse.y <= gridY(y) + sectionWidth
+                clientX >= gridX(x) && clientX <= gridX(x) + sectionWidth &&
+                clientY >= gridY(y) && clientY <= gridY(y) + sectionWidth
             ){
                 playerTurn(x, y);
             }
