@@ -106,6 +106,13 @@ window.cancelAnimationFrame = (function () {
  *|                                                    # 
 \#####################################################*/
 
+/**
+ * Draws a path between two points
+ * @param {number} x x-coordinate of start path start
+ * @param {number} y y-coordinate of start path start
+ * @param {number} x1 x-coordinate of start path end
+ * @param {number} y1 y-coordinate of start path end
+ */
 function drawPath(x, y, x1, y1){
     c.beginPath();
     c.moveTo(x, y);
@@ -113,14 +120,25 @@ function drawPath(x, y, x1, y1){
     c.stroke();
 }
 
+/**
+ * Returns game grid x-coordinate based on canvas
+ * @param {number} x x-coordinate
+ */
 function gridX(x){
     return x * sectionWidth + topLeft.x;
 }
 
+/**
+ * Returns game grid y-coordinate based on canvas
+ * @param {number} y y-coordinate
+ */
 function gridY(y){
     return y * sectionWidth + topLeft.y;
 }
 
+/**
+ * resets canvas brush to default values
+ */
 function resetBrush(){
     c.lineWidth = 1;
     c.strokeStyle = "black";
@@ -150,7 +168,8 @@ function resetBrush(){
  *|                                                    #
 \#####################################################*/
 
-
+// stores the game theme
+// - can be minified
 var theme = {
     cross : {
         color : "#4F9BA8",
@@ -237,26 +256,32 @@ c.translate(0.5,0.5);
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
+// stores the center of the canvas
 var center = {
     x: canvas.width / 2,
     y: canvas.height / 2
 };
 
+// can be removed
+// (don't know what this does either)
 const mouse = {
     x: innerWidth / 2,
     y: innerHeight / 2
 };
 
+// coordinates for the top left of the game grid
 var topLeft = {
     x: center.x - sectionWidth * 1.5,
     y: center.y - sectionWidth * 1.5
 };
 
+
+// can be removed
+// stored colors of old project (don't know why I didn't delete this earlier)
 const colors = ['#2185C5', '#7ECEFD', '#FFF6E5', '#FF7F66'];
 
 
 // sets if player is able to put a piece down
-
 var playerClick = true;
 
 
@@ -269,14 +294,23 @@ var playerClick = true;
  *|                                                    #
 \#####################################################*/
 
+// stores the grid state
 var grid = [];
 
+// creates multi-dimentional array for
+// grid state
 for(var i=0;i<3;i++){
     grid.push([0,0,0]);
 }
 
+// if the computer has placed a piece
 var computerMoved = false;
 
+// game variables
+// end: if the game has ended
+// win: if the game has been won
+// winArray: stores the array combination of which the
+// player has won with
 var game = {
     end: false,
     win: false,
@@ -299,12 +333,18 @@ var game = {
  *|                                #
 \#################################*/
 
+// array of wincombinations relative to grid[] variable
 var combinations=[];
 
+/**
+ * Sets win combinations
+ */
+// (maybe an idea to just hardcode these instead of setting them with a method)
 function setCombinations(){
     
-
+    // sets horizontal win combinations
     for(var y = 0; y < 3; y++){
+        // array that stores coordinates for win combinations
         var array = [];
         for(var x = 0; x < 3; x++){
             array.push([x,y]);
@@ -312,7 +352,9 @@ function setCombinations(){
         combinations.push(array);
     }
     
+    // sets vertical combinations
     for(var y = 0; y < 3; y++){
+        // array that stores coordinates for win combinations
         array = [];
         for(var x = 0; x < 3; x++){
             array.push([y,x]);
@@ -320,11 +362,11 @@ function setCombinations(){
         combinations.push(array);
     }
 
+    // sets diagonal win combinations
     for(i=0;i<1;i++){
-        
+        // arrays that store coordinates for win combinations
         var array = [];
         var array1 = [];
-
         for(var x=2, y=0; x >= 0; x--, y++){
             array1.push([y,y]); 
             array.push([y, x]);
@@ -362,7 +404,11 @@ function setCombinations(){
 
 
 
-// event that gets execute on tap or click
+/**
+ * Event that gets executed on tap or click of canvas
+ * @param {number} clientX - X-Coordinate of where user taps or clicks
+ * @param {number} clientY - Y-Coordinate or where user taps or clicks
+ */
 function canvasEvent(clientX, clientY){
     mouse.x = clientX;
     mouse.y = clientY;
@@ -380,7 +426,7 @@ function canvasEvent(clientX, clientY){
 
 };
 
-// Checks if browser is mobile, and adds a touch event
+// Checks if browser is mobile, and adds a touch instead of click event
 if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
     document.addEventListener("touchstart",function(event){
         var clientX = event.touches[0].clientX;
@@ -388,47 +434,57 @@ if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(naviga
 
         canvasEvent(clientX, clientY);
     });
-
-
-
 }
 else{
     document.addEventListener("click",function(event) {
         canvasEvent(event.clientX, event.clientY);
     })
-
-
 }
 
+// Adds resize event to window
+// If the window gets resized, or on mobile rotated the
+// canvas will adjust itself to the window size, if the
+// window is sized smaller than the default grid size
+// the grid will scale accordingly
 window.addEventListener("resize",function(){
-        
-    // innerWidth = window.innerWidth;
-    // innerHeight = window.innerHeight;
 
+    // checks if the window is smaller than the minimal gird width
+    // if true: the window is smaller than the minimal grid width the grid won't get smaller
     if(innerWidth<minGridWidth+gridPadding*2 || innerHeight<minGridWidth+gridPadding*2){
         gridWidth = minGridWidth;
     }
+    // checks if window width is smaller than the default grid width
+    // if true: adjusts grid size to the width of the window
     else if(innerWidth<maxGridWidth+gridPadding*2 && innerHeight>innerWidth){
         gridWidth = innerWidth-gridPadding*2;
         
+        // adjusts stroke-width to the size of the grid
         theme.grid.thickness = Math.round((0.0285*gridWidth)*10)/10;
         theme.knot.thickness = Math.round((0.0285*gridWidth)*10)/10;
         theme.cross.thickness = Math.round((0.0285*gridWidth)*10)/10;
         theme.winLine.thickness = Math.round((0.0285*gridWidth)*10)/10;
 
+        // adjusts padding of grid cells
         padding = Math.round((0.0713*gridWidth)*10)/10;
     }
+    // checks if window width is smaller than the default grid height
+    // if true: adjusts grid size to the height of the window
     else if(innerHeight<maxGridWidth+gridPadding*2 && innerWidth>innerHeight){
+        
         gridWidth = innerHeight-gridPadding*2;
 
+        // adjusts stroke-width to the size of the grid
         theme.grid.thickness = Math.round((0.0285*gridWidth)*10)/10;
         theme.knot.thickness = Math.round((0.0285*gridWidth)*10)/10;
         theme.cross.thickness = Math.round((0.0285*gridWidth)*10)/10;
         theme.winLine.thickness = Math.round((0.0285*gridWidth)*10)/10;
 
+        // adjusts padding of grid cells
         padding = Math.round((0.0713*gridWidth)*10)/10;
     }
     else if(innerWidth>maxGridWidth && innerHeight>maxGridWidth){
+
+        // sets grid properties back to default values
         gridWidth = maxGridWidth;
         theme.grid.thickness = 10;
         theme.knot.thickness = 10;
@@ -437,16 +493,21 @@ window.addEventListener("resize",function(){
         padding = 25;
     }
 
+    // updates section-width value to gridWidth
     sectionWidth = gridWidth / 3;
 
+    //update canvas height and width to window height and width 
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
+    //update coordinates of the center of the canvas
     center = {
         x: canvas.width / 2,
         y: canvas.height / 2
     };
 
+
+    //update top-left coordinates of the grid
     topLeft = {
         x: center.x - sectionWidth * 1.5,
         y: center.y - sectionWidth * 1.5
@@ -508,9 +569,12 @@ window.addEventListener("resize",function(){
  *| 10. Drawing                                        #
  *|                                                    #
 \#####################################################*/
-
+/**
+ * Draws game grid on canvas
+ */
 function drawGrid(){
 
+    // sets stroke-style to grid-style
     c.lineCap = theme.grid.cap;
     c.strokeStyle = theme.grid.color;
     c.lineWidth = theme.grid.thickness;
@@ -533,13 +597,23 @@ function drawGrid(){
 
     }
     
+    // resets stroke-style to default values
     resetBrush();
 
 }
 
+/**
+ * Redraws game grid with placed pieces
+ */
 function redraw(){
+    // clears entire canvas
     c.clearRect(0,0,innerHeight,innerWidth);
+    
     drawGrid();
+
+    // loops through every grid item
+    // and draws a game piece if it's
+    // placed
     grid.forEach(function(item,y){
         item.forEach(function(piece,x){
             if(piece==1){
@@ -576,18 +650,33 @@ function redraw(){
  *|                                                    #
 \#####################################################*/
 
-
+/**
+ * Function that gets executed for the turn of player 1
+ * @param {number} x X coordinate of where the player puts his piece
+ * @param {number} y Y coordinate of where the player puts his piece
+ */
 function playerTurn(x, y){
 
+    // checks if the player is able to click, if the game hasn't been won, or isn't ended
     if(grid[y][x] == 0 && playerClick==true & game.end == false & game.win == false){
+        
+        // sets game-grid value to 1 where player put piece
         grid[y][x] = 1;
+
         animateX(x, y);
         playerClick=false;
+
+        // checks if player has won
         winCheck(1);
+        
+        // executes delays for if player has won
         if(game.end==true || game.win==true){
             gameEndDelay(1);
         }
+        // if the game hasn't ended, it's the turn of the computer
         else if(game.end == false){
+
+            // delays time of when player can click again
             setTimeout(function(){
                 computer();
                 playerClick=true;
@@ -597,6 +686,11 @@ function playerTurn(x, y){
     
 };
 
+/**
+ * Function that gets executed for the turn of the computer
+ * @param {*} x X coordinate of where the computer puts his piece
+ * @param {*} y Y coordinate of where the computer puts his piece
+ */
 function computerTurn(x, y){
     grid[y][x] = 2;
     animateO(x, y);
@@ -606,6 +700,17 @@ function computerTurn(x, y){
     }
 }
 
+/**
+ * Generates index of where the computer will place it's piece and executes
+ * computerTurn method
+ * ---
+ * How the computer player works:
+ * The computer player is hardcoded, it sees weather it is able to win
+ * or if the player is able to win by looking at the state of the grid.
+ * If the computer is one piece away from winning, it will place the
+ * winning piece. If the player is one piece away from winning, it will
+ * block the player.
+ */
 function computer(){
     var l = combinations.length;
     var item;
@@ -613,23 +718,41 @@ function computer(){
     
     function computerLoop(player){
 
+        // loops through every win combination
         combinations.forEach(function(array,index){
 
             item = combinations[i];
 
             for(var o=0; o<3; o++){
                 if(
+                    // checks if 2 spaces of a win combination are taken
+                    // and the last piece is still free. If it is free
+                    // the computer will place a piece.
                     grid[ array[0][1] ][ array[0][0] ] == player &&
                     grid[ array[1][1] ][ array[1][0] ] == player &&
                     grid[ array[2][1] ][ array[2][0] ] == 0 &&
+
+                    // checks if the computer already has chosen a spot
+                    // to place a piece.
                     computerMoved == false
                 ){
+                    // stores the combination the computer can move
                     turnArray = [array[2][0] , array[2][1]];
+                    // says the computer has moved
                     computerMoved = true;
+
+                    // changes state of win combination to
+                    // return to original state
                     array.unshift(array[2]);
                     array.pop();
                 }
                 else {
+                    // if the computer hasn't found a win 
+                    // combination or player isn't about to in
+
+                    // changes state of possible win combination
+                    // since there are 3 possible ways the pieces
+                    // are able to be arranges before a player can win
                     array.unshift(array[2]);
                     array.pop();
                 }
@@ -639,11 +762,21 @@ function computer(){
 
     }
     
+    // 2 stands for the computer
+    // 1 stands for the player
+    // it first checks if the computer can win
+    // then checks if the player is about to win
     computerLoop(2);
     computerLoop(1);
 
+
+    // if the computer can't win or the player
+    // can't be blocked, the computer will choose
+    // a random index
     if(computerMoved == false){
 
+
+        // chooses random indexes for X and Y axis
         function randomBox(){
 
             function randomX(){
@@ -656,10 +789,14 @@ function computer(){
             var x = randomX();
             var y = randomY();
 
+            // checks if chosen spaces doesn't
+            // already have a piece.
             if( grid[y][x] != 0 ){
+                // if true, re-run function
                 randomBox();
             }
             else{
+                // set indexes to turn array
                 turnArray = [x , y];
             }
 
@@ -670,7 +807,11 @@ function computer(){
 
     }
     
+    // place piece at turnArray coordinates
     computerTurn(turnArray[0], turnArray[1]);
+
+    // set computerMoved to false so the
+    // computer can move next turn
     computerMoved = false;
 
     return;
@@ -678,38 +819,57 @@ function computer(){
 
 // drawWinLine() function position
 
+/**
+ * Checks if a player has won
+ * @param {number} player code of the player (1 = player, 2 = computer)
+ */
 function winCheck(player){
 
+    // win combination for which the player has won
     var winArray;
+
+    // counts if there are 3 of the same pieces on
+    // a win combination
     var counter=0;
     
+    // loops through each win combination to check
+    //  if the player has won
     combinations.forEach(function(combination){
 
+        // checks if the game already has been won
         if(game.win==false){
             combination.forEach(function(array){
                 if(grid[ array[1] ][ array[0] ] == player){
+                    // adds to counter
                     counter++
                 };
             });
         }
 
+        // checks if a possible win combination has already
+        // been made
         if(counter===3 && game.win==false){
             game.win=true;
             game.end=true;
             winArray = combination;
         }
         else{
+            // resets counter
             counter=0
         };
 
     });
 
+    // stores the win combination in the win array
     if(game.win==true && game.end==true){
         game.winArray = winArray;
     };
 
     counter=0;
 
+    // checks if there is a tie
+    // (if each square has a piece but no
+    // player has won)
     grid.forEach(function(array){
         array.forEach(function(item){
             if(item!=0){
@@ -717,7 +877,6 @@ function winCheck(player){
             };
         })
     });
-       
     if(counter==9 && game.end==false && game.win==false){
         game.end=true;
         playerClick = false;
@@ -726,6 +885,10 @@ function winCheck(player){
     // counter=0;
 }
 
+
+/**
+ * resets game variables and grid
+ */
 function reset(){
     game.win = false;
     game.end=false;
@@ -739,12 +902,19 @@ function reset(){
     return;
 };
 
+/**
+ * Delays for if a player has won in order for animations to flow
+ * after each other instead of being executed at the same time
+ * @param {number} player code of the player (1 = player, 2 = computer)
+ */
 function gameEndDelay(player){
     if(player==1){
         setTimeout(function(){
             if(game.win==true){
                 animateWinLine(game.winArray);
                 setTimeout(function(){
+                    // if the game has been won
+                    // the player can't click anymore
                     playerClick = false;
                     fadeOutReset(true, game.winArray);
                     setTimeout(function(){
