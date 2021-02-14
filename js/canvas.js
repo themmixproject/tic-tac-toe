@@ -149,7 +149,6 @@ function resetBrush(){
 \#####################################################*/
 
 // stores the game theme
-// - can be minified
 var theme = {
     cross : {
         color : "#4F9BA8",
@@ -171,10 +170,7 @@ var theme = {
         thickness : 10,
         cap : "round"
     },
-    // background : "#FCF4C9"
     background : "#EFCDBF"
-    // background : "#FFF6E6"
-    // background : "#FBC49A"
 };
 
 var padding = 25;
