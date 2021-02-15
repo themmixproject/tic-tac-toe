@@ -297,49 +297,55 @@ var game = {
 \#################################*/
 
 // array of wincombinations relative to grid[] variable
-var combinations=[];
-
-/**
- * Sets win combinations
- */
-// (maybe an idea to just hardcode these instead of setting them with a method)
-function setCombinations(){
+var combinations = [
+    // horizontal
+    [
+        [0, 0],
+        [0, 1],
+        [0, 2]
+    ],
+    [
+        [1, 0],
+        [1, 1],
+        [1, 2]
+    ],
+    [
+        [2, 0],
+        [2, 1],
+        [2, 2]
+    ],
     
-    // sets horizontal win combinations
-    for(var y = 0; y < 3; y++){
-        // array that stores coordinates for win combinations
-        var array = [];
-        for(var x = 0; x < 3; x++){
-            array.push([x,y]);
-        }
-        combinations.push(array);
-    }
-    
-    // sets vertical combinations
-    for(var y = 0; y < 3; y++){
-        // array that stores coordinates for win combinations
-        array = [];
-        for(var x = 0; x < 3; x++){
-            array.push([y,x]);
-        }
-        combinations.push(array);
-    }
+    // vertical
+    [
+        [0, 0],
+        [1, 0],
+        [2, 0]
+    ],
+    [
+        [0, 1],
+        [1, 1],
+        [2, 1]
+    ],
+    [
+        [0, 2],
+        [1, 2],
+        [2, 2]
+    ],
 
-    // sets diagonal win combinations
-    for(i=0;i<1;i++){
-        // arrays that store coordinates for win combinations
-        var array = [];
-        var array1 = [];
-        for(var x=2, y=0; x >= 0; x--, y++){
-            array1.push([y,y]); 
-            array.push([y, x]);
-        }
-        
-        combinations.push(array1,array);
-    
-    }
-}
+    // diagonal
+    [
+        [0, 0],
+        [1, 1],
+        [2, 2]
+    ],
+    [
+        [0, 2],
+        [1, 1],
+        [2, 0]
+    ]
 
+    
+]
 
 
 
@@ -922,7 +928,6 @@ function gameEndDelay(player){
 \#####################################################*/
 
 // Implementation
-setCombinations();
 drawGrid();
 
 
