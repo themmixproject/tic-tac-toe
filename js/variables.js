@@ -27,7 +27,7 @@ gameBoard = [
     [0, 0, 0]
 ]
 
-gameBoardAttributes = {
+grid = {
     topLeftCoordinates: {
         x: canvasCenter.x - this.style.sectionWidth * 1.5,
         y: canvasCenter.y - this.style.sectionWidth * 1.5

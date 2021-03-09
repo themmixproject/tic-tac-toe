@@ -45,12 +45,7 @@
 
 
 
-/*#####################################################\
- *|                                                    #
- *| 1. Monkey Patches                                  #
- *|                                                    #
-\#####################################################*/
-
+// monkey patches
 window.requestAnimationFrame = (function () {
     return window.requestAnimationFrame ||
     window.webkitRequestAnimationFrame ||
@@ -59,7 +54,6 @@ window.requestAnimationFrame = (function () {
         window.setTimeout(callback, 1000 / 60);
     };
 })();
-
 window.cancelAnimationFrame = (function () {
     return window.cancelAnimationFrame ||
     window.webkitCancelAnimationFrame ||
@@ -79,54 +73,6 @@ window.cancelAnimationFrame = (function () {
 
 
 
-
-/*#####################################################\
- *|                                                    #
- *| 2. Global Utility Functions                        #
- *|                                                    # 
-\#####################################################*/
-
-/**
- * Draws a path between two points
- * @param {number} x x-coordinate of start path start
- * @param {number} y y-coordinate of start path start
- * @param {number} x1 x-coordinate of start path end
- * @param {number} y1 y-coordinate of start path end
- */
-function drawPath(x, y, x1, y1){
-    c.beginPath();
-    c.moveTo(x, y);
-    c.lineTo(x1, y1);
-    c.stroke();
-}
-
-/**
- * Returns game grid x-coordinate based on canvas
- * @param {number} x x-coordinate
- */
-function gridX(x){
-    return x * sectionWidth + topLeft.x;
-}
-
-/**
- * Returns game grid y-coordinate based on canvas
- * @param {number} y y-coordinate
- */
-function gridY(y){
-    return y * sectionWidth + topLeft.y;
-}
-
-/**
- * resets canvas brush to default values
- */
-function resetBrush(){
-    c.lineWidth = 1;
-    c.strokeStyle = "black";
-    c.fillStyle = "black";
-    c.lineCap = "butt";
-
-    c.globalAlpha = 1;
-}
 
 
 
@@ -148,7 +94,53 @@ function resetBrush(){
  *|                                                    #
 \#####################################################*/
 
-// stores the game theme
+// setting up canvas
+var canvas = document.getElementById("canvas");
+canvas.style.backgroundColor = theme.background;
+var canvasContext = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+var canvasCenterCoordinates = {
+    x: canvas.width / 2,
+    y: canvas.height / 2
+};
+
+grid = {
+    topLeftCoordinates: {
+        x: canvasCenter.x - this.style.sectionWidth * 1.5,
+        y: canvasCenter.y - this.style.sectionWidth * 1.5
+    },
+    padding: 25,
+    celPadding: 15,
+    lineLength: 350.5,
+    lineSectionLength: this.style.lineLength / 3,
+    minimumLineLength: 200,
+    maximumLineLength: 350.5,
+};
+
+gameBoard = [
+    [0, 0, 0]
+    [0, 0, 0]
+    [0, 0, 0]
+];
+
+var computerHasMoved = false;
+var playerCanClick = true;
+
+game = {
+    hasBeenWon: false,
+    hasEnded: false,
+    winningCombination: []
+}
+
+
+
+
+
+
+
+
 var theme = {
     cross : {
         color : "#4F9BA8",
@@ -173,148 +165,62 @@ var theme = {
     background : "#EFCDBF"
 };
 
-var padding = 25;
- 
-var gridWidth = 350.5;
-var maxGridWidth = 350.5;
-var sectionWidth = gridWidth / 3;
-var gridPadding = 15;
-var minGridWidth = 200;
 
-// sets grid smaller in case the window is smaller
-// than the default gridWidth
-if(innerWidth<gridWidth+gridPadding){
-    // gridWidth = (innerWidth*0.9);
-    gridWidth = innerWidth-gridPadding*2;
-    sectionWidth = gridWidth / 3;
-    
-    theme.grid.thickness = Math.round((0.0285*gridWidth)*10)/10;
-    theme.knot.thickness = Math.round((0.0285*gridWidth)*10)/10;
-    theme.cross.thickness = Math.round((0.0285*gridWidth)*10)/10;
-    theme.winLine.thickness = Math.round((0.0285*gridWidth)*10)/10;
 
-    padding = Math.round((0.0713*gridWidth)*10)/10;
-    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function drawPath(startCoordinates, endCoordinates){
+    canvasContext.moveTo(startCoordinates.x, startCoordinates.y);
+    canvasContext.lineTo(endCoordinates.x, endCoordinates.y);
+    c.stroke();
 }
 
-
-
-
-
-
-
-
-
-
-
-/*#####################################################\
- *|                                                    #
- *| 4. Init Values                                     #
- *|                                                    #
- *| These values are the standard var's of canvas.js   #
- *|                                                    #
-\#####################################################*/
-
-// setting up canvas
-var canvas = document.getElementById("canvas");
-canvas.style.backgroundColor = theme.background;
-var c = canvas.getContext('2d');
-
-var dpi = window.devicePixelRatio;
-
-c.scale(dpi,dpi);
-
-c.translate(0.5,0.5);
-
-// var innerWidth = window.innerWidth;
-// var innerHeight = window.innerHeight;
-
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-
-// stores the center of the canvas
-var center = {
-    x: canvas.width / 2,
-    y: canvas.height / 2
-};
-
-// coordinates for the top left of the game grid
-var topLeft = {
-    x: center.x - sectionWidth * 1.5,
-    y: center.y - sectionWidth * 1.5
-};
-
-// sets if player is able to put a piece down
-var playerClick = true;
-
-
-
-
-
-/*#####################################################\
- *|                                                    #
- *| 5. Game Variables                                  #
- *|                                                    #
-\#####################################################*/
-
-// stores the grid state
-var grid = [];
-
-// creates multi-dimentional array for
-// grid state
-for(var i=0;i<3;i++){
-    grid.push([0,0,0]);
+function convertGameBoardCoordinatesToCanvasCoordinates(gameBoardCoordinates){
+    var canvasX = gameBoardCoordinates.x * grid.lineSectionLength + grid.topLeftCoordinates.x;
+    var canvasY =  gameBoardCoordinates.y * grid.lineSectionLength + grid.topLeftCoordinates.y;
+    return {x: canvasX, y: canvasY};
 }
 
-// if the computer has placed a piece
-var computerMoved = false;
+/**
+ * resets canvas brush to default values
+ */
+function resetBrush(){
+    c.lineWidth = 1;
+    c.strokeStyle = "black";
+    c.fillStyle = "black";
+    c.lineCap = "butt";
 
-// game variables
-// end: if the game has ended
-// win: if the game has been won
-// winArray: stores the array combination of which the
-// player has won with
-var game = {
-    end: false,
-    win: false,
-    winArray: []
-};
-
-
-
-
-
-
-
-
-
-
-
-/*#################################\
- *|                                #
- *| 5.1 Win Combinations           #
- *|                                #
-\#################################*/
-
-// array of wincombinations relative to grid[] variable
-var combinations = [
-    // horizontal
-    [ [0, 0], [0, 1], [0, 2] ],
-    [ [1, 0], [1, 1], [1, 2] ],
-    [ [2, 0], [2, 1], [2, 2] ],
-    
-    // vertical
-    [ [0, 0], [1, 0], [2, 0] ],
-    [ [0, 1], [1, 1], [2, 1] ],
-    [ [0, 2], [1, 2], [2, 2] ],
-
-    // diagonal
-    [ [0, 0], [1, 1], [2, 2] ],
-    [ [0, 2], [1, 1], [2, 0] ]
-]
-
-
-
+    c.globalAlpha = 1;
+}
 
 
 
