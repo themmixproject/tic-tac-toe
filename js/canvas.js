@@ -63,84 +63,6 @@ window.cancelAnimationFrame = (function () {
     };
 })();
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*#####################################################\
- *|                                                    #
- *| 3. Canvas properties                               #
- *|                                                    #
-\#####################################################*/
-
-// setting up canvas
-var canvas = document.getElementById("canvas");
-canvas.style.backgroundColor = theme.background;
-var canvasContext = canvas.getContext('2d');
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-
-var canvasCenterCoordinates = {
-    x: canvas.width / 2,
-    y: canvas.height / 2
-};
-
-grid = {
-    topLeftCoordinates: {
-        x: canvasCenter.x - this.style.sectionWidth * 1.5,
-        y: canvasCenter.y - this.style.sectionWidth * 1.5
-    },
-    padding: 25,
-    celPadding: 15,
-    lineLength: 350.5,
-    lineSectionLength: this.style.lineLength / 3,
-    minimumLineLength: 200,
-    maximumLineLength: 350.5,
-};
-
-gameBoard = [
-    [0, 0, 0]
-    [0, 0, 0]
-    [0, 0, 0]
-];
-
-var computerHasMoved = false;
-var playerCanClick = true;
-
-game = {
-    hasBeenWon: false,
-    hasEnded: false,
-    winningCombination: []
-}
-
-
-
-
-
-
-
-
 var theme = {
     cross : {
         color : "#4F9BA8",
@@ -173,29 +95,56 @@ var theme = {
 
 
 
+/*#####################################################\
+ *|                                                    #
+ *| 3. Canvas properties                               #
+ *|                                                    #
+\#####################################################*/
+
+// setting up canvas
+var canvas = document.getElementById("canvas");
+canvas.style.backgroundColor = theme.background;
+var canvasContext = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+var canvasCenterCoordinates = {
+    x: canvas.width / 2,
+    y: canvas.height / 2
+};
+
+grid = {
+    margin: 50,
+    celPadding: 15,
+    lineLength: 350.5
+};
+grid.lineSectionLength = grid.lineLength / 3;
+grid.width = grid.lineLength + grid.margin;
+grid.height = grid.width;
+grid.maxWidth = 350.5 + grid.margin;
+grid.minWidth = 200 + grid.margin;
+grid.maxHeight = grid.maxWidth;
+grid.minHeight = grid.minWidth;
+grid.topLeftCoordinates= {
+    x: canvasCenterCoordinates.x - grid.lineSectionLength * 1.5,
+    y: canvasCenterCoordinates.y - grid.lineSectionLength * 1.5
+}
 
 
+gameBoard = [
+    [0, 0, 0]
+    [0, 0, 0]
+    [0, 0, 0]
+];
 
+var computerHasMoved = false;
+var playerCanClick = true;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+game = {
+    hasBeenWon: false,
+    hasEnded: false,
+    winningCombination: []
+}
 
 
 function drawPath(startCoordinates, endCoordinates){
@@ -222,13 +171,103 @@ function resetBrush(){
     c.globalAlpha = 1;
 }
 
+function addEvents(){
+    if(isMobileDevice())
+        addMobileEvents();
+    else
+        addDesktopEvents();
+}
+function isMobileDevice(){
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+}
+
+function addDesktopEvents(){
+    document.addEventListener("click", canvasClickEvent);
+    window.addEventListener("resize", windowResizeEvent );
+}
+function canvasClickEvent(event){
+    console.log("hello world!")
+}
+
+function addMobileEvents(){
+    console.log("hello world!");
+}
+function windowResizeEvent(){
+    updateCanvasAttributes(); 
+
+    var winHeight = window.innerHeight;
+    var winWidth = window.innerWidth;
+
+    if(winWidth > grid.maxWidth && winHeight > grid.maxHeight){
+        setGridSizeToMaximum();
+    }
+    else if(winWidth < grid.minWidth || winHeight < grid.minHeight){
+        setGridSizeToMinimum();
+    }    
+    else {
+        scaleGridSize();
+    }
+
+    // if(innerWidth<minGridWidth+gridPadding*2 || innerHeight<minGridWidth+gridPadding*2){
+    // } 
+    // else if(innerWidth<maxGridWidth+gridPadding*2 && innerHeight>innerWidth){
+    // }
+    // else if(innerHeight<maxGridWidth+gridPadding*2 && innerWidth>innerHeight){
+    // }
+    // else if(innerWidth>maxGridWidth && innerHeight>maxGridWidth){
 
 
+}
 
+grid.setHeightAndWidth = function(heightWidth){
+    grid.width = heightWidth;
+    
+    //the grid is a square, so height and width are the same
+    grid.height = grid.width;
+}
 
+function setGridSizeToMinimum(){
+    console.log("minimum");
+    grid.setHeightAndWidth(grid.minWidth);
+}
 
+function setGridSizeToMaximum(){
+    console.log("maximum");
+    grid.setHeightAndWidth(grid.maxWidth);
+}
 
+function scaleGridSize(){
+    console.log("scale");
+    var innerHeight = window.innerHeight;
+    var innerWidth = window.innerWidth;
 
+    if(innerWidth < innerHeight)
+        grid.setHeightAndWidth( innerWidth - grid.margin );
+    else
+        grid.setHeightAndWidth( innerHeight - grid.margin );
+}
+
+function scaleThemeThickness(scaleFactor){
+    theme.grid.thickness = Math.round((0.0285*scaleFactor)*10)/10;
+    theme.knot.thickness = Math.round((0.0285*scaleFactor)*10)/10;
+    theme.cross.thickness = Math.round((0.0285*scaleFactor)*10)/10;
+    theme.winLine.thickness = Math.round((0.0285*scaleFactor)*10)/10;
+}
+function updateGridAttributes(){
+    sectionWidth = gridWidth / 3;
+    grid.topLeftCoordinates = {
+        x: center.x - sectionWidth * 1.5,
+        y: center.y - sectionWidth * 1.5
+    };
+}
+function updateCanvasAttributes(){
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    canvasCenterCoordinates = {
+        x: canvas.width / 2,
+        y: canvas.height / 2
+    };
+}
 
 
 
@@ -268,93 +307,82 @@ function canvasEvent(clientX, clientY){
 // Checks if browser is mobile, and adds a touch instead of click event
 if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
     document.addEventListener("touchstart",function(event){
-        var clientX = event.touches[0].clientX;
-        var clientY = event.touches[0].clientY;
+        // var clientX = event.touches[0].clientX;
+        // var clientY = event.touches[0].clientY;
 
-        canvasEvent(clientX, clientY);
+        // canvasEvent(clientX, clientY);
     });
 }
 else{
-    document.addEventListener("click",function(event) {
-        canvasEvent(event.clientX, event.clientY);
-    })
+    // document.addEventListener("click",function(event) {
+        // canvasEvent(event.clientX, event.clientY);
+    // })
 }
 
-// Adds resize event to window
-// If the window gets resized, or on mobile rotated the
-// canvas will adjust itself to the window size, if the
-// window is sized smaller than the default grid size
-// the grid will scale accordingly
-window.addEventListener("resize",function(){
 
-    // checks if the window is smaller than the minimal gird width
-    // if true: the window is smaller than the minimal grid width the grid won't get smaller
-    if(innerWidth<minGridWidth+gridPadding*2 || innerHeight<minGridWidth+gridPadding*2){
-        gridWidth = minGridWidth;
-    }
-    // checks if window width is smaller than the default grid width
-    // if true: adjusts grid size to the width of the window
-    else if(innerWidth<maxGridWidth+gridPadding*2 && innerHeight>innerWidth){
-        gridWidth = innerWidth-gridPadding*2;
+// window.addEventListener("resize",function(){
+//     if(innerWidth<minGridWidth+gridPadding*2 || innerHeight<minGridWidth+gridPadding*2){
+//         gridWidth = minGridWidth;
+//     }
+//     else if(innerWidth<maxGridWidth+gridPadding*2 && innerHeight>innerWidth){
+//         gridWidth = innerWidth-gridPadding*2;
+
+//         theme.grid.thickness = Math.round((0.0285*gridWidth)*10)/10;
+//         theme.knot.thickness = Math.round((0.0285*gridWidth)*10)/10;
+//         theme.cross.thickness = Math.round((0.0285*gridWidth)*10)/10;
+//         theme.winLine.thickness = Math.round((0.0285*gridWidth)*10)/10;
+
+//         // adjusts padding of grid cells
+//         padding = Math.round((0.0713*gridWidth)*10)/10;
+//     }
+//     // checks if window width is smaller than the default grid height
+//     // if true: adjusts grid size to the height of the window
+//     else if(innerHeight<maxGridWidth+gridPadding*2 && innerWidth>innerHeight){
         
-        // adjusts stroke-width to the size of the grid
-        theme.grid.thickness = Math.round((0.0285*gridWidth)*10)/10;
-        theme.knot.thickness = Math.round((0.0285*gridWidth)*10)/10;
-        theme.cross.thickness = Math.round((0.0285*gridWidth)*10)/10;
-        theme.winLine.thickness = Math.round((0.0285*gridWidth)*10)/10;
+//         gridWidth = innerHeight-gridPadding*2;
 
-        // adjusts padding of grid cells
-        padding = Math.round((0.0713*gridWidth)*10)/10;
-    }
-    // checks if window width is smaller than the default grid height
-    // if true: adjusts grid size to the height of the window
-    else if(innerHeight<maxGridWidth+gridPadding*2 && innerWidth>innerHeight){
-        
-        gridWidth = innerHeight-gridPadding*2;
+//         // adjusts stroke-width to the size of the grid
+//         theme.grid.thickness = Math.round((0.0285*gridWidth)*10)/10;
+//         theme.knot.thickness = Math.round((0.0285*gridWidth)*10)/10;
+//         theme.cross.thickness = Math.round((0.0285*gridWidth)*10)/10;
+//         theme.winLine.thickness = Math.round((0.0285*gridWidth)*10)/10;
 
-        // adjusts stroke-width to the size of the grid
-        theme.grid.thickness = Math.round((0.0285*gridWidth)*10)/10;
-        theme.knot.thickness = Math.round((0.0285*gridWidth)*10)/10;
-        theme.cross.thickness = Math.round((0.0285*gridWidth)*10)/10;
-        theme.winLine.thickness = Math.round((0.0285*gridWidth)*10)/10;
+//         padding = Math.round((0.0713*gridWidth)*10)/10;
+//     }
+//     else if(innerWidth>maxGridWidth && innerHeight>maxGridWidth){
 
-        // adjusts padding of grid cells
-        padding = Math.round((0.0713*gridWidth)*10)/10;
-    }
-    else if(innerWidth>maxGridWidth && innerHeight>maxGridWidth){
+//         // sets grid properties back to default values
+//         gridWidth = maxGridWidth;
+//         theme.grid.thickness = 10;
+//         theme.knot.thickness = 10;
+//         theme.cross.thickness = 10;
+//         theme.winLine.thickness = 10;
+//         padding = 25;
+//     }
 
-        // sets grid properties back to default values
-        gridWidth = maxGridWidth;
-        theme.grid.thickness = 10;
-        theme.knot.thickness = 10;
-        theme.cross.thickness = 10;
-        theme.winLine.thickness = 10;
-        padding = 25;
-    }
+//     // updates section-width value to gridWidth
+//     sectionWidth = gridWidth / 3;
 
-    // updates section-width value to gridWidth
-    sectionWidth = gridWidth / 3;
+//     //update canvas height and width to window height and width 
+//     canvas.width = window.innerWidth;
+//     canvas.height = window.innerHeight;
 
-    //update canvas height and width to window height and width 
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-
-    //update coordinates of the center of the canvas
-    center = {
-        x: canvas.width / 2,
-        y: canvas.height / 2
-    };
+//     //update coordinates of the center of the canvas
+//     center = {
+//         x: canvas.width / 2,
+//         y: canvas.height / 2
+//     };
 
 
-    //update top-left coordinates of the grid
-    topLeft = {
-        x: center.x - sectionWidth * 1.5,
-        y: center.y - sectionWidth * 1.5
-    };
+//     //update top-left coordinates of the grid
+//     topLeft = {
+//         x: center.x - sectionWidth * 1.5,
+//         y: center.y - sectionWidth * 1.5
+//     };
 
-    // drawGrid();
-    redraw(); 
-});
+//     // drawGrid();
+//     redraw(); 
+// });
 
 
 
@@ -800,4 +828,5 @@ function gameEndDelay(player){
 \#####################################################*/
 
 // Implementation
-drawGrid();
+// drawGrid();
+addEvents();
