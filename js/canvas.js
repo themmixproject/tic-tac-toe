@@ -74,6 +74,11 @@ var theme = {
         cap : "round",
         thickness : 10
     },
+    gamePiece : {
+        crossColor: "#4F9BA8",
+        knotColor: "#D9695F",
+
+    },
     grid : {
         color : "#2D3742",
         thickness : 10,
@@ -92,9 +97,6 @@ var theme = {
 
 
 
-
-
-
 /*#####################################################\
  *|                                                    #
  *| 3. Canvas properties                               #
@@ -104,11 +106,13 @@ var theme = {
 // setting up canvas
 var canvas = document.getElementById("canvas");
 canvas.style.backgroundColor = theme.background;
+
 var canvasContext = canvas.getContext('2d');
+
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-var canvasCenterCoordinates = {
+var canvasCenter = {
     x: canvas.width / 2,
     y: canvas.height / 2
 };
@@ -126,10 +130,15 @@ grid.minWidth = 200 + grid.margin;
 grid.maxHeight = grid.maxWidth;
 grid.minHeight = grid.minWidth;
 grid.topLeftCoordinates= {
-    x: canvasCenterCoordinates.x - grid.lineSectionLength * 1.5,
-    y: canvasCenterCoordinates.y - grid.lineSectionLength * 1.5
+    x: canvasCenter.x - grid.lineSectionLength * 1.5,
+    y: canvasCenter.y - grid.lineSectionLength * 1.5
 }
-
+grid.setHeightAndWidth = function(heightWidth){
+    grid.width = heightWidth;
+    
+    //the grid is a square, so height and width are the same
+    grid.height = grid.width;
+}
 
 gameBoard = [
     [0, 0, 0]
@@ -151,12 +160,6 @@ function drawPath(startCoordinates, endCoordinates){
     canvasContext.moveTo(startCoordinates.x, startCoordinates.y);
     canvasContext.lineTo(endCoordinates.x, endCoordinates.y);
     c.stroke();
-}
-
-function convertGameBoardCoordinatesToCanvasCoordinates(gameBoardCoordinates){
-    var canvasX = gameBoardCoordinates.x * grid.lineSectionLength + grid.topLeftCoordinates.x;
-    var canvasY =  gameBoardCoordinates.y * grid.lineSectionLength + grid.topLeftCoordinates.y;
-    return {x: canvasX, y: canvasY};
 }
 
 /**
@@ -194,36 +197,30 @@ function addMobileEvents(){
 }
 function windowResizeEvent(){
     updateCanvasAttributes(); 
+    updateGridSize();
+    updateGridAttributes();
+}
 
+function updateCanvasAttributes(){
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    canvasCenterCoordinates = {
+        x: canvas.width / 2,
+        y: canvas.height / 2
+    };
+}
+
+function updateGridSize(){
     var winHeight = window.innerHeight;
     var winWidth = window.innerWidth;
 
-    if(winWidth > grid.maxWidth && winHeight > grid.maxHeight){
+    if(winWidth > grid.maxWidth && winHeight > grid.maxHeight)
         setGridSizeToMaximum();
-    }
-    else if(winWidth < grid.minWidth || winHeight < grid.minHeight){
+    else if(winWidth < grid.minWidth || winHeight < grid.minHeight)
         setGridSizeToMinimum();
-    }    
-    else {
+    else
         scaleGridSize();
-    }
-
-    // if(innerWidth<minGridWidth+gridPadding*2 || innerHeight<minGridWidth+gridPadding*2){
-    // } 
-    // else if(innerWidth<maxGridWidth+gridPadding*2 && innerHeight>innerWidth){
-    // }
-    // else if(innerHeight<maxGridWidth+gridPadding*2 && innerWidth>innerHeight){
-    // }
-    // else if(innerWidth>maxGridWidth && innerHeight>maxGridWidth){
-
-
-}
-
-grid.setHeightAndWidth = function(heightWidth){
-    grid.width = heightWidth;
-    
-    //the grid is a square, so height and width are the same
-    grid.height = grid.width;
 }
 
 function setGridSizeToMinimum(){
@@ -247,27 +244,15 @@ function scaleGridSize(){
         grid.setHeightAndWidth( innerHeight - grid.margin );
 }
 
-function scaleThemeThickness(scaleFactor){
-    theme.grid.thickness = Math.round((0.0285*scaleFactor)*10)/10;
-    theme.knot.thickness = Math.round((0.0285*scaleFactor)*10)/10;
-    theme.cross.thickness = Math.round((0.0285*scaleFactor)*10)/10;
-    theme.winLine.thickness = Math.round((0.0285*scaleFactor)*10)/10;
-}
 function updateGridAttributes(){
-    sectionWidth = gridWidth / 3;
+    sectionWidth = grid.width / 3;
+
     grid.topLeftCoordinates = {
-        x: center.x - sectionWidth * 1.5,
-        y: center.y - sectionWidth * 1.5
+        x: canvasCenter.x - sectionWidth * 1.5,
+        y: canvasCenter.y - sectionWidth * 1.5
     };
 }
-function updateCanvasAttributes(){
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    canvasCenterCoordinates = {
-        x: canvas.width / 2,
-        y: canvas.height / 2
-    };
-}
+
 
 
 
