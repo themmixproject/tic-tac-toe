@@ -180,21 +180,65 @@ function addEvents(){
     else
         addDesktopEvents();
 }
+
 function isMobileDevice(){
     return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 }
 
 function addDesktopEvents(){
-    document.addEventListener("click", canvasClickEvent);
+    canvas.addEventListener("click", canvasClickEvent);
     window.addEventListener("resize", windowResizeEvent );
 }
+
 function canvasClickEvent(event){
-    console.log("hello world!")
+    var clientXY = {
+        x: event.clientX,
+        y: event.clientY
+    }
+
+    canvasInteractionEvent(clientXY);
 }
 
-function addMobileEvents(){
-    console.log("hello world!");
+function canvasInteractionEvent(clientXY){
+    for(x=0; x<3;x++){
+        for(y=0;y<3;y++){
+            var celXY = convertGridToCanvasCoordinates(x, y);
+            var hasCollision = hasGridCelCollision(clientXY, celXY);
+
+            if(hasCollision)
+                humanPlayerTurnPlaceHolder();
+        }
+    }
 }
+
+
+
+function convertGridToCanvasCoordinates(x, y){
+    var canvasX = x * grid.lineSectionLength + grid.topLeftCoordinates.x;
+    var canvasY = y * grid.lineSectionLength + grid.topLeftCoordinates.y;
+
+    return {x: canvasX, y: canvasY};
+}
+
+function hasGridCelCollision(clientXY, celXY){
+    var startX = celXY.x;
+    var endX = celXY.x + grid.lineSectionLength;
+    var startY = celXY.y;
+    var endY = celXY.y + grid.lineSectionLength;
+
+    var hasXCollision = clientXY.x >= startX && clientXY.x <= endX;
+    var hasYCollision = clientXY.y >= startY && clientXY.y <= endY;
+
+    return hasXCollision && hasYCollision;
+
+    //    clientX >= gridX(x) && clientX <= gridX(x) + sectionWidth &&
+    //    clientY >= gridY(y) && clientY <= gridY(y) + sectionWidth
+}
+
+function humanPlayerTurnPlaceHolder(){
+    console.log("player take turn");
+}
+
 function windowResizeEvent(){
     updateCanvasAttributes(); 
     updateGridSize();
@@ -253,8 +297,18 @@ function updateGridAttributes(){
     };
 }
 
+function addMobileEvents(){
+    canvas.addEventListener("touchstart", canvasTouchStartEvent);
+}
 
+function canvasTouchStartEvent(event){
+    var clientXY = {
+        x: event.touches[0].clientX,
+        y: event.touches[0].clientY
+    }
 
+    canvasInteractionEvent(clientXY);
+}
 
 
 
@@ -274,20 +328,20 @@ function updateGridAttributes(){
  * @param {number} clientX - X-Coordinate of where user taps or clicks
  * @param {number} clientY - Y-Coordinate or where user taps or clicks
  */
-function canvasEvent(clientX, clientY){
+// function canvasEvent(clientX, clientY){
     
-    for(x=0; x<3;x++){
-        for(y=0;y<3;y++){
-            if(
-                clientX >= gridX(x) && clientX <= gridX(x) + sectionWidth &&
-                clientY >= gridY(y) && clientY <= gridY(y) + sectionWidth
-            ){
-                playerTurn(x, y);
-            }
-        }
-    }
+//     for(x=0; x<3;x++){
+//         for(y=0;y<3;y++){
+//             if(
+//                 clientX >= gridX(x) && clientX <= gridX(x) + sectionWidth &&
+//                 clientY >= gridY(y) && clientY <= gridY(y) + sectionWidth
+//             ){
+//                 playerTurn(x, y);
+//             }
+//         }
+//     }
 
-};
+// };
 
 // Checks if browser is mobile, and adds a touch instead of click event
 if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
