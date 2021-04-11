@@ -322,27 +322,31 @@ function canvasTouchStartEvent(event){
 }
 
 function drawGridOnCanvas(){
-    var lineStart = grid.lineSectionLength * 1.5;
-    var lineEnd = -lineStart;
-    var lineDifference = grid.lineSectionLength * 0.5
-
     var myArray = [["x", "y"], ["y", "x"]];
     for(i=1; i>=-2; i-=2){
         myArray.forEach(function(item){
-            start = {};
-            start[ item[0] ] = canvasCenter[ item[0] ] + lineStart;
-            start[ item[1] ] = canvasCenter[ item[1] ] + lineDifference * i;
-
-            end = {};
-            end[ item[0] ] = canvasCenter[ item[0] ] + lineEnd;
-            end[ item[1] ] = canvasCenter[ item[1] ] + lineDifference * i;
-            
-            drawPath(start, end);
+            drawGridLine(item);
             
             item.push( item.unshift(item[1]) );
             item.pop();
         })
     }
+}
+
+function drawGridLine(item){
+    var lineStart = grid.lineSectionLength * 1.5;
+    var lineEnd = -lineStart;
+    var lineDifference = grid.lineSectionLength * 0.5;
+
+    start = {};
+    start[ item[0] ] = canvasCenter[ item[0] ] + lineStart;
+    start[ item[1] ] = canvasCenter[ item[1] ] + lineDifference * i;
+
+    end = {};
+    end[ item[0] ] = canvasCenter[ item[0] ] + lineEnd;
+    end[ item[1] ] = canvasCenter[ item[1] ] + lineDifference * i;
+    
+    drawPath(start, end);
 }
 
 /**
