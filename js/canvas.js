@@ -125,8 +125,8 @@ grid = {
 grid.lineSectionLength = grid.lineLength / 3;
 grid.width = grid.lineLength + grid.margin;
 grid.height = grid.width;
-grid.maxWidth = 350.5 + grid.margin;
-grid.minWidth = 200 + grid.margin;
+grid.maxWidth = 350.5;
+grid.minWidth = 200;
 grid.maxHeight = grid.maxWidth;
 grid.minHeight = grid.minWidth;
 grid.topLeftCoordinates= {
@@ -159,7 +159,7 @@ game = {
 function drawPath(startCoordinates, endCoordinates){
     canvasContext.moveTo(startCoordinates.x, startCoordinates.y);
     canvasContext.lineTo(endCoordinates.x, endCoordinates.y);
-    c.stroke();
+    canvasContext.stroke();
 }
 
 /**
@@ -240,16 +240,22 @@ function humanPlayerTurnPlaceHolder(){
 }
 
 function windowResizeEvent(){
+    clearCanvas();
     updateCanvasAttributes(); 
     updateGridSize();
     updateGridAttributes();
+    drawGridOnCanvas();
+}
+
+function clearCanvas(){
+    canvasContext.clearRect(0, 0, canvas.width, canvas.height);
 }
 
 function updateCanvasAttributes(){
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
-    canvasCenterCoordinates = {
+    canvasCenter = {
         x: canvas.width / 2,
         y: canvas.height / 2
     };
@@ -259,41 +265,46 @@ function updateGridSize(){
     var winHeight = window.innerHeight;
     var winWidth = window.innerWidth;
 
-    if(winWidth > grid.maxWidth && winHeight > grid.maxHeight)
+    var totalMaxWidth = grid.maxWidth + grid.margin;
+    var totalMaxHeight = grid.maxHeight + grid.margin;
+    var totalMinWidth= grid.minWidth + grid.margin;
+    var totalMinHeight = grid.minHeight + grid.margin;
+
+    if(winWidth > totalMaxWidth && winHeight > totalMaxHeight)
         setGridSizeToMaximum();
-    else if(winWidth < grid.minWidth || winHeight < grid.minHeight)
+    else if(winWidth < totalMinWidth || winHeight < totalMinHeight)
         setGridSizeToMinimum();
     else
         scaleGridSize();
 }
 
 function setGridSizeToMinimum(){
-    console.log("minimum");
+    // console.log("minimum");
     grid.setHeightAndWidth(grid.minWidth);
 }
 
 function setGridSizeToMaximum(){
-    console.log("maximum");
+    // console.log("maximum");
     grid.setHeightAndWidth(grid.maxWidth);
 }
 
 function scaleGridSize(){
-    console.log("scale");
+    // console.log("scale");
     var innerHeight = window.innerHeight;
     var innerWidth = window.innerWidth;
 
     if(innerWidth < innerHeight)
-        grid.setHeightAndWidth( innerWidth - grid.margin );
+        grid.setHeightAndWidth(innerWidth - grid.margin);
     else
-        grid.setHeightAndWidth( innerHeight - grid.margin );
+        grid.setHeightAndWidth(innerHeight - grid.margin);
 }
 
 function updateGridAttributes(){
-    sectionWidth = grid.width / 3;
+    grid.lineSectionLength = grid.width / 3;
 
     grid.topLeftCoordinates = {
-        x: canvasCenter.x - sectionWidth * 1.5,
-        y: canvasCenter.y - sectionWidth * 1.5
+        x: canvasCenter.x - grid.lineSectionLength * 1.5,
+        y: canvasCenter.y - grid.lineSectionLength * 1.5
     };
 }
 
@@ -310,202 +321,28 @@ function canvasTouchStartEvent(event){
     canvasInteractionEvent(clientXY);
 }
 
-
-
-
-
-
-/*#####################################################\
- *|                                                    #
- *| 6. Event Listeners                                 #
- *|                                                    #
-\#####################################################*/
-
-
-
-/**
- * Event that gets executed on tap or click of canvas
- * @param {number} clientX - X-Coordinate of where user taps or clicks
- * @param {number} clientY - Y-Coordinate or where user taps or clicks
- */
-// function canvasEvent(clientX, clientY){
-    
-//     for(x=0; x<3;x++){
-//         for(y=0;y<3;y++){
-//             if(
-//                 clientX >= gridX(x) && clientX <= gridX(x) + sectionWidth &&
-//                 clientY >= gridY(y) && clientY <= gridY(y) + sectionWidth
-//             ){
-//                 playerTurn(x, y);
-//             }
-//         }
-//     }
-
-// };
-
-// Checks if browser is mobile, and adds a touch instead of click event
-if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
-    document.addEventListener("touchstart",function(event){
-        // var clientX = event.touches[0].clientX;
-        // var clientY = event.touches[0].clientY;
-
-        // canvasEvent(clientX, clientY);
-    });
-}
-else{
-    // document.addEventListener("click",function(event) {
-        // canvasEvent(event.clientX, event.clientY);
-    // })
-}
-
-
-// window.addEventListener("resize",function(){
-//     if(innerWidth<minGridWidth+gridPadding*2 || innerHeight<minGridWidth+gridPadding*2){
-//         gridWidth = minGridWidth;
-//     }
-//     else if(innerWidth<maxGridWidth+gridPadding*2 && innerHeight>innerWidth){
-//         gridWidth = innerWidth-gridPadding*2;
-
-//         theme.grid.thickness = Math.round((0.0285*gridWidth)*10)/10;
-//         theme.knot.thickness = Math.round((0.0285*gridWidth)*10)/10;
-//         theme.cross.thickness = Math.round((0.0285*gridWidth)*10)/10;
-//         theme.winLine.thickness = Math.round((0.0285*gridWidth)*10)/10;
-
-//         // adjusts padding of grid cells
-//         padding = Math.round((0.0713*gridWidth)*10)/10;
-//     }
-//     // checks if window width is smaller than the default grid height
-//     // if true: adjusts grid size to the height of the window
-//     else if(innerHeight<maxGridWidth+gridPadding*2 && innerWidth>innerHeight){
-        
-//         gridWidth = innerHeight-gridPadding*2;
-
-//         // adjusts stroke-width to the size of the grid
-//         theme.grid.thickness = Math.round((0.0285*gridWidth)*10)/10;
-//         theme.knot.thickness = Math.round((0.0285*gridWidth)*10)/10;
-//         theme.cross.thickness = Math.round((0.0285*gridWidth)*10)/10;
-//         theme.winLine.thickness = Math.round((0.0285*gridWidth)*10)/10;
-
-//         padding = Math.round((0.0713*gridWidth)*10)/10;
-//     }
-//     else if(innerWidth>maxGridWidth && innerHeight>maxGridWidth){
-
-//         // sets grid properties back to default values
-//         gridWidth = maxGridWidth;
-//         theme.grid.thickness = 10;
-//         theme.knot.thickness = 10;
-//         theme.cross.thickness = 10;
-//         theme.winLine.thickness = 10;
-//         padding = 25;
-//     }
-
-//     // updates section-width value to gridWidth
-//     sectionWidth = gridWidth / 3;
-
-//     //update canvas height and width to window height and width 
-//     canvas.width = window.innerWidth;
-//     canvas.height = window.innerHeight;
-
-//     //update coordinates of the center of the canvas
-//     center = {
-//         x: canvas.width / 2,
-//         y: canvas.height / 2
-//     };
-
-
-//     //update top-left coordinates of the grid
-//     topLeft = {
-//         x: center.x - sectionWidth * 1.5,
-//         y: center.y - sectionWidth * 1.5
-//     };
-
-//     // drawGrid();
-//     redraw(); 
-// });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*#####################################################\
- *|                                                    #
- *| 7. Animation Utility                               #
- *|                                                    #
-\#####################################################*/
-
-
-
-// X animation function position
-
-
-// O animation function position
-
-
-// animate winLine function position
-
-
-// fadeOutRest() animation method position
-
-
-
-/*#####################################################\
- *|                                                    #
- *| 10. Drawing                                        #
- *|                                                    #
-\#####################################################*/
-/**
- * Draws game grid on canvas
- */
-function drawGrid(){
-
-    // sets stroke-style to grid-style
-    c.lineCap = theme.grid.cap;
-    c.strokeStyle = theme.grid.color;
-    c.lineWidth = theme.grid.thickness;
-    
-    // horizontal lines
-    for(var y = 1, o = 1; y <= 2; y++, o=-1){
-        drawPath(
-            center.x - (sectionWidth * 1.5), center.y + (sectionWidth * -0.5) * o,
-            center.x + (sectionWidth * 1.5), center.y + (sectionWidth * -0.5) * o
-        );
+function drawGridOnCanvas(){
+    var lineStart = grid.lineSectionLength * 1.5;
+    var lineEnd = -lineStart;
+    var lineDifference = grid.lineSectionLength * 0.5
+
+    var myArray = [["x", "y"], ["y", "x"]];
+    for(i=1; i>=-2; i-=2){
+        myArray.forEach(function(item){
+            start = {};
+            start[ item[0] ] = canvasCenter[ item[0] ] + lineStart;
+            start[ item[1] ] = canvasCenter[ item[1] ] + lineDifference * i;
+
+            end = {};
+            end[ item[0] ] = canvasCenter[ item[0] ] + lineEnd;
+            end[ item[1] ] = canvasCenter[ item[1] ] + lineDifference * i;
+            
+            drawPath(start, end);
+            
+            item.push( item.unshift(item[1]) );
+            item.pop();
+        })
     }
-
-    // vertical lines
-    for(var x = 1, o = 1; x <= 2; x++, o=-1){
-
-        drawPath(
-            center.x + (sectionWidth * -0.5) * o, center.y - (sectionWidth * 1.5),
-            center.x + (sectionWidth * -0.5) * o, center.y + (sectionWidth * 1.5)
-        );
-
-    }
-    
-    // resets stroke-style to default values
-    resetBrush();
-
 }
 
 /**
@@ -869,3 +706,4 @@ function gameEndDelay(player){
 // Implementation
 // drawGrid();
 addEvents();
+drawGridOnCanvas();
