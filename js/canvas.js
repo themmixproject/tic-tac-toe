@@ -123,6 +123,7 @@ grid = {
     lineLength: 350.5
 };
 grid.lineSectionLength = grid.lineLength / 3;
+grid.sectionLength = grid.lineLength / 3;
 grid.width = grid.lineLength + grid.margin;
 grid.height = grid.width;
 grid.maxWidth = 350.5;
@@ -254,6 +255,7 @@ function clearCanvas(){
 function updateCanvasAttributes(){
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
+    canvasContext.translate(0.5, 0.5);
 
     canvasCenter = {
         x: canvas.width / 2,
@@ -322,16 +324,52 @@ function canvasTouchStartEvent(event){
 }
 
 function drawGridOnCanvas(){
-    var myArray = [["x", "y"], ["y", "x"]];
+
+
+    // var lineStart = 4;
+    // var lineLenght = canvasSize - 5;
+    // context.lineWidth = lineWidth;
+    // context.lineCap = 'round';
+    // context.strokeStyle = strokeStyle;
+    // context.beginPath();
+  
+    // /*
+    //  * Horizontal lines 
+    //  */
+    // for (var y = 1;y <= 2;y++) {  
+    //   context.moveTo(lineStart, y * sectionSize);
+    //   context.lineTo(lineLenght, y * sectionSize);
+    // }
+  
+    // /*
+    //  * Vertical lines 
+    //  */
+    // for (var x = 1;x <= 2;x++) {
+    //   context.moveTo(x * sectionSize, lineStart);
+    //   context.lineTo(x * sectionSize, lineLenght);
+    // }
+
+    var lineStart = grid.lineSectionLength * 1.5;
+    var lineEnd = -lineStart;
+    var verticalStart = canvasCenter.y + lineStart;
+    var verticalEnd = canvasCenter.y + lineEnd;
+    var horizontalStart = canvasCenter.x + lineStart;
+    var horizontalEnd = canvasCenter.x + lineEnd;
+
+    canvasContext.beginPath();
     for(i=1; i>=-2; i-=2){
-        myArray.forEach(function(item){
-            drawGridLine(item);
-            
-            item.push( item.unshift(item[1]) );
-            item.pop();
-        })
+        var lineDifference = grid.lineSectionLength * 0.5 * i;
+        
+        canvasContext.moveTo(horizontalStart, canvasCenter.y - lineDifference);
+        canvasContext.lineTo(horizontalEnd, canvasCenter.y - lineDifference);
+
+        canvasContext.moveTo(canvasCenter.x - lineDifference, verticalStart);
+        canvasContext.lineTo(canvasCenter.x - lineDifference, verticalEnd);
     }
+
+    canvasContext.stroke();
 }
+
 
 function drawGridLine(item){
     var lineStart = grid.lineSectionLength * 1.5;
@@ -371,22 +409,6 @@ function redraw(){
         });
     });
 }
-
-
-
-// drawX function position
-
-
-
-
-// drawO() function position
-
-
-
-
-
-
-
 
 
 
