@@ -122,7 +122,6 @@ grid = {
     celPadding: 15,
     lineLength: 350.5
 };
-grid.lineSectionLength = grid.lineLength / 3;
 grid.sectionLength = grid.lineLength / 3;
 grid.width = grid.lineLength + grid.margin;
 grid.height = grid.width;
@@ -131,8 +130,8 @@ grid.minWidth = 200;
 grid.maxHeight = grid.maxWidth;
 grid.minHeight = grid.minWidth;
 grid.topLeftCoordinates= {
-    x: canvasCenter.x - grid.lineSectionLength * 1.5,
-    y: canvasCenter.y - grid.lineSectionLength * 1.5
+    x: canvasCenter.x - grid.sectionLength * 1.5,
+    y: canvasCenter.y - grid.sectionLength * 1.5
 }
 grid.setHeightAndWidth = function(heightWidth){
     grid.width = heightWidth;
@@ -215,17 +214,17 @@ function canvasInteractionEvent(clientXY){
 
 
 function convertGridToCanvasCoordinates(x, y){
-    var canvasX = x * grid.lineSectionLength + grid.topLeftCoordinates.x;
-    var canvasY = y * grid.lineSectionLength + grid.topLeftCoordinates.y;
+    var canvasX = x * grid.sectionLength + grid.topLeftCoordinates.x;
+    var canvasY = y * grid.sectionLength + grid.topLeftCoordinates.y;
 
     return {x: canvasX, y: canvasY};
 }
 
 function hasGridCelCollision(clientXY, celXY){
     var startX = celXY.x;
-    var endX = celXY.x + grid.lineSectionLength;
+    var endX = celXY.x + grid.sectionLength;
     var startY = celXY.y;
-    var endY = celXY.y + grid.lineSectionLength;
+    var endY = celXY.y + grid.sectionLength;
 
     var hasXCollision = clientXY.x >= startX && clientXY.x <= endX;
     var hasYCollision = clientXY.y >= startY && clientXY.y <= endY;
@@ -245,7 +244,7 @@ function windowResizeEvent(){
     updateCanvasAttributes(); 
     updateGridSize();
     updateGridAttributes();
-    drawGridOnCanvas();
+    drawGridOnCanvasDEMO();
 }
 
 function clearCanvas(){
@@ -302,11 +301,11 @@ function scaleGridSize(){
 }
 
 function updateGridAttributes(){
-    grid.lineSectionLength = grid.width / 3;
+    grid.sectionLength = grid.width / 3;
 
     grid.topLeftCoordinates = {
-        x: canvasCenter.x - grid.lineSectionLength * 1.5,
-        y: canvasCenter.y - grid.lineSectionLength * 1.5
+        x: canvasCenter.x - grid.sectionLength * 1.5,
+        y: canvasCenter.y - grid.sectionLength * 1.5
     };
 }
 
@@ -322,9 +321,6 @@ function canvasTouchStartEvent(event){
 
     canvasInteractionEvent(clientXY);
 }
-
-function drawGridOnCanvas(){
-
 
     // var lineStart = 4;
     // var lineLenght = canvasSize - 5;
@@ -349,43 +345,64 @@ function drawGridOnCanvas(){
     //   context.lineTo(x * sectionSize, lineLenght);
     // }
 
-    var lineStart = grid.lineSectionLength * 1.5;
+function drawGridOnCanvas(){
+    var lineStart = grid.sectionLength * 1.5;
     var lineEnd = -lineStart;
+
     var verticalStart = canvasCenter.y + lineStart;
     var verticalEnd = canvasCenter.y + lineEnd;
+
     var horizontalStart = canvasCenter.x + lineStart;
     var horizontalEnd = canvasCenter.x + lineEnd;
 
     canvasContext.beginPath();
-    for(i=1; i>=-2; i-=2){
-        var lineDifference = grid.lineSectionLength * 0.5 * i;
-        
-        canvasContext.moveTo(horizontalStart, canvasCenter.y - lineDifference);
-        canvasContext.lineTo(horizontalEnd, canvasCenter.y - lineDifference);
 
-        canvasContext.moveTo(canvasCenter.x - lineDifference, verticalStart);
-        canvasContext.lineTo(canvasCenter.x - lineDifference, verticalEnd);
+    for(i=1; i>=-2; i-=2){
+        var lineDifference = grid.sectionLength * 0.5 * i;
+        var verticalDifference = canvasCenter.y - lineDifference;
+        var horizontalDifference = canvasCenter.x - lineDifference;
+
+        canvasContext.moveTo(verticalDifference, verticalStart);
+        canvasContext.lineTo(verticalDifference, verticalEnd);
+
+        canvasContext.moveTo(horizontalStart, horizontalDifference);
+        canvasContext.lineTo(horizontalEnd, horizontalDifference);
     }
 
     canvasContext.stroke();
 }
 
 
-function drawGridLine(item){
-    var lineStart = grid.lineSectionLength * 1.5;
-    var lineEnd = -lineStart;
-    var lineDifference = grid.lineSectionLength * 0.5;
 
-    start = {};
-    start[ item[0] ] = canvasCenter[ item[0] ] + lineStart;
-    start[ item[1] ] = canvasCenter[ item[1] ] + lineDifference * i;
 
-    end = {};
-    end[ item[0] ] = canvasCenter[ item[0] ] + lineEnd;
-    end[ item[1] ] = canvasCenter[ item[1] ] + lineDifference * i;
+function drawGridOnCanvasDEMO(){
+    canvasContext.beginPath();
     
-    drawPath(start, end);
+    for(i=1; i>=-2; i-=2){
+        var lineDifference = grid.sectionLength * 0.5 * i;
+
+        drawGridLineDEMO(canvasCenter.x, lineDifference);
+        drawGridLineDEMO(canvasCenter.y, lineDifference);
+    }
+
+    canvasContext.stroke();
 }
+
+function drawGridLineDEMO(canvasCenterXorY, lineDifference){
+    var lineStart = canvasCenterXorY + (grid.sectionLength * 1.5);
+    var lineEnd = canvasCenterXorY - (grid.sectionLength * 1.5);
+
+    if(canvasCenterXorY == canvasCenter.x){
+        canvasContext.moveTo(lineStart, canvasCenter.y - lineDifference);
+        canvasContext.lineTo(lineEnd, canvasCenter.y - lineDifference);
+    }
+    else{
+        canvasContext.moveTo(canvasCenter.x - lineDifference, lineStart);
+        canvasContext.lineTo(canvasCenter.x - lineDifference, lineEnd);
+    };
+}
+
+
 
 /**
  * Redraws game grid with placed pieces
@@ -732,4 +749,4 @@ function gameEndDelay(player){
 // Implementation
 // drawGrid();
 addEvents();
-drawGridOnCanvas();
+drawGridOnCanvasDEMO();
