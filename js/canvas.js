@@ -125,6 +125,8 @@ grid = {
 grid.sectionLength = grid.lineLength / 3;
 grid.width = grid.lineLength + grid.margin;
 grid.height = grid.width;
+grid.maxHeightWidth = 350.5;
+grid.minHeighWidth = 200;
 grid.maxWidth = 350.5;
 grid.minWidth = 200;
 grid.maxHeight = grid.maxWidth;
@@ -230,9 +232,6 @@ function hasGridCelCollision(clientXY, celXY){
     var hasYCollision = clientXY.y >= startY && clientXY.y <= endY;
 
     return hasXCollision && hasYCollision;
-
-    //    clientX >= gridX(x) && clientX <= gridX(x) + sectionWidth &&
-    //    clientY >= gridY(y) && clientY <= gridY(y) + sectionWidth
 }
 
 function humanPlayerTurnPlaceHolder(){
@@ -244,7 +243,7 @@ function windowResizeEvent(){
     updateCanvasAttributes(); 
     updateGridSize();
     updateGridAttributes();
-    drawGridOnCanvasDEMO();
+    drawGridOnCanvas();
 }
 
 function clearCanvas(){
@@ -272,22 +271,13 @@ function updateGridSize(){
     var totalMinHeight = grid.minHeight + grid.margin;
 
     if(winWidth > totalMaxWidth && winHeight > totalMaxHeight)
-        setGridSizeToMaximum();
+        grid.setHeightAndWidth(grid.maxHeightWidth);
     else if(winWidth < totalMinWidth || winHeight < totalMinHeight)
-        setGridSizeToMinimum();
+        grid.setHeightAndWidth(grid.minHeighWidth)
     else
         scaleGridSize();
 }
 
-function setGridSizeToMinimum(){
-    // console.log("minimum");
-    grid.setHeightAndWidth(grid.minWidth);
-}
-
-function setGridSizeToMaximum(){
-    // console.log("maximum");
-    grid.setHeightAndWidth(grid.maxWidth);
-}
 
 function scaleGridSize(){
     // console.log("scale");
@@ -322,29 +312,6 @@ function canvasTouchStartEvent(event){
     canvasInteractionEvent(clientXY);
 }
 
-    // var lineStart = 4;
-    // var lineLenght = canvasSize - 5;
-    // context.lineWidth = lineWidth;
-    // context.lineCap = 'round';
-    // context.strokeStyle = strokeStyle;
-    // context.beginPath();
-  
-    // /*
-    //  * Horizontal lines 
-    //  */
-    // for (var y = 1;y <= 2;y++) {  
-    //   context.moveTo(lineStart, y * sectionSize);
-    //   context.lineTo(lineLenght, y * sectionSize);
-    // }
-  
-    // /*
-    //  * Vertical lines 
-    //  */
-    // for (var x = 1;x <= 2;x++) {
-    //   context.moveTo(x * sectionSize, lineStart);
-    //   context.lineTo(x * sectionSize, lineLenght);
-    // }
-
 function drawGridOnCanvas(){
     var lineStart = grid.sectionLength * 1.5;
     var lineEnd = -lineStart;
@@ -359,8 +326,8 @@ function drawGridOnCanvas(){
 
     for(i=1; i>=-2; i-=2){
         var lineDifference = grid.sectionLength * 0.5 * i;
-        var verticalDifference = canvasCenter.y - lineDifference;
-        var horizontalDifference = canvasCenter.x - lineDifference;
+        var horizontalDifference = canvasCenter.y - lineDifference;
+        var verticalDifference = canvasCenter.x - lineDifference;
 
         canvasContext.moveTo(verticalDifference, verticalStart);
         canvasContext.lineTo(verticalDifference, verticalEnd);
@@ -371,38 +338,6 @@ function drawGridOnCanvas(){
 
     canvasContext.stroke();
 }
-
-
-
-
-function drawGridOnCanvasDEMO(){
-    canvasContext.beginPath();
-    
-    for(i=1; i>=-2; i-=2){
-        var lineDifference = grid.sectionLength * 0.5 * i;
-
-        drawGridLineDEMO(canvasCenter.x, lineDifference);
-        drawGridLineDEMO(canvasCenter.y, lineDifference);
-    }
-
-    canvasContext.stroke();
-}
-
-function drawGridLineDEMO(canvasCenterXorY, lineDifference){
-    var lineStart = canvasCenterXorY + (grid.sectionLength * 1.5);
-    var lineEnd = canvasCenterXorY - (grid.sectionLength * 1.5);
-
-    if(canvasCenterXorY == canvasCenter.x){
-        canvasContext.moveTo(lineStart, canvasCenter.y - lineDifference);
-        canvasContext.lineTo(lineEnd, canvasCenter.y - lineDifference);
-    }
-    else{
-        canvasContext.moveTo(canvasCenter.x - lineDifference, lineStart);
-        canvasContext.lineTo(canvasCenter.x - lineDifference, lineEnd);
-    };
-}
-
-
 
 /**
  * Redraws game grid with placed pieces
@@ -749,4 +684,4 @@ function gameEndDelay(player){
 // Implementation
 // drawGrid();
 addEvents();
-drawGridOnCanvasDEMO();
+drawGridOnCanvas();
