@@ -142,9 +142,9 @@ grid.setHeightAndWidth = function(heightWidth){
     grid.height = grid.width;
 }
 
-gameBoard = [
-    [0, 0, 0]
-    [0, 0, 0]
+var gameBoard = [
+    [0, 0, 0],
+    [0, 0, 0],
     [0, 0, 0]
 ];
 
@@ -156,6 +156,12 @@ game = {
     hasEnded: false,
     winningCombination: []
 }
+
+
+var currentPlayer;
+
+var computerPlayer = {
+};
 
 
 function drawPath(startCoordinates, endCoordinates){
@@ -204,16 +210,44 @@ function canvasClickEvent(event){
 function canvasInteractionEvent(clientXY){
     for(x=0; x<3;x++){
         for(y=0;y<3;y++){
-            var celXY = convertGridToCanvasCoordinates(x, y);
-            var hasCollision = hasGridCelCollision(clientXY, celXY);
+            var gridCelXY = convertGridToCanvasCoordinates(x, y);
+            var hasCollision = hasGridCelCollision(clientXY, gridCelXY);
+            var boardSquareIsFree = gameBoard[y][x] == 0;
 
-            if(hasCollision)
-                humanPlayerTurnPlaceHolder();
+            console.log(boardSquareIsFree);
+
+            if(hasCollision && boardSquareIsFree && !game.hasEnded)
+                humanPlayerTakeTurn(x, y);
         }
     }
 }
 
+function humanPlayerTakeTurn(x, y){
+    drawCrossOnCanvas(x, y);
+    gameBoard[y][x] = 1;
+}
 
+function drawCrossOnCanvas(boardX, boardY){
+    var drawCoordinates = convertGridToCanvasCoordinates(boardX, boardY);
+
+    var lineStartY = drawCoordinates.y + grid.celPadding;
+    var lineEndY = drawCoordinates.y + grid.sectionLength - grid.celPadding;
+
+    var leftStart = drawCoordinates.x + grid.celPadding ;
+    var rightStart = drawCoordinates.x + grid.sectionLength - grid.celPadding;
+    var leftEnd = drawCoordinates.x + grid.sectionLength - grid.celPadding;
+    var rightEnd =  drawCoordinates.x + grid.celPadding;
+
+    canvasContext.beginPath();
+
+    canvasContext.moveTo(leftStart, lineStartY);
+    canvasContext.lineTo(leftEnd, lineEndY);
+
+    canvasContext.moveTo(rightStart, lineStartY);
+    canvasContext.lineTo(rightEnd, lineEndY);
+
+    canvasContext.stroke();
+}
 
 function convertGridToCanvasCoordinates(x, y){
     var canvasX = x * grid.sectionLength + grid.topLeftCoordinates.x;
@@ -232,10 +266,6 @@ function hasGridCelCollision(clientXY, celXY){
     var hasYCollision = clientXY.y >= startY && clientXY.y <= endY;
 
     return hasXCollision && hasYCollision;
-}
-
-function humanPlayerTurnPlaceHolder(){
-    console.log("player take turn");
 }
 
 function windowResizeEvent(){
@@ -280,7 +310,6 @@ function updateGridSize(){
 
 
 function scaleGridSize(){
-    // console.log("scale");
     var innerHeight = window.innerHeight;
     var innerWidth = window.innerWidth;
 
