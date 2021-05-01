@@ -143,9 +143,9 @@ grid.setHeightAndWidth = function(heightWidth){
 }
 
 var gameBoard = [
-    [0, 0, 0],
-    [0, 0, 0],
-    [0, 0, 0]
+    ["", "", ""],
+    ["", "", ""],
+    ["", "", ""]
 ];
 
 var computerHasMoved = false;
@@ -157,18 +157,26 @@ game = {
     winningCombination: []
 }
 
+var winCombinations = [
+    // horizontal
+    [ [0, 0], [0, 1], [0, 2] ],
+    [ [1, 0], [1, 1], [1, 2] ],
+    [ [2, 0], [2, 1], [2, 2] ],
+    
+    // vertical
+    [ [0, 0], [1, 0], [2, 0] ],
+    [ [0, 1], [1, 1], [2, 1] ],
+    [ [0, 2], [1, 2], [2, 2] ],
+
+    // diagonal
+    [ [0, 0], [1, 1], [2, 2] ],
+    [ [0, 2], [1, 1], [2, 0] ]
+]
+
 
 var currentPlayer;
 
-var computerPlayer = {
-};
 
-
-function drawPath(startCoordinates, endCoordinates){
-    canvasContext.moveTo(startCoordinates.x, startCoordinates.y);
-    canvasContext.lineTo(endCoordinates.x, endCoordinates.y);
-    canvasContext.stroke();
-}
 
 /**
  * resets canvas brush to default values
@@ -181,6 +189,10 @@ function resetBrush(){
 
     c.globalAlpha = 1;
 }
+
+
+
+
 
 function addEvents(){
     if(isMobileDevice())
@@ -204,31 +216,96 @@ function canvasClickEvent(event){
         y: event.clientY
     }
 
-    canvasInteractionEvent(clientXY);
+    canvasInteraction(clientXY);
 }
 
-function canvasInteractionEvent(clientXY){
+var players = {
+    humanPlayer: {
+        piece: "X",
+        canInteract: true
+    },
+    computerPlayer: {
+        piece: "O"
+    }
+}
+
+function canvasInteraction(clientCoordinates){
     for(x=0; x<3;x++){
         for(y=0;y<3;y++){
-            var gridCelXY = convertGridToCanvasCoordinates(x, y);
-            var hasCollision = hasGridCelCollision(clientXY, gridCelXY);
-            var boardSquareIsFree = gameBoard[y][x] == 0;
+            
+            var canvasCelCoordinates = convertBoardToCanvasCoordinates(x, y);
+            var hasCollision = hasCollisionWithGridCel(clientCoordinates, canvasCelCoordinates);
+            var boardSpaceIsEmpty = gameBoard[x][y] === "";
+            var canInteract = players.humanPlayer.canInteract
 
-            console.log(boardSquareIsFree);
-
-            if(hasCollision && boardSquareIsFree && !game.hasEnded)
-                humanPlayerTakeTurn(x, y);
+            if(hasCollision && boardSpaceIsEmpty && canInteract && !game.hasEnded)
+                playerTurn(x, y);
         }
     }
 }
 
-function humanPlayerTakeTurn(x, y){
+function playerTurn(x, y){
+    currentPlayer = players.humanPlayer;
+
+    // update board state
+    gameBoard[x][y] = currentPlayer.piece;
+
     drawCrossOnCanvas(x, y);
-    gameBoard[y][x] = 1;
+
+    checkGameEndConditions(currentPlayer);
 }
 
+function checkGameEndConditions(player){
+    if( checkIfPlayerHasWon(player) )
+        console.log("player has won");
+}
+
+function checkIfPlayerHasWon(player){
+    winCombinations.forEach( function(winCombination){
+        
+        console.log("check combination");
+
+        var sameCounter = 0;
+        
+        winCombination.forEach( function(boardPoint){
+            if( gameBoard[ boardPoint[0] ][ boardPoint[1] ] === player.piece )
+                sameCounter++;
+        });
+
+        if(sameCounter === 3){
+            console.log("gameHasBeenWon")
+            game.hasEnded = true;
+            game.hasBeenWon = true;
+            game.winningCombination = winCombination;
+        }
+
+    });
+
+    if( game.hasBeenWon )
+        return true;
+    else
+        return false
+
+}
+
+function hasCollisionWithGridCel(clientXY, celXY){
+    var startX = celXY.x;
+    var endX = celXY.x + grid.sectionLength;
+    var startY = celXY.y;
+    var endY = celXY.y + grid.sectionLength;
+
+    var hasXCollision = clientXY.x >= startX && clientXY.x <= endX;
+    var hasYCollision = clientXY.y >= startY && clientXY.y <= endY;
+
+    return hasXCollision && hasYCollision;
+}
+
+
+
+
+
 function drawCrossOnCanvas(boardX, boardY){
-    var drawCoordinates = convertGridToCanvasCoordinates(boardX, boardY);
+    var drawCoordinates = convertBoardToCanvasCoordinates(boardX, boardY);
 
     var lineStartY = drawCoordinates.y + grid.celPadding;
     var lineEndY = drawCoordinates.y + grid.sectionLength - grid.celPadding;
@@ -249,23 +326,11 @@ function drawCrossOnCanvas(boardX, boardY){
     canvasContext.stroke();
 }
 
-function convertGridToCanvasCoordinates(x, y){
+function convertBoardToCanvasCoordinates(x, y){
     var canvasX = x * grid.sectionLength + grid.topLeftCoordinates.x;
     var canvasY = y * grid.sectionLength + grid.topLeftCoordinates.y;
 
     return {x: canvasX, y: canvasY};
-}
-
-function hasGridCelCollision(clientXY, celXY){
-    var startX = celXY.x;
-    var endX = celXY.x + grid.sectionLength;
-    var startY = celXY.y;
-    var endY = celXY.y + grid.sectionLength;
-
-    var hasXCollision = clientXY.x >= startX && clientXY.x <= endX;
-    var hasYCollision = clientXY.y >= startY && clientXY.y <= endY;
-
-    return hasXCollision && hasYCollision;
 }
 
 function windowResizeEvent(){
@@ -308,7 +373,6 @@ function updateGridSize(){
         scaleGridSize();
 }
 
-
 function scaleGridSize(){
     var innerHeight = window.innerHeight;
     var innerWidth = window.innerWidth;
@@ -328,6 +392,7 @@ function updateGridAttributes(){
     };
 }
 
+
 function addMobileEvents(){
     canvas.addEventListener("touchstart", canvasTouchStartEvent);
 }
@@ -338,7 +403,7 @@ function canvasTouchStartEvent(event){
         y: event.touches[0].clientY
     }
 
-    canvasInteractionEvent(clientXY);
+    canvasInteraction(clientXY);
 }
 
 function drawGridOnCanvas(){
@@ -405,36 +470,36 @@ function redraw(){
  * @param {number} x X coordinate of where the player puts his piece
  * @param {number} y Y coordinate of where the player puts his piece
  */
-function playerTurn(x, y){
+// function playerTurn(x, y){
 
-    // checks if the player is able to click, if the game hasn't been won, or isn't ended
-    if(grid[y][x] == 0 && playerClick==true & game.end == false & game.win == false){
+//     // checks if the player is able to click, if the game hasn't been won, or isn't ended
+//     if(grid[y][x] == 0 && playerClick==true & game.end == false & game.win == false){
         
-        // sets game-grid value to 1 where player put piece
-        grid[y][x] = 1;
+//         // sets game-grid value to 1 where player put piece
+//         grid[y][x] = 1;
 
-        animateX(x, y);
-        playerClick=false;
+//         animateX(x, y);
+//         playerClick=false;
 
-        // checks if player has won
-        winCheck(1);
+//         // checks if player has won
+//         winCheck(1);
         
-        // executes delays for if player has won
-        if(game.end==true || game.win==true){
-            gameEndDelay(1);
-        }
-        // if the game hasn't ended, it's the turn of the computer
-        else if(game.end == false){
+//         // executes delays for if player has won
+//         if(game.end==true || game.win==true){
+//             gameEndDelay(1);
+//         }
+//         // if the game hasn't ended, it's the turn of the computer
+//         else if(game.end == false){
 
-            // delays time of when player can click again
-            setTimeout(function(){
-                computer();
-                playerClick=true;
-            }, xDuration-350)
-        }
-    }
+//             // delays time of when player can click again
+//             setTimeout(function(){
+//                 computer();
+//                 playerClick=true;
+//             }, xDuration-350)
+//         }
+//     }
     
-};
+// };
 
 /**
  * Function that gets executed for the turn of the computer
