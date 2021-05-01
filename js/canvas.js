@@ -258,6 +258,8 @@ function playerTurn(x, y){
 function checkGameEndConditions(player){
     if( checkIfPlayerHasWon(player) )
         console.log("player has won");
+    else if( checkIfGameHasTied() )
+        console.log("game has been tied");
 }
 
 function checkIfPlayerHasWon(player){
@@ -286,6 +288,22 @@ function checkIfPlayerHasWon(player){
     else
         return false
 
+}
+
+function checkIfGameHasTied(){
+    var pieceCounter = 0;
+    
+    gameBoard.forEach(function(boardRow){
+        boardRow.forEach(function(boardPiece){
+            if(boardPiece !== "")
+                pieceCounter++;
+        })
+    })
+
+    if(pieceCounter === 9)
+        return true
+    else
+        return false
 }
 
 function hasCollisionWithGridCel(clientXY, celXY){
