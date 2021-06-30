@@ -229,6 +229,114 @@ var players = {
     }
 }
 
+var computerPlayer = {
+    placedPieces: [],
+    isFirstTurn: true,
+    takeTurn: function(){
+
+        // computerPlayer.placedPieces.push(Math.floor(Math.random()*3))
+        // console.log(computerPlayer.placedPieces);
+
+        computerPlayer.turnIndex++;
+
+        currentPlayer = players.computerPlayer;
+
+        var turnCoordinates = computerPlayer.getTurnCoordinates();
+
+        computerPlayer.placedPieces.push( turnCoordinates );
+
+        // update game state
+        // gameBoard[ turnCoordinates[0] ][ turnCoordinates[1] ];
+
+        console.log(computerPlayer.placedPieces);
+
+        checkGameEndConditions(currentPlayer);
+
+        if(computerPlayer.isFirstTurn)
+            computerPlayer.isFirstTurn = false;
+    },
+    getTurnCoordinates: function(){
+        if(computerPlayer.isFirstTurn)
+            return computerPlayer.generateRandomBoardSpace();
+        else
+            return computerPlayer.calculateBoardSpace();
+    },
+    generateRandomBoardSpace: function(){
+        var randomX = Math.floor( Math.random() * 3 );
+        var randomY = Math.floor( Math.random() * 3 );
+
+        var isEmpty = gameBoard[ randomX ][ randomY ] === "";
+        if(!isEmpty)
+            computerPlayer.generateRandomBoardSpace();
+        else
+            return [randomX, randomY];
+    },
+
+    // grid indexes
+    // [0, 1, 2]
+    // [3, 4, 5]
+    // [6, 7, 8]
+    graph: {
+        0: [1, 2, 3, 4, 6, 8],
+        1: [0, 2, 4, 7],
+        2: [0, 1, 5, 4, 6, 8],
+        3: [0, 6, 4, 5],
+        4: [0, 1, 2, 3, 5, 6, 7, 8],
+        5: [2, 3, 4, 8],
+        6: [0, 2, 3, 4, 7, 8],
+        7: [1, 4, 6, 8],
+        8: [0, 2, 4, 5, 6, 7]
+    },
+
+    calculateBoardSpace: function(){
+        var possibleMoves = computerPlayer.getPossibleMoves();
+        var chosenMove = Math.floor(Math.random()*possibleMoves.length)
+        var movePoint = convertIndexToBoardCoordinate(chosenMove)
+        
+        console.log(movePoint);
+        return movePoint;
+    },
+    getPossibleMoves: function(){
+        var possibleMoves = [];
+        
+        firstPlacedPiece = computerPlayer.placedPieces[0]
+
+        computerPlayer.placedPieces.forEach(function(item){
+            var singleIndex = convertToSingularIndex(item[0], item[1]);
+            possibleMoves = possibleMoves.concat( computerPlayer.graph[singleIndex] )
+        });
+
+        return possibleMoves;
+    }
+};
+
+function convertToSingularIndex(x, y){
+    // 3 because it's a 3x3 grid
+    return y * 3 + x;
+}
+
+function convertIndexToBoardCoordinate(index){
+    var base = Math.floor( Math.sqrt(index) )
+    var remains = index - base * base;
+    var x = 0;
+    var y = 0;
+    if(remains <= base){
+        x = remains;
+        y = base;
+    }
+    else{
+        x = base;
+        y = 2 * base - remains;
+    }
+
+    return [x, y]
+}
+
+
+computerPlayer.takeTurn();
+computerPlayer.takeTurn();
+
+
 function canvasInteraction(clientCoordinates){
     for(x=0; x<3;x++){
         for(y=0;y<3;y++){
@@ -265,8 +373,6 @@ function checkGameEndConditions(player){
 function checkIfPlayerHasWon(player){
     winCombinations.forEach( function(winCombination){
         
-        console.log("check combination");
-
         var sameCounter = 0;
         
         winCombination.forEach( function(boardPoint){
