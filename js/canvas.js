@@ -190,7 +190,39 @@ function resetBrush(){
     c.globalAlpha = 1;
 }
 
+function logGameBoard(){
+    var logString = "";
 
+    var rotatedBoard = rotateBoard();
+
+    rotatedBoard.forEach(function(row){
+        row.forEach(function(item, index){
+            var itemString = item;
+            
+            if(item === ""){
+                itemString = "-";
+            }
+            if(index > 0){
+                itemString = " " + itemString;
+            }
+
+            logString += itemString
+        })
+        
+        logString+="\n";
+    })
+    console.log(logString);
+}
+
+function rotateBoard(){
+    rotatedRows = [[], [], []];
+    gameBoard.forEach(function(row){
+        row.forEach(function(item, index){
+            rotatedRows[index].push(row[index]);
+        })
+    });
+    return rotatedRows;
+}
 
 
 
@@ -233,33 +265,41 @@ var computerPlayer = {
     placedPieces: [],
     isFirstTurn: true,
     takeTurn: function(){
-
-        // computerPlayer.placedPieces.push(Math.floor(Math.random()*3))
-        // console.log(computerPlayer.placedPieces);
-
-        computerPlayer.turnIndex++;
-
         currentPlayer = players.computerPlayer;
 
         var turnCoordinates = computerPlayer.getTurnCoordinates();
 
         computerPlayer.placedPieces.push( turnCoordinates );
 
-        // update game state
-        // gameBoard[ turnCoordinates[0] ][ turnCoordinates[1] ];
+        // // update game state
+        gameBoard[ turnCoordinates[0] ][ turnCoordinates[1] ] = "O";
 
-        console.log(computerPlayer.placedPieces);
-
+        logGameBoard();
         checkGameEndConditions(currentPlayer);
 
         if(computerPlayer.isFirstTurn)
             computerPlayer.isFirstTurn = false;
+            
     },
     getTurnCoordinates: function(){
-        if(computerPlayer.isFirstTurn)
-            return computerPlayer.generateRandomBoardSpace();
-        else
-            return computerPlayer.calculateBoardSpace();
+        if(computerPlayer.isFirstTurn){
+            return computerPlayer.takeFirsTurn();
+        }
+        else{
+            move = computerPlayer.calculateBoardSpace();
+            return move;
+        }
+            
+    },
+    takeFirsTurn: function(){
+        var turnCoordinates = computerPlayer.generateRandomBoardSpace();
+        var turnIndex = convertToSingularIndex(turnCoordinates[0], turnCoordinates[1]);
+        
+        computerPlayer.baseIndex = turnIndex;
+
+        computerPlayer.progressRow.push(turnIndex);
+
+        return turnCoordinates;
     },
     generateRandomBoardSpace: function(){
         var randomX = Math.floor( Math.random() * 3 );
@@ -272,41 +312,43 @@ var computerPlayer = {
             return [randomX, randomY];
     },
 
-    // grid indexes
-    // [0, 1, 2]
-    // [3, 4, 5]
-    // [6, 7, 8]
-    graph: {
-        0: [1, 2, 3, 4, 6, 8],
-        1: [0, 2, 4, 7],
-        2: [0, 1, 5, 4, 6, 8],
-        3: [0, 6, 4, 5],
-        4: [0, 1, 2, 3, 5, 6, 7, 8],
-        5: [2, 3, 4, 8],
-        6: [0, 2, 3, 4, 7, 8],
-        7: [1, 4, 6, 8],
-        8: [0, 2, 4, 5, 6, 7]
-    },
-
+    baseIndex: null,
+    progressRow: [],
     calculateBoardSpace: function(){
-        var possibleMoves = computerPlayer.getPossibleMoves();
-        var chosenMove = Math.floor(Math.random()*possibleMoves.length)
-        var movePoint = convertIndexToBoardCoordinate(chosenMove)
-        
-        console.log(movePoint);
-        return movePoint;
+        if(computerPlayer.progressRow.length == 1){
+            var potentialMoves = moveTree[computerPlayer.progressRow.length][computerPlayer.baseIndex];
+            var selectedMove = computerPlayer.selectMove(potentialMoves);
+
+            computerPlayer.progressRow.push(convertToSingularIndex(selectedMove[0], selectedMove[1]));
+
+            return selectedMove;
+        }
     },
-    getPossibleMoves: function(){
+    selectMove: function(potentialMoves){
         var possibleMoves = [];
         
-        firstPlacedPiece = computerPlayer.placedPieces[0]
+        potentialMoves.forEach(function(item, index){
+            var gameBoardCoordinates = convertIndexToBoardCoordinate(item);
+            
+            var gridSpaceIsEmpty = gameBoard[ gameBoardCoordinates[0] ] [gameBoardCoordinates[1] ] === "";
 
-        computerPlayer.placedPieces.forEach(function(item){
-            var singleIndex = convertToSingularIndex(item[0], item[1]);
-            possibleMoves = possibleMoves.concat( computerPlayer.graph[singleIndex] )
+            if(gridSpaceIsEmpty)
+                possibleMoves.push(item);
         });
 
-        return possibleMoves;
+        if(possibleMoves.length === 0)
+            return null;
+        
+        var selectedIndex = Math.floor(Math.random()*possibleMoves.length);
+
+        var boardSpot = possibleMoves[selectedIndex];
+        var coordinates = convertIndexToBoardCoordinate(boardSpot);
+
+        console.log("index: " + boardSpot + "  " + "coordinates: " + coordinates);
+
+        var selectedSpace = convertIndexToBoardCoordinate(possibleMoves[selectedIndex]);
+
+        return selectedSpace;
     }
 };
 
@@ -316,18 +358,8 @@ function convertToSingularIndex(x, y){
 }
 
 function convertIndexToBoardCoordinate(index){
-    var base = Math.floor( Math.sqrt(index) )
-    var remains = index - base * base;
-    var x = 0;
-    var y = 0;
-    if(remains <= base){
-        x = remains;
-        y = base;
-    }
-    else{
-        x = base;
-        y = 2 * base - remains;
-    }
+    var x = index % 3;
+    var y = Math.floor( (index / 3) % 3 );
 
     return [x, y]
 }
