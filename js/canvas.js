@@ -277,9 +277,10 @@ var computerPlayer = {
         logGameBoard();
         checkGameEndConditions(currentPlayer);
 
+        drawCircleOnCanvas(turnCoordinates[1], turnCoordinates[0]);
+
         if(computerPlayer.isFirstTurn)
             computerPlayer.isFirstTurn = false;
-            
     },
     getTurnCoordinates: function(){
         if(computerPlayer.isFirstTurn){
@@ -322,6 +323,17 @@ var computerPlayer = {
             computerPlayer.progressRow.push(convertToSingularIndex(selectedMove[0], selectedMove[1]));
 
             return selectedMove;
+        }
+        else{
+            var LastMoveIndex  = moveTree[computerPlayer.progressRow.length][computerPlayer.baseIndex][computerPlayer.progressRow[1]];
+
+            console.log(LastMoveIndex)
+
+            var lastMoveCoordinates = convertIndexToBoardCoordinate(LastMoveIndex);
+
+            computerPlayer.progressRow.push(LastMoveIndex);
+
+            return lastMoveCoordinates;
         }
     },
     selectMove: function(potentialMoves){
@@ -367,7 +379,7 @@ function convertIndexToBoardCoordinate(index){
 
 computerPlayer.takeTurn();
 computerPlayer.takeTurn();
-
+computerPlayer.takeTurn();
 
 function canvasInteraction(clientCoordinates){
     for(x=0; x<3;x++){
@@ -479,6 +491,21 @@ function drawCrossOnCanvas(boardX, boardY){
     canvasContext.moveTo(rightStart, lineStartY);
     canvasContext.lineTo(rightEnd, lineEndY);
 
+    canvasContext.stroke();
+}
+
+function drawCircleOnCanvas(boardX, boardY){
+    var drawCoordinates = convertBoardToCanvasCoordinates(boardX, boardY);
+
+    var celCenterPoint = {
+        x: drawCoordinates.x + grid.sectionLength/2,
+        y: drawCoordinates.y + grid.sectionLength/2
+    }
+
+    var radius = (grid.sectionLength-(grid.celPadding*2))/2;
+
+    canvasContext.beginPath();
+    canvasContext.arc(celCenterPoint.x, celCenterPoint.y, radius, 0, Math.PI * 2);
     canvasContext.stroke();
 }
 
