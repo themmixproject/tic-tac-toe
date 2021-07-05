@@ -272,22 +272,23 @@ var computerPlayer = {
         computerPlayer.placedPieces.push( turnCoordinates );
 
         // // update game state
-        gameBoard[ turnCoordinates[0] ][ turnCoordinates[1] ] = "O";
+        gameBoard[ turnCoordinates[0] ][ turnCoordinates[1] ] = currentPlayer.piece;
 
         logGameBoard();
         checkGameEndConditions(currentPlayer);
 
-        drawCircleOnCanvas(turnCoordinates[1], turnCoordinates[0]);
+        drawCircleOnCanvas(turnCoordinates[0], turnCoordinates[1]);
 
         if(computerPlayer.isFirstTurn)
             computerPlayer.isFirstTurn = false;
     },
     getTurnCoordinates: function(){
         if(computerPlayer.isFirstTurn){
-            return computerPlayer.takeFirsTurn();
+            var move = computerPlayer.takeFirsTurn();
+            return move;
         }
         else{
-            move = computerPlayer.calculateBoardSpace();
+            var move = computerPlayer.calculateBoardSpace();
             return move;
         }
             
@@ -307,29 +308,50 @@ var computerPlayer = {
         var randomY = Math.floor( Math.random() * 3 );
 
         var isEmpty = gameBoard[ randomX ][ randomY ] === "";
-        if(!isEmpty)
-            computerPlayer.generateRandomBoardSpace();
-        else
+        if(!isEmpty){
+            return computerPlayer.generateRandomBoardSpace();
+        }
+        else{
+            // console.log("Randomly generated\n" + "Coordinates: " + [randomX, randomY]);
             return [randomX, randomY];
+        }
+
     },
 
     baseIndex: null,
     progressRow: [],
     calculateBoardSpace: function(){
+        console.log(computerPlayer.progressRow.length);
+
         if(computerPlayer.progressRow.length == 1){
             var potentialMoves = moveTree[computerPlayer.progressRow.length][computerPlayer.baseIndex];
             var selectedMove = computerPlayer.selectMove(potentialMoves);
 
-            computerPlayer.progressRow.push(convertToSingularIndex(selectedMove[0], selectedMove[1]));
+            if(selectedMove === null){
+                var turnIndex = computerPlayer.generateRandomBoardSpace();
+                return convertIndexToBoardCoordinate(turnIndex);
+            }
+            else{
+                computerPlayer.progressRow.push(convertToSingularIndex(selectedMove[0], selectedMove[1]));
 
-            return selectedMove;
+                return selectedMove;
+            }
         }
         else{
             var LastMoveIndex  = moveTree[computerPlayer.progressRow.length][computerPlayer.baseIndex][computerPlayer.progressRow[1]];
 
-            console.log(LastMoveIndex)
-
             var lastMoveCoordinates = convertIndexToBoardCoordinate(LastMoveIndex);
+            var gridSpaceIsEmpty = gameBoard[ lastMoveCoordinates[0] ] [lastMoveCoordinates[1] ] === "";
+            
+            console.log("it empty?: " + gridSpaceIsEmpty + "\nContents: " + gameBoard[ lastMoveCoordinates[0] ] [lastMoveCoordinates[1] ])
+
+            if(!gridSpaceIsEmpty){
+                var turnIndex = computerPlayer.generateRandomBoardSpace();
+
+                console.log(turnIndex);
+
+                return turnIndex;
+            }
 
             computerPlayer.progressRow.push(LastMoveIndex);
 
@@ -356,7 +378,7 @@ var computerPlayer = {
         var boardSpot = possibleMoves[selectedIndex];
         var coordinates = convertIndexToBoardCoordinate(boardSpot);
 
-        console.log("index: " + boardSpot + "  " + "coordinates: " + coordinates);
+        // console.log("index: " + boardSpot + "  " + "coordinates: " + coordinates);
 
         var selectedSpace = convertIndexToBoardCoordinate(possibleMoves[selectedIndex]);
 
@@ -376,15 +398,9 @@ function convertIndexToBoardCoordinate(index){
     return [x, y]
 }
 
-
-computerPlayer.takeTurn();
-computerPlayer.takeTurn();
-computerPlayer.takeTurn();
-
 function canvasInteraction(clientCoordinates){
     for(x=0; x<3;x++){
         for(y=0;y<3;y++){
-            
             var canvasCelCoordinates = convertBoardToCanvasCoordinates(x, y);
             var hasCollision = hasCollisionWithGridCel(clientCoordinates, canvasCelCoordinates);
             var boardSpaceIsEmpty = gameBoard[x][y] === "";
@@ -402,9 +418,11 @@ function playerTurn(x, y){
     // update board state
     gameBoard[x][y] = currentPlayer.piece;
 
+    checkGameEndConditions(currentPlayer);
+
     drawCrossOnCanvas(x, y);
 
-    checkGameEndConditions(currentPlayer);
+    computerPlayer.takeTurn();
 }
 
 function checkGameEndConditions(player){
