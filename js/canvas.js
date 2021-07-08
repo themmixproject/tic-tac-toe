@@ -261,15 +261,99 @@ var players = {
     }
 }
 
+var winCombinationIndexes = convertWinCombinationsToIndexes();
+
+function convertWinCombinationsToIndexes(){
+    var winCombinationIndexes = [];
+
+    winCombinations.forEach(function(combination){
+        var indexArray = [];
+        combination.forEach(function(coordinate){
+            var singleIndex = convertBoardCoordinateToIndex(coordinate[0], coordinate[1]);
+            indexArray.push(singleIndex);
+        })
+
+        winCombinationIndexes.push(indexArray);
+    })
+    
+    return winCombinationIndexes;
+}
+
 var computerPlayer = {
     placedPieces: [],
     isFirstTurn: true,
+    currentTarget: [],
+    potentialTargets: [],
+    checkedPotentialTargets: [],
+    winCombinationIndexes: [
+        [0, 3, 6],
+        [1, 4, 7],
+        [2, 5, 8],
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8],
+        [0, 4, 8],
+        [6, 4, 2]
+    ],
+    targetCombinationIndexes: [
+        [0, 3, 6],
+        [1, 4, 7],
+        [2, 5, 8],
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8],
+        [0, 4, 8],
+        [6, 4, 2]
+    ],
+    init: function(){
+        computerPlayer.getNewTargetCombination();
+    },
+    getNewTargetCombination: function(){
+        computerPlayer.updatePotentialTargetCombinations();
+        
+        var targetIndex = Math.floor(Math.random() * computerPlayer.potentialTargets.length);
+        var target = computerPlayer.potentialTargets[targetIndex];
+        
+        computerPlayer.currentTarget = target;
+        computerPlayer.checkedPotentialTargets.push(target);
+
+        shuffleArray(computerPlayer.currentTarget);
+    },
+    updatePotentialTargetCombinations: function(){
+        computerPlayer.potentialTargets = [];
+
+        computerPlayer.winCombinationIndexes.forEach(function(combination){
+            var hasPotential = true;
+
+            for(i=0; i<combination.length; i++){
+                var item = combination[i];
+                coordinate = convertIndexToBoardCoordinate(item);
+                
+                var isEmpty = gameBoard[ coordinate[0] ][ coordinate[1] ] === "";
+
+                if(!isEmpty)
+                    hasPotential = false;
+            }
+
+            if(hasPotential){
+                computerPlayer.potentialTargets.push(combination);
+            };
+            
+        });
+
+        computerPlayer.potentialTargets.forEach(function(item){
+            if(computerPlayer.checkedPotentialTargets.indexOf(item) > 0){
+                index = computerPlayer.potentialTargets.indexOf(item);
+                computerPlayer.potentialTargets.splice(index, 1);
+            }
+        });
+    },
     takeTurn: function(){
         currentPlayer = players.computerPlayer;
 
         var turnCoordinates = computerPlayer.getTurnCoordinates();
 
-        computerPlayer.placedPieces.push( turnCoordinates );
+        computerPlayer.placedPieces.push(turnCoordinates);
 
         // // update game state
         gameBoard[ turnCoordinates[0] ][ turnCoordinates[1] ] = currentPlayer.piece;
@@ -281,27 +365,37 @@ var computerPlayer = {
 
         if(computerPlayer.isFirstTurn)
             computerPlayer.isFirstTurn = false;
+
+        if(game.hasEnded)
+            players.humanPlayer.canInteract = false;
     },
+    currentTargetIndex: 0,
     getTurnCoordinates: function(){
-        if(computerPlayer.isFirstTurn){
-            var move = computerPlayer.takeFirsTurn();
-            return move;
-        }
+        var targetIndex = computerPlayer.currentTarget[computerPlayer.currentTargetIndex];
+
+        if(computerPlayer.currentTargetIndex < computerPlayer.currentTarget.length-1)
+            computerPlayer.currentTargetIndex++;
+        else
+            computerPlayer.currentIndex = computerPlayer.currentTarget.length-1;
+
+        console.log(computerPlayer.currentTargetIndex);
+
+        var isPossible = true;
+        computerPlayer.currentTarget.forEach(function(item){
+            var coordinates = convertIndexToBoardCoordinate(item);
+            var isBlocked = gameBoard[ coordinates[0] ][ coordinates[1] ] === "X";
+
+            if(isBlocked){
+                isPossible = false;
+            }
+        });
+
+        if(isPossible)
+            return convertIndexToBoardCoordinate(targetIndex);
         else{
-            var move = computerPlayer.calculateBoardSpace();
-            return move;
-        }
-            
-    },
-    takeFirsTurn: function(){
-        var turnCoordinates = computerPlayer.generateRandomBoardSpace();
-        var turnIndex = convertToSingularIndex(turnCoordinates[0], turnCoordinates[1]);
-        
-        computerPlayer.baseIndex = turnIndex;
-
-        computerPlayer.progressRow.push(turnIndex);
-
-        return turnCoordinates;
+            console.log("randomSpace");
+            return computerPlayer.generateRandomBoardSpace();
+        }            
     },
     generateRandomBoardSpace: function(){
         var randomX = Math.floor( Math.random() * 3 );
@@ -317,12 +411,7 @@ var computerPlayer = {
         }
 
     },
-
-    baseIndex: null,
-    progressRow: [],
     calculateBoardSpace: function(){
-        console.log(computerPlayer.progressRow.length);
-
         if(computerPlayer.progressRow.length == 1){
             var potentialMoves = moveTree[computerPlayer.progressRow.length][computerPlayer.baseIndex];
             var selectedMove = computerPlayer.selectMove(potentialMoves);
@@ -332,7 +421,7 @@ var computerPlayer = {
                 return convertIndexToBoardCoordinate(turnIndex);
             }
             else{
-                computerPlayer.progressRow.push(convertToSingularIndex(selectedMove[0], selectedMove[1]));
+                computerPlayer.progressRow.push(convertBoardCoordinateToIndex(selectedMove[0], selectedMove[1]));
 
                 return selectedMove;
             }
@@ -343,8 +432,6 @@ var computerPlayer = {
             var lastMoveCoordinates = convertIndexToBoardCoordinate(LastMoveIndex);
             var gridSpaceIsEmpty = gameBoard[ lastMoveCoordinates[0] ] [lastMoveCoordinates[1] ] === "";
             
-            console.log("it empty?: " + gridSpaceIsEmpty + "\nContents: " + gameBoard[ lastMoveCoordinates[0] ] [lastMoveCoordinates[1] ])
-
             if(!gridSpaceIsEmpty){
                 var turnIndex = computerPlayer.generateRandomBoardSpace();
 
@@ -358,35 +445,10 @@ var computerPlayer = {
             return lastMoveCoordinates;
         }
     },
-    selectMove: function(potentialMoves){
-        var possibleMoves = [];
-        
-        potentialMoves.forEach(function(item, index){
-            var gameBoardCoordinates = convertIndexToBoardCoordinate(item);
-            
-            var gridSpaceIsEmpty = gameBoard[ gameBoardCoordinates[0] ] [gameBoardCoordinates[1] ] === "";
-
-            if(gridSpaceIsEmpty)
-                possibleMoves.push(item);
-        });
-
-        if(possibleMoves.length === 0)
-            return null;
-        
-        var selectedIndex = Math.floor(Math.random()*possibleMoves.length);
-
-        var boardSpot = possibleMoves[selectedIndex];
-        var coordinates = convertIndexToBoardCoordinate(boardSpot);
-
-        // console.log("index: " + boardSpot + "  " + "coordinates: " + coordinates);
-
-        var selectedSpace = convertIndexToBoardCoordinate(possibleMoves[selectedIndex]);
-
-        return selectedSpace;
-    }
 };
+computerPlayer.init();
 
-function convertToSingularIndex(x, y){
+function convertBoardCoordinateToIndex(x, y){
     // 3 because it's a 3x3 grid
     return y * 3 + x;
 }
@@ -397,6 +459,24 @@ function convertIndexToBoardCoordinate(index){
 
     return [x, y]
 }
+
+function shuffleArray(array) {
+    var currentIndex = array.length,  randomIndex;
+  
+    // While there remain elements to shuffle...
+    while (0 !== currentIndex) {
+  
+      // Pick a remaining element...
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex--;
+  
+      // And swap it with the current element.
+      [array[currentIndex], array[randomIndex]] = [
+        array[randomIndex], array[currentIndex]];
+    }
+  
+    return array;
+  }
 
 function canvasInteraction(clientCoordinates){
     for(x=0; x<3;x++){
@@ -422,7 +502,8 @@ function playerTurn(x, y){
 
     drawCrossOnCanvas(x, y);
 
-    computerPlayer.takeTurn();
+    if(!game.hasEnded)
+        computerPlayer.takeTurn();
 }
 
 function checkGameEndConditions(player){
@@ -455,7 +536,7 @@ function checkIfPlayerHasWon(player){
         return true;
     else
         return false
-
+    
 }
 
 function checkIfGameHasTied(){
