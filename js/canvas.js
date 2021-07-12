@@ -289,9 +289,11 @@ var computerPlayer = {
         [0, 3, 6],
         [1, 4, 7],
         [2, 5, 8],
+
         [0, 1, 2],
         [3, 4, 5],
         [6, 7, 8],
+        
         [0, 4, 8],
         [6, 4, 2]
     ],
@@ -314,15 +316,16 @@ var computerPlayer = {
         
         var targetIndex = Math.floor(Math.random() * computerPlayer.potentialTargets.length);
         var target = computerPlayer.potentialTargets[targetIndex];
-        
+
         computerPlayer.setTargetCombination(target);
     },
     setTargetCombination: function(target){
         computerPlayer.currentTarget = target;
         computerPlayer.checkedPotentialTargets.push(target);
 
+        console.log("Current target: " + computerPlayer.currentTarget);
+
         shuffleArray(computerPlayer.currentTarget);
-        console.log("CurrentTarget: " + computerPlayer.currentTarget);
     },
     updatePotentialTargetCombinations: function(){
         computerPlayer.potentialTargets = [];
@@ -332,11 +335,11 @@ var computerPlayer = {
 
             for(i=0; i<combination.length; i++){
                 var item = combination[i];
+
                 coordinate = convertIndexToBoardCoordinate(item);
                 
-                var isEmpty = gameBoard[ coordinate[0] ][ coordinate[1] ] === "";
-
-                if(!isEmpty)
+                var isPossible = gameBoard[ coordinate[0] ][ coordinate[1] ] !== players.humanPlayer.piece;
+                if(!isPossible)
                     hasPotential = false;
             }
 
@@ -345,13 +348,30 @@ var computerPlayer = {
             };
             
         });
-
+     
         computerPlayer.potentialTargets.forEach(function(item){
-            if(computerPlayer.checkedPotentialTargets.indexOf(item) > 0){
-                index = computerPlayer.potentialTargets.indexOf(item);
-                computerPlayer.potentialTargets.splice(index, 1);
-            }
+            var hasBeenChecked = multiDimensionalArrayHasArray(computerPlayer.checkedPotentialTargets, item);
+            if(hasBeenChecked){
+                var indexOfPotentialTarget = computerPlayer.potentialTargets.indexOf(item);
+                computerPlayer.potentialTargets.splice(indexOfPotentialTarget, 1);
+            };
         });
+
+        console.log( JSON.stringify(computerPlayer.potentialTargets) )
+
+        // var itemsToRemove = [];
+        // computerPlayer.potentialTargets.forEach(function(item, index){
+        //     var hasBeenChecked = multiDimensionalArrayHasArray(computerPlayer.checkedPotentialTargets, item);
+        //     if(hasBeenChecked){
+        //         var indexOfPotentialTarget = computerPlayer.potentialTargets.indexOf(item);
+        //         itemsToRemove.push(indexOfPotentialTarget);
+        //     }
+        // });
+
+        // itemsToRemove.forEach(function(indexOfPotentialTarget){
+        //     computerPlayer.potentialTargets.splice(indexOfPotentialTarget, 1);
+        //     // console.log("potential targets: " + JSON.stringify(computerPlayer.potentialTargets));
+        // });
     },
     takeTurn: function(){
         currentPlayer = players.computerPlayer;
@@ -363,13 +383,9 @@ var computerPlayer = {
         // // update game state
         gameBoard[ turnCoordinates[0] ][ turnCoordinates[1] ] = currentPlayer.piece;
 
-        logGameBoard();
         checkGameEndConditions(currentPlayer);
 
         drawCircleOnCanvas(turnCoordinates[0], turnCoordinates[1]);
-
-        if(computerPlayer.isFirstTurn)
-            computerPlayer.isFirstTurn = false;
 
         if(game.hasEnded)
             players.humanPlayer.canInteract = false;
@@ -381,13 +397,19 @@ var computerPlayer = {
         if(computerPlayer.currentTargetIsPossible())
             turnCoordinates =  convertIndexToBoardCoordinate(targetIndex);
         else{
-            console.log("randomSpace");
-            turnCoordinates =  computerPlayer.generateRandomBoardSpace();
+            turnCoordinates = computerPlayer.getCoordinatesFromNewTarget();
+            // console.log("randomSpace");
+            // turnCoordinates =  computerPlayer.generateRandomBoardSpace();
         }
+        
         
         computerPlayer.updateTargetIndex();
 
         return turnCoordinates;
+    },
+    getCoordinatesFromNewTarget: function(){
+        computerPlayer.getNewTargetCombination();
+        return convertIndexToBoardCoordinate(computerPlayer.currentTarget[0]);
     },
     currentTargetIsPossible: function(){
         var isPossible = true;
@@ -469,6 +491,22 @@ function convertIndexToBoardCoordinate(index){
 
     return [x, y]
 }
+
+function arrayEquals(a, b) {
+    return Array.isArray(a) &&
+    Array.isArray(b) &&
+    a.length === b.length &&
+    a.every((val, index) => val === b[index]);
+}
+
+function multiDimensionalArrayHasArray(multiArray, checkArray){
+    var containsItem = false;
+    multiArray.forEach(function(item){
+        if(arrayEquals(item, checkArray))
+            containsItem = true;
+    });
+    return containsItem;
+};
 
 function shuffleArray(array) {
     var currentIndex = array.length,  randomIndex;
