@@ -305,6 +305,7 @@ var computerPlayer = {
         [0, 4, 8],
         [6, 4, 2]
     ],
+    currentTargetIndex: 0,
     init: function(){
         computerPlayer.getNewTargetCombination();
     },
@@ -314,10 +315,14 @@ var computerPlayer = {
         var targetIndex = Math.floor(Math.random() * computerPlayer.potentialTargets.length);
         var target = computerPlayer.potentialTargets[targetIndex];
         
+        computerPlayer.setTargetCombination(target);
+    },
+    setTargetCombination: function(target){
         computerPlayer.currentTarget = target;
         computerPlayer.checkedPotentialTargets.push(target);
 
         shuffleArray(computerPlayer.currentTarget);
+        console.log("CurrentTarget: " + computerPlayer.currentTarget);
     },
     updatePotentialTargetCombinations: function(){
         computerPlayer.potentialTargets = [];
@@ -369,17 +374,22 @@ var computerPlayer = {
         if(game.hasEnded)
             players.humanPlayer.canInteract = false;
     },
-    currentTargetIndex: 0,
     getTurnCoordinates: function(){
         var targetIndex = computerPlayer.currentTarget[computerPlayer.currentTargetIndex];
+        var turnCoordinates = [];
 
-        if(computerPlayer.currentTargetIndex < computerPlayer.currentTarget.length-1)
-            computerPlayer.currentTargetIndex++;
-        else
-            computerPlayer.currentIndex = computerPlayer.currentTarget.length-1;
+        if(computerPlayer.currentTargetIsPossible())
+            turnCoordinates =  convertIndexToBoardCoordinate(targetIndex);
+        else{
+            console.log("randomSpace");
+            turnCoordinates =  computerPlayer.generateRandomBoardSpace();
+        }
+        
+        computerPlayer.updateTargetIndex();
 
-        console.log(computerPlayer.currentTargetIndex);
-
+        return turnCoordinates;
+    },
+    currentTargetIsPossible: function(){
         var isPossible = true;
         computerPlayer.currentTarget.forEach(function(item){
             var coordinates = convertIndexToBoardCoordinate(item);
@@ -389,13 +399,13 @@ var computerPlayer = {
                 isPossible = false;
             }
         });
-
-        if(isPossible)
-            return convertIndexToBoardCoordinate(targetIndex);
-        else{
-            console.log("randomSpace");
-            return computerPlayer.generateRandomBoardSpace();
-        }            
+        return isPossible;
+    },
+    updateTargetIndex: function(){
+        if(computerPlayer.currentTargetIndex < computerPlayer.currentTarget.length-1)
+        computerPlayer.currentTargetIndex++;
+        else
+            computerPlayer.currentIndex = computerPlayer.currentTarget.length-1;
     },
     generateRandomBoardSpace: function(){
         var randomX = Math.floor( Math.random() * 3 );
