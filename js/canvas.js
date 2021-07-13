@@ -171,7 +171,7 @@ var winCombinations = [
     // diagonal
     [ [0, 0], [1, 1], [2, 2] ],
     [ [0, 2], [1, 1], [2, 0] ]
-]
+];
 
 
 var currentPlayer;
@@ -261,24 +261,6 @@ var players = {
     }
 }
 
-var winCombinationIndexes = convertWinCombinationsToIndexes();
-
-function convertWinCombinationsToIndexes(){
-    var winCombinationIndexes = [];
-
-    winCombinations.forEach(function(combination){
-        var indexArray = [];
-        combination.forEach(function(coordinate){
-            var singleIndex = convertBoardCoordinateToIndex(coordinate[0], coordinate[1]);
-            indexArray.push(singleIndex);
-        })
-
-        winCombinationIndexes.push(indexArray);
-    })
-    
-    return winCombinationIndexes;
-}
-
 var computerPlayer = {
     placedPieces: [],
     isFirstTurn: true,
@@ -323,62 +305,68 @@ var computerPlayer = {
         computerPlayer.currentTarget = target;
         computerPlayer.checkedPotentialTargets.push(target);
 
+        computerPlayer.filterPlacedPieces(computerPlayer.currentTarget);
+
         console.log("Current target: " + computerPlayer.currentTarget);
 
         shuffleArray(computerPlayer.currentTarget);
+    },
+    filterPlacedPieces: function(){
+        computerPlayer.currentTarget.forEach(function(pieceIndex, indexInArray){
+            console.log("filter: " + pieceIndex + " " + JSON.stringify(computerPlayer.placedPieces) + "\nIs in array:" + (computerPlayer.placedPieces.indexOf(pieceIndex) > -1) );
+            if(computerPlayer.placedPieces.indexOf(pieceIndex) > -1){
+
+                computerPlayer.currentTarget.splice(indexInArray, 1);
+            }
+                
+        });
     },
     updatePotentialTargetCombinations: function(){
         computerPlayer.potentialTargets = [];
 
         computerPlayer.winCombinationIndexes.forEach(function(combination){
-            var hasPotential = true;
-
-            for(i=0; i<combination.length; i++){
-                var item = combination[i];
-
-                coordinate = convertIndexToBoardCoordinate(item);
-                
-                var isPossible = gameBoard[ coordinate[0] ][ coordinate[1] ] !== players.humanPlayer.piece;
-                if(!isPossible)
-                    hasPotential = false;
-            }
-
-            if(hasPotential){
+            if(computerPlayer.combinationHasPotential(combination)){
                 computerPlayer.potentialTargets.push(combination);
             };
-            
         });
-     
-        computerPlayer.potentialTargets.forEach(function(item){
-            var hasBeenChecked = multiDimensionalArrayHasArray(computerPlayer.checkedPotentialTargets, item);
+        
+        computerPlayer.filterPotentialTargets();
+
+        console.log( JSON.stringify(computerPlayer.potentialTargets) );
+    },
+    combinationHasPotential: function(combination){
+        var hasPotential = true;
+
+        for(i=0; i<combination.length; i++){
+            var item = combination[i];
+
+            coordinate = convertIndexToBoardCoordinate(item);
+            
+            var isPossible = gameBoard[ coordinate[0] ][ coordinate[1] ] !== players.humanPlayer.piece;
+            if(!isPossible)
+                hasPotential = false;
+        };
+
+        return hasPotential;
+    },
+    filterPotentialTargets: function(){
+        computerPlayer.potentialTargets.forEach(function(potentialTarget){
+            var hasBeenChecked = multiDimensionalArrayHasArray(computerPlayer.checkedPotentialTargets, potentialTarget);
             if(hasBeenChecked){
-                var indexOfPotentialTarget = computerPlayer.potentialTargets.indexOf(item);
+                var indexOfPotentialTarget = computerPlayer.potentialTargets.indexOf(potentialTarget);
                 computerPlayer.potentialTargets.splice(indexOfPotentialTarget, 1);
             };
         });
-
-        console.log( JSON.stringify(computerPlayer.potentialTargets) )
-
-        // var itemsToRemove = [];
-        // computerPlayer.potentialTargets.forEach(function(item, index){
-        //     var hasBeenChecked = multiDimensionalArrayHasArray(computerPlayer.checkedPotentialTargets, item);
-        //     if(hasBeenChecked){
-        //         var indexOfPotentialTarget = computerPlayer.potentialTargets.indexOf(item);
-        //         itemsToRemove.push(indexOfPotentialTarget);
-        //     }
-        // });
-
-        // itemsToRemove.forEach(function(indexOfPotentialTarget){
-        //     computerPlayer.potentialTargets.splice(indexOfPotentialTarget, 1);
-        //     // console.log("potential targets: " + JSON.stringify(computerPlayer.potentialTargets));
-        // });
     },
     takeTurn: function(){
         currentPlayer = players.computerPlayer;
 
         var turnCoordinates = computerPlayer.getTurnCoordinates();
+        var turnIndex = convertBoardCoordinateToIndex(turnCoordinates[0], turnCoordinates[1]);
+        
+        console.log("Turncoordinates: " + turnCoordinates);
 
-        computerPlayer.placedPieces.push(turnCoordinates);
+        computerPlayer.placedPieces.push(turnIndex);
 
         // // update game state
         gameBoard[ turnCoordinates[0] ][ turnCoordinates[1] ] = currentPlayer.piece;
@@ -396,19 +384,21 @@ var computerPlayer = {
 
         if(computerPlayer.currentTargetIsPossible())
             turnCoordinates =  convertIndexToBoardCoordinate(targetIndex);
-        else{
-            turnCoordinates = computerPlayer.getCoordinatesFromNewTarget();
-            // console.log("randomSpace");
-            // turnCoordinates =  computerPlayer.generateRandomBoardSpace();
-        }
-        
+
+        else
+            turnCoordinates = computerPlayer.getTurnCoordinatesFromAlternativePossiblities();
         
         computerPlayer.updateTargetIndex();
 
         return turnCoordinates;
     },
-    getCoordinatesFromNewTarget: function(){
+    getTurnCoordinatesFromAlternativePossiblities: function(){
+        
+        // reset current target index
+        computerPlayer.currentTargetIndex = 0;
+        
         computerPlayer.getNewTargetCombination();
+        
         return convertIndexToBoardCoordinate(computerPlayer.currentTarget[0]);
     },
     currentTargetIsPossible: function(){
@@ -440,41 +430,6 @@ var computerPlayer = {
         else{
             // console.log("Randomly generated\n" + "Coordinates: " + [randomX, randomY]);
             return [randomX, randomY];
-        }
-
-    },
-    calculateBoardSpace: function(){
-        if(computerPlayer.progressRow.length == 1){
-            var potentialMoves = moveTree[computerPlayer.progressRow.length][computerPlayer.baseIndex];
-            var selectedMove = computerPlayer.selectMove(potentialMoves);
-
-            if(selectedMove === null){
-                var turnIndex = computerPlayer.generateRandomBoardSpace();
-                return convertIndexToBoardCoordinate(turnIndex);
-            }
-            else{
-                computerPlayer.progressRow.push(convertBoardCoordinateToIndex(selectedMove[0], selectedMove[1]));
-
-                return selectedMove;
-            }
-        }
-        else{
-            var LastMoveIndex  = moveTree[computerPlayer.progressRow.length][computerPlayer.baseIndex][computerPlayer.progressRow[1]];
-
-            var lastMoveCoordinates = convertIndexToBoardCoordinate(LastMoveIndex);
-            var gridSpaceIsEmpty = gameBoard[ lastMoveCoordinates[0] ] [lastMoveCoordinates[1] ] === "";
-            
-            if(!gridSpaceIsEmpty){
-                var turnIndex = computerPlayer.generateRandomBoardSpace();
-
-                console.log(turnIndex);
-
-                return turnIndex;
-            }
-
-            computerPlayer.progressRow.push(LastMoveIndex);
-
-            return lastMoveCoordinates;
         }
     },
 };
