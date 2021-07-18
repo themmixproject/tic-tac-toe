@@ -371,14 +371,14 @@ var computerPlayer = {
     getTurnCoordinates: function(){
         var turnCoordinates = [];
 
-        if(computerPlayer.currentTargetIsPossible()){
-            turnCoordinates = computerPlayer.getCoordinatesFromTarget();
-        }
+        turnCoordinates = computerPlayer.getCoordinatesFromTarget();
+        
+        console.log(turnCoordinates);
 
-        else{
-            console.log("Generate random");
+        var noCoordinatesFoundFromTarget = turnCoordinates.length === 0;
+        if(noCoordinatesFoundFromTarget)
             turnCoordinates = computerPlayer.generateRandomBoardSpace();
-        }
+
         console.log(turnCoordinates);
 
         return turnCoordinates;
@@ -395,7 +395,12 @@ var computerPlayer = {
             return [randomX, randomY];
         }
     },
-    getCoordinatesFromTarget: function(){
+    getCoordinatesFromTarget(){
+        if(computerPlayer.currentTargetIsPossible())
+            return computerPlayer.getCoordinatesFromCurrentTarget();
+        return [];
+    },
+    getCoordinatesFromCurrentTarget: function(){
         var targetIndex = computerPlayer.currentTarget[computerPlayer.currentTargetIndex];
         turnCoordinates =  convertIndexToBoardCoordinate(targetIndex);
 
