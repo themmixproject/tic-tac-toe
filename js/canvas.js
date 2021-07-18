@@ -421,11 +421,8 @@ var computerPlayer = {
         return isPossible;
     },
     getCoordinatesFromCurrentTarget: function(){
-        console.log("Get coordinates from target");
-
         var targetIndex = computerPlayer.currentTarget[computerPlayer.currentTargetProgressMarker];
         turnCoordinates =  convertIndexToBoardCoordinate(targetIndex);
-
 
         // WATCH OUT FOR THIS LINE OF CODE
         computerPlayer.updateTargetIndex();
@@ -458,12 +455,7 @@ var computerPlayer = {
 
             computerPlayer.setTargetCombination(newTarget);
     
-            var turnIndex = computerPlayer.currentTarget[computerPlayer.currentTargetProgressMarker];
-    
-            // WATCH OUT FOR THIS LINE OF CODE
-            computerPlayer.updateTargetIndex();
-            
-            return convertIndexToBoardCoordinate(turnIndex);
+            return computerPlayer.getCoordinatesFromCurrentTarget();
         }
 
         return newTarget;
