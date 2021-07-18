@@ -376,6 +376,7 @@ var computerPlayer = {
         }
 
         else{
+            console.log("Generate random");
             turnCoordinates = computerPlayer.generateRandomBoardSpace();
         }
         console.log(turnCoordinates);
@@ -495,15 +496,26 @@ function playerTurn(x, y){
 
     drawCrossOnCanvas(x, y);
 
-    if(!game.hasEnded)
+    if(!game.hasEnded){
         computerPlayer.takeTurn();
+    }
 }
 
 function checkGameEndConditions(player){
-    if( checkIfPlayerHasWon(player) )
+    if( checkIfPlayerHasWon(player) ){
         console.log("player has won");
-    else if( checkIfGameHasTied() )
+        endGame();
+
+    }
+    else if( checkIfGameHasTied() ){
         console.log("game has been tied");
+        endGame();
+    }
+}
+
+// temporary endGame function
+function endGame(){
+    game.hasEnded = true;
 }
 
 function checkIfPlayerHasWon(player){
