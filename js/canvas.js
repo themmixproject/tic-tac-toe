@@ -413,6 +413,18 @@ var computerPlayer = {
 
         return [];
     },
+    currentTargetIsPossible: function(){
+        var isPossible = true;
+        computerPlayer.currentTarget.forEach(function(item){
+            var coordinates = convertIndexToBoardCoordinate(item);
+            var isBlocked = gameBoard[ coordinates[0] ][ coordinates[1] ] === "X";
+
+            if(isBlocked){
+                isPossible = false;
+            }
+        });
+        return isPossible;
+    },
     getCoordinatesFromCurrentTarget: function(){
         var targetIndex = computerPlayer.currentTarget[computerPlayer.currentTargetProgressMarker];
         turnCoordinates =  convertIndexToBoardCoordinate(targetIndex);
@@ -429,6 +441,8 @@ var computerPlayer = {
         var selectedPotentialTargetIndex = Math.floor(Math.random() * computerPlayer.potentialTargets.length);
         var newTarget = computerPlayer.potentialTargets[selectedPotentialTargetIndex];
 
+        newTarget = computerPlayer.filterPlacedPiecesFromTarget(newTarget);
+
         computerPlayer.setTargetCombination(newTarget);
 
         var turnIndex = computerPlayer.currentTarget[computerPlayer.currentTargetProgressMarker];
@@ -438,26 +452,20 @@ var computerPlayer = {
         
         return convertIndexToBoardCoordinate(turnIndex);
     },
-    currentTargetIsPossible: function(){
-        var isPossible = true;
-        computerPlayer.currentTarget.forEach(function(item){
-            var coordinates = convertIndexToBoardCoordinate(item);
-            var isBlocked = gameBoard[ coordinates[0] ][ coordinates[1] ] === "X";
-
-            if(isBlocked){
-                isPossible = false;
-            }
+    filterPlacedPiecesFromTarget: function(target){
+        var filteredTarget = [];
+        target.forEach(function(boardIndex){
+            if(computerPlayer.placedPieces.indexOf(boardIndex) < 0)
+                filteredTarget.push(boardIndex)
         });
-        return isPossible;
+        return filteredTarget;
     },
-    
     updateTargetIndex: function(){
         if(computerPlayer.currentTargetProgressMarker < computerPlayer.currentTarget.length-1)
         computerPlayer.currentTargetProgressMarker++;
         else
             computerPlayer.currentTargetProgressMarker = computerPlayer.currentTarget.length-1;
     },
-
 };
 computerPlayer.init();
 
