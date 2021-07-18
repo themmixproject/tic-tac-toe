@@ -292,89 +292,25 @@ var computerPlayer = {
     currentTargetIndex: 0,
     potentialBaseIndexes: [],
     init: function(){
-        computerPlayer.getNewTargetCombination();
+        var initialTarget = computerPlayer.getInitialTarget();
+        computerPlayer.setTargetCombination(initialTarget);
     },
-    getNewTargetCombination: function(){
+    getInitialTarget: function(){
         computerPlayer.updatePotentialTargetCombinations();
+        
+        var initialTarget = [];
+        var targetIndex = Math.floor(Math.random() * computerPlayer.potentialTargets.length);
+        initialTarget = computerPlayer.potentialTargets[targetIndex];
 
-        var target = [];
-        if(computerPlayer.potentialBaseIndexes.length > 0){
-            target = computerPlayer.getTargetFromBaseIndex();
-            
-            console.log("base target: " + target);
-        }
-
-        var noBaseTargetFound = (target.length === 0);
-        if(noBaseTargetFound){
-            var targetIndex = Math.floor(Math.random() * computerPlayer.potentialTargets.length);
-            target = computerPlayer.potentialTargets[targetIndex];
-        }
-
-        computerPlayer.setTargetCombination(target);
+        return initialTarget;
     },
-    getTargetFromBaseIndex: function(){
-        var selectedCombination = [];
-
-        computerPlayer.potentialBaseIndexes.forEach(function(baseIndex, itemIndex){
-            var baseCombinations = computerPlayer.getCombinationsFromBase(baseIndex);
-            var potentialBaseCombinations = computerPlayer.filterPossibleCombinations(baseCombinations);
-            
-            // console.log("base index:" + baseIndex + "\nbase combinations:" +  baseCombinations);
-            // console.log("potential base combinations:" + potentialBaseCombinations);
-
-            if(potentialBaseCombinations.length > 0 && selectedCombination.length === 0){
-                var selectedIndex = Math.floor(Math.random() * potentialBaseCombinations.length);
-                console.log("potential combinations:" + potentialBaseCombinations + "\nselected index: " + selectedIndex);
-
-                selectedCombination = potentialBaseCombinations[selectedIndex];
-            }
-            else{
-                computerPlayer.potentialBaseIndexes.splice(itemIndex, 1);
-            }
-
-            console.log("selected combination: " + selectedCombination);
-        });
-
-        return selectedCombination;
-    },
-    getCombinationsFromBase: function(baseIndex){
-        var baseCombinations = [];
-        computerPlayer.winCombinationIndexes.forEach(function(combination){
-            var hasIndex = combination.indexOf(baseIndex) > -1;
-            if(hasIndex)
-                baseCombinations.push(combination);
-        })
-
-        return baseCombinations;
-    },
-    filterPossibleCombinations: function(possibleCombinations){
-        var potentialCombinations = [];
-        possibleCombinations.forEach(function(combination){
-            if(computerPlayer.combinationHasPotential(combination))
-                potentialCombinations.push(combination);
-        })
-
-        return potentialCombinations;
-    },
-
     setTargetCombination: function(target){
         computerPlayer.currentTarget = target;
         computerPlayer.checkedPotentialTargets.push(target);
 
-        computerPlayer.filterPlacedPieces(computerPlayer.currentTarget);
+        shuffleArray(computerPlayer.currentTarget);
 
         console.log("Current target: " + computerPlayer.currentTarget);
-
-        shuffleArray(computerPlayer.currentTarget);
-    },
-    filterPlacedPieces: function(){
-        computerPlayer.currentTarget.forEach(function(pieceIndex, indexInArray){
-            if(computerPlayer.placedPieces.indexOf(pieceIndex) > -1){
-
-                computerPlayer.currentTarget.splice(indexInArray, 1);
-            }
-                
-        });
     },
     updatePotentialTargetCombinations: function(){
         computerPlayer.potentialTargets = [];
