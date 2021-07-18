@@ -290,6 +290,7 @@ var computerPlayer = {
         [6, 4, 2]
     ],
     currentTargetIndex: 0,
+    currentTargetProgressMarker: 0,
     potentialBaseIndexes: [],
     init: function(){
         var initialTarget = computerPlayer.getInitialTarget();
@@ -373,8 +374,6 @@ var computerPlayer = {
 
         turnCoordinates = computerPlayer.getCoordinatesFromTarget();
         
-        console.log(turnCoordinates);
-
         var noCoordinatesFoundFromTarget = turnCoordinates.length === 0;
         if(noCoordinatesFoundFromTarget)
             turnCoordinates = computerPlayer.generateRandomBoardSpace();
@@ -396,17 +395,48 @@ var computerPlayer = {
         }
     },
     getCoordinatesFromTarget(){
-        if(computerPlayer.currentTargetIsPossible())
+
+        var currentTargetIsPossible_LOCAL = computerPlayer.currentTargetIsPossible();
+        // console.log(currentTargetIsPossible_LOCAL);
+
+        if(currentTargetIsPossible_LOCAL){
+            console.log(computerPlayer.currentTargetProgressMarker);
             return computerPlayer.getCoordinatesFromCurrentTarget();
+        }
+            
+        
+        computerPlayer.updatePotentialTargetCombinations();
+        var potentialTargetsAvailable = computerPlayer.potentialTargets.length > 0;
+        if(potentialTargetsAvailable){
+            return computerPlayer.getCoordinatesFromNewTarget();
+        }
+
         return [];
     },
     getCoordinatesFromCurrentTarget: function(){
-        var targetIndex = computerPlayer.currentTarget[computerPlayer.currentTargetIndex];
+        var targetIndex = computerPlayer.currentTarget[computerPlayer.currentTargetProgressMarker];
         turnCoordinates =  convertIndexToBoardCoordinate(targetIndex);
 
+
+        // WATCH OUT FOR THIS LINE OF CODE
         computerPlayer.updateTargetIndex();
 
         return turnCoordinates
+    },
+    getCoordinatesFromNewTarget: function(){
+        computerPlayer.currentTargetProgressMarker = 0;
+
+        var selectedPotentialTargetIndex = Math.floor(Math.random() * computerPlayer.potentialTargets.length);
+        var newTarget = computerPlayer.potentialTargets[selectedPotentialTargetIndex];
+
+        computerPlayer.setTargetCombination(newTarget);
+
+        var turnIndex = computerPlayer.currentTarget[computerPlayer.currentTargetProgressMarker];
+
+        // WATCH OUT FOR THIS LINE OF CODE
+        computerPlayer.updateTargetIndex();
+        
+        return convertIndexToBoardCoordinate(turnIndex);
     },
     currentTargetIsPossible: function(){
         var isPossible = true;
@@ -422,10 +452,10 @@ var computerPlayer = {
     },
     
     updateTargetIndex: function(){
-        if(computerPlayer.currentTargetIndex < computerPlayer.currentTarget.length-1)
-        computerPlayer.currentTargetIndex++;
+        if(computerPlayer.currentTargetProgressMarker < computerPlayer.currentTarget.length-1)
+        computerPlayer.currentTargetProgressMarker++;
         else
-            computerPlayer.currentIndex = computerPlayer.currentTarget.length-1;
+            computerPlayer.currentTargetProgressMarker = computerPlayer.currentTarget.length-1;
     },
 
 };
