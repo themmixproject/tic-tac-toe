@@ -433,27 +433,38 @@ var computerPlayer = {
             players.humanPlayer.canInteract = false;
     },
     getTurnCoordinates: function(){
-        var targetIndex = computerPlayer.currentTarget[computerPlayer.currentTargetIndex];
         var turnCoordinates = [];
 
-        if(computerPlayer.currentTargetIsPossible())
-            turnCoordinates =  convertIndexToBoardCoordinate(targetIndex);
+        if(computerPlayer.currentTargetIsPossible()){
+            turnCoordinates = computerPlayer.getCoordinatesFromTarget();
+        }
 
-        else
-            turnCoordinates = computerPlayer.getTurnCoordinatesFromAlternativePossiblities();
-        
-        computerPlayer.updateTargetIndex();
+        else{
+            turnCoordinates = computerPlayer.generateRandomBoardSpace();
+        }
+        console.log(turnCoordinates);
 
         return turnCoordinates;
     },
-    getTurnCoordinatesFromAlternativePossiblities: function(){
-        
-        // reset current target index
-        computerPlayer.currentTargetIndex = 0;
-        
-        computerPlayer.getNewTargetCombination();
-        
-        return convertIndexToBoardCoordinate(computerPlayer.currentTarget[0]);
+    generateRandomBoardSpace: function(){
+        var randomX = Math.floor( Math.random() * 3 );
+        var randomY = Math.floor( Math.random() * 3 );
+
+        var isEmpty = gameBoard[ randomX ][ randomY ] === "";
+        if(!isEmpty){
+            return computerPlayer.generateRandomBoardSpace();
+        }
+        else{
+            return [randomX, randomY];
+        }
+    },
+    getCoordinatesFromTarget: function(){
+        var targetIndex = computerPlayer.currentTarget[computerPlayer.currentTargetIndex];
+        turnCoordinates =  convertIndexToBoardCoordinate(targetIndex);
+
+        computerPlayer.updateTargetIndex();
+
+        return turnCoordinates
     },
     currentTargetIsPossible: function(){
         var isPossible = true;
@@ -467,25 +478,14 @@ var computerPlayer = {
         });
         return isPossible;
     },
+    
     updateTargetIndex: function(){
         if(computerPlayer.currentTargetIndex < computerPlayer.currentTarget.length-1)
         computerPlayer.currentTargetIndex++;
         else
             computerPlayer.currentIndex = computerPlayer.currentTarget.length-1;
     },
-    generateRandomBoardSpace: function(){
-        var randomX = Math.floor( Math.random() * 3 );
-        var randomY = Math.floor( Math.random() * 3 );
 
-        var isEmpty = gameBoard[ randomX ][ randomY ] === "";
-        if(!isEmpty){
-            return computerPlayer.generateRandomBoardSpace();
-        }
-        else{
-            // console.log("Randomly generated\n" + "Coordinates: " + [randomX, randomY]);
-            return [randomX, randomY];
-        }
-    },
 };
 computerPlayer.init();
 
