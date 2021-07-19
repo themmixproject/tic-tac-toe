@@ -370,11 +370,11 @@ var computerPlayer = {
             players.humanPlayer.canInteract = false;
     },
     getTurnCoordinates: function(){
-        var playerIsAboutToWin = computerPlayer.playerIsAboutToWin();
-        console.log(playerIsAboutToWin);
-
         var turnCoordinates = [];
-        if(playerIsAboutToWin){    
+
+        var passesBlockThreshold = computerPlayer.checkBlockThreshold();
+        if(passesBlockThreshold){
+            console.log("blockPlayer");
             turnCoordinates = computerPlayer.getBlockCoordinates();
         };
 
@@ -391,26 +391,11 @@ var computerPlayer = {
         
         return turnCoordinates;
     },
-    playerIsAboutToWin: function(){
-        var aboutToWin = false;
-        computerPlayer.winCombinationIndexes.forEach(function(winCombinationIndex){
-            var winCombinationCoordinates = computerPlayer.getWinCombinationCoordinates(winCombinationIndex);
-            var winCombinationCopy = winCombinationCoordinates.slice();
-
-                for(i = 0; i < 3; i++){
-                    if(
-                        gameBoard[ winCombinationCopy[0][1] ][ winCombinationCopy[0][0] ] ==  players.humanPlayer.piece &&
-                        gameBoard[ winCombinationCopy[1][1] ][ winCombinationCopy[1][0] ] == players.humanPlayer.piece &&
-                        gameBoard[ winCombinationCopy[2][1] ][ winCombinationCopy[2][0] ] == ""
-                    ){
-                        aboutToWin = true;
-                    }
-                    winCombinationCopy.unshift(winCombinationCopy[2]);
-                    winCombinationCopy.pop();
-                }
-        });
-
-        return aboutToWin;
+    checkBlockThreshold: function(){
+        var blockScale = 100;
+        var blockThreshold = 40;
+        var passNumber = Math.floor(Math.random() * blockScale + 1);
+        return (passNumber > blockThreshold);
     },
     getBlockCoordinates: function(){
         var blockCoordinates = [];
@@ -420,22 +405,43 @@ var computerPlayer = {
             var winCombinationCopy = winCombinationCoordinates.slice();
 
             for(i = 0; i < 3; i++){
-                if(
-                    gameBoard[ winCombinationCopy[0][1] ][ winCombinationCopy[0][0] ] ==  players.humanPlayer.piece &&
-                    gameBoard[ winCombinationCopy[1][1] ][ winCombinationCopy[1][0] ] == players.humanPlayer.piece &&
-                    gameBoard[ winCombinationCopy[2][1] ][ winCombinationCopy[2][0] ] == ""
-                ){
-                    var blockCoordinatesIsSet = (blockCoordinates.length > 0);
-                    if(!blockCoordinatesIsSet){
-                        blockCoordinates = [winCombinationCopy[2][1], winCombinationCopy[2][0]];
-                    }
+                var isAboutToWin = computerPlayer.playerIsAboutToWinAtCombination(winCombinationCopy);
+                var blockCoordinatesIsSet = (blockCoordinates.length > 0);
+
+                if(!blockCoordinatesIsSet && isAboutToWin){
+                    blockCoordinates = computerPlayer.getEmptySpotFromWinCombination(winCombinationCopy);
                 }
-                winCombinationCopy.unshift(winCombinationCopy[2]);
-                winCombinationCopy.pop();
             }
         });
 
+        console.log("blockcoordinates: " + blockCoordinates);
+
         return blockCoordinates;
+    },
+    getEmptySpotFromWinCombination: function(combination){
+        var emptySpot = [];
+
+        combination.forEach(function(coordinate){
+            var isEmpty = gameBoard[coordinate[0]][coordinate[1]] === "";
+            if(isEmpty)
+                emptySpot = coordinate;
+        });
+
+        return emptySpot;
+    },
+    playerIsAboutToWinAtCombination: function(winCombination){
+        var sameCounter = 0;
+        var isAboutToWin = false;
+        
+        winCombination.forEach(function(coordinate){
+            if(gameBoard[coordinate[0]][coordinate[1]] === players.humanPlayer.piece)
+                sameCounter ++;
+        });
+
+        if(sameCounter == 2)
+            isAboutToWin = true;
+
+        return isAboutToWin;
     },
     getWinCombinationCoordinates: function(winCombination){
         var winCoordinates = [];
