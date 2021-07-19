@@ -29,10 +29,12 @@ var computerPlayer = {
     currentTargetIndex: 0,
     currentTargetProgressMarker: 0,
     potentialBaseIndexes: [],
+
     init: function(){
         var initialTarget = computerPlayer.getInitialTarget();
         computerPlayer.setTargetCombination(initialTarget);
     },
+
     getInitialTarget: function(){
         computerPlayer.updatePotentialTargetCombinations();
         
@@ -50,6 +52,7 @@ var computerPlayer = {
 
         console.log("Current target: " + computerPlayer.currentTarget);
     },
+
     updatePotentialTargetCombinations: function(){
         computerPlayer.potentialTargets = [];
 
@@ -61,6 +64,7 @@ var computerPlayer = {
         
         computerPlayer.filterPotentialTargets();
     },
+
     combinationHasPotential: function(combination){
         var hasPotential = true;
 
@@ -85,14 +89,13 @@ var computerPlayer = {
             };
         });
     },
+
     takeTurn: function(){
         currentPlayer = players.computerPlayer;
 
         var turnCoordinates = computerPlayer.getTurnCoordinates();
         var turnIndex = convertBoardCoordinateToIndex(turnCoordinates[0], turnCoordinates[1]);
         
-        // console.log("Turncoordinates: " + turnCoordinates);
-
         computerPlayer.placedPieces.push(turnIndex);
         computerPlayer.potentialBaseIndexes.push(turnIndex);
 
@@ -106,6 +109,7 @@ var computerPlayer = {
         if(game.hasEnded)
             players.humanPlayer.canInteract = false;
     },
+
     getTurnCoordinates: function(){
         var turnCoordinates = [];
 
@@ -114,6 +118,13 @@ var computerPlayer = {
         if(passesBlockThreshold && !aboutTooWin){
             console.log("blockPlayer");
             turnCoordinates = computerPlayer.getBlockCoordinates();
+            
+            var blockCoordinates = turnCoordinates.slice();
+            var blockIndex = convertBoardCoordinateToIndex(blockCoordinates);
+            var blockCoordinateIsInTarget = computerPlayer.currentTarget.indexOf(blockIndex) > 1;
+            if(blockCoordinateIsInTarget){
+                removeIndexFromCurrentTarget(blockIndex);
+            }
         };
 
         var noBlockCoordinatesHaveBeenFound = turnCoordinates.length === 0;
@@ -129,12 +140,14 @@ var computerPlayer = {
         
         return turnCoordinates;
     },
+    
     checkBlockThreshold: function(){
         var blockScale = 100;
         var blockThreshold = 40;
         var passNumber = Math.floor(Math.random() * blockScale + 1);
         return (passNumber > blockThreshold);
     },
+
     getBlockCoordinates: function(){
         var blockCoordinates = [];
 
@@ -151,11 +164,16 @@ var computerPlayer = {
                 }
             }
         });
-
         console.log("blockcoordinates: " + blockCoordinates);
 
         return blockCoordinates;
     },
+
+    removeIndexFromCurrentTarget: function(pieceIndex){
+        var indexOfItem = computerPlayer.currentTarget.indexOf(pieceIndex);
+        computerPlayer.currentTarget.splice(indexOfItem, 1);
+    },
+
     getEmptySpotFromWinCombination: function(combination){
         var emptySpot = [];
 
@@ -167,6 +185,7 @@ var computerPlayer = {
 
         return emptySpot;
     },
+
     playerIsAboutToWinAtCombination: function(winCombination){
         var sameCounter = 0;
         var isAboutToWin = false;
@@ -181,6 +200,7 @@ var computerPlayer = {
 
         return isAboutToWin;
     },
+
     getWinCombinationCoordinates: function(winCombination){
         var winCoordinates = [];
         winCombination.forEach(function(index){
@@ -202,6 +222,7 @@ var computerPlayer = {
             return [randomX, randomY];
         }
     },
+
     getCoordinatesFromTarget(){
         if(computerPlayer.currentTargetIsPossible()){
             return computerPlayer.getCoordinatesFromCurrentTarget();
@@ -216,6 +237,7 @@ var computerPlayer = {
 
         return [];
     },
+
     currentTargetIsPossible: function(){
         var isPossible = true;
         computerPlayer.currentTarget.forEach(function(item){
@@ -228,6 +250,7 @@ var computerPlayer = {
         });
         return isPossible;
     },
+
     getCoordinatesFromCurrentTarget: function(){
         var targetIndex = computerPlayer.currentTarget[computerPlayer.currentTargetProgressMarker];
         turnCoordinates =  convertIndexToBoardCoordinate(targetIndex);
@@ -237,6 +260,7 @@ var computerPlayer = {
 
         return turnCoordinates
     },
+
     getCoordinatesFromNewTarget: function(){
         computerPlayer.currentTargetProgressMarker = 0;
 
@@ -292,10 +316,12 @@ var computerPlayer = {
 
         return baseIndexTarget;
     },
+
     getNewTargetFromPotentialTargets: function(){
         var selectedPotentialTargetIndex = Math.floor(Math.random() * computerPlayer.potentialTargets.length);
         return computerPlayer.potentialTargets[selectedPotentialTargetIndex];
     },
+
     getPotentialCombinationsFromBaseIndex: function(baseIndex){
         var baseIndexCombinations = [];
 
@@ -307,6 +333,7 @@ var computerPlayer = {
 
         return baseIndexCombinations;
     },
+
     filterPlacedPiecesFromTarget: function(target){
         var filteredTarget = [];
         target.forEach(function(boardIndex){
@@ -315,6 +342,7 @@ var computerPlayer = {
         });
         return filteredTarget;
     },
+
     updateTargetIndex: function(){
         if(computerPlayer.currentTargetProgressMarker < computerPlayer.currentTarget.length-1)
         computerPlayer.currentTargetProgressMarker++;
