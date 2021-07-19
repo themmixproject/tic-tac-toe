@@ -370,9 +370,18 @@ var computerPlayer = {
             players.humanPlayer.canInteract = false;
     },
     getTurnCoordinates: function(){
-        var turnCoordinates = [];
+        var playerIsAboutToWin = computerPlayer.playerIsAboutToWin();
+        console.log(playerIsAboutToWin);
 
-        turnCoordinates = computerPlayer.getCoordinatesFromTarget();
+        var turnCoordinates = [];
+        if(playerIsAboutToWin){    
+            turnCoordinates = computerPlayer.getBlockCoordinates();
+        };
+
+        var noBlockCoordinatesHaveBeenFound = turnCoordinates.length === 0;
+        if(noBlockCoordinatesHaveBeenFound){
+            turnCoordinates = computerPlayer.getCoordinatesFromTarget();
+        }
         
         var noCoordinatesFoundFromTarget = turnCoordinates.length === 0;
         if(noCoordinatesFoundFromTarget){
@@ -381,6 +390,61 @@ var computerPlayer = {
         }
         
         return turnCoordinates;
+    },
+    playerIsAboutToWin: function(){
+        var aboutToWin = false;
+        computerPlayer.winCombinationIndexes.forEach(function(winCombinationIndex){
+            var winCombinationCoordinates = computerPlayer.getWinCombinationCoordinates(winCombinationIndex);
+            var winCombinationCopy = winCombinationCoordinates.slice();
+
+                for(i = 0; i < 3; i++){
+                    if(
+                        gameBoard[ winCombinationCopy[0][1] ][ winCombinationCopy[0][0] ] ==  players.humanPlayer.piece &&
+                        gameBoard[ winCombinationCopy[1][1] ][ winCombinationCopy[1][0] ] == players.humanPlayer.piece &&
+                        gameBoard[ winCombinationCopy[2][1] ][ winCombinationCopy[2][0] ] == ""
+                    ){
+                        aboutToWin = true;
+                    }
+                    winCombinationCopy.unshift(winCombinationCopy[2]);
+                    winCombinationCopy.pop();
+                }
+        });
+
+        return aboutToWin;
+    },
+    getBlockCoordinates: function(){
+        var blockCoordinates = [];
+
+        computerPlayer.winCombinationIndexes.forEach(function(winCombinationIndex){
+            var winCombinationCoordinates = computerPlayer.getWinCombinationCoordinates(winCombinationIndex);
+            var winCombinationCopy = winCombinationCoordinates.slice();
+
+            for(i = 0; i < 3; i++){
+                if(
+                    gameBoard[ winCombinationCopy[0][1] ][ winCombinationCopy[0][0] ] ==  players.humanPlayer.piece &&
+                    gameBoard[ winCombinationCopy[1][1] ][ winCombinationCopy[1][0] ] == players.humanPlayer.piece &&
+                    gameBoard[ winCombinationCopy[2][1] ][ winCombinationCopy[2][0] ] == ""
+                ){
+                    var blockCoordinatesIsSet = (blockCoordinates.length > 0);
+                    if(!blockCoordinatesIsSet){
+                        blockCoordinates = [winCombinationCopy[2][1], winCombinationCopy[2][0]];
+                    }
+                }
+                winCombinationCopy.unshift(winCombinationCopy[2]);
+                winCombinationCopy.pop();
+            }
+        });
+
+        return blockCoordinates;
+    },
+    getWinCombinationCoordinates: function(winCombination){
+        var winCoordinates = [];
+        winCombination.forEach(function(index){
+            var coordinates = convertIndexToBoardCoordinate(index);
+            winCoordinates.push(coordinates);
+        });
+
+        return winCoordinates;
     },
     generateRandomBoardSpace: function(){
         var randomX = Math.floor( Math.random() * 3 );
@@ -412,7 +476,7 @@ var computerPlayer = {
         var isPossible = true;
         computerPlayer.currentTarget.forEach(function(item){
             var coordinates = convertIndexToBoardCoordinate(item);
-            var isBlocked = gameBoard[ coordinates[0] ][ coordinates[1] ] === "X";
+            var isBlocked = gameBoard[ coordinates[0] ][ coordinates[1] ] === players.humanPlayer.piece;
 
             if(isBlocked){
                 isPossible = false;
@@ -449,8 +513,6 @@ var computerPlayer = {
 
         var newTargetIsFound = newTarget.length > 0;
         if(newTargetIsFound){
-            // can delete, you can make use of the getCoordiantesFromCurrentTarget() method
-
             newTarget = computerPlayer.filterPlacedPiecesFromTarget(newTarget);
 
             computerPlayer.setTargetCombination(newTarget);
@@ -617,7 +679,7 @@ function checkIfPlayerHasWon(player){
         
         winCombination.forEach( function(boardPoint){
             if( gameBoard[ boardPoint[0] ][ boardPoint[1] ] === player.piece )
-                sameCounter++;
+                sameCounter++;9
         });
 
         if(sameCounter === 3){
