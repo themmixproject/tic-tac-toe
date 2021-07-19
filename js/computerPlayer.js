@@ -118,13 +118,6 @@ var computerPlayer = {
         if(passesBlockThreshold && !aboutTooWin){
             console.log("blockPlayer");
             turnCoordinates = computerPlayer.getBlockCoordinates();
-            
-            var blockCoordinates = turnCoordinates.slice();
-            var blockIndex = convertBoardCoordinateToIndex(blockCoordinates);
-            var blockCoordinateIsInTarget = computerPlayer.currentTarget.indexOf(blockIndex) > 1;
-            if(blockCoordinateIsInTarget){
-                removeIndexFromCurrentTarget(blockIndex);
-            }
         };
 
         var noBlockCoordinatesHaveBeenFound = turnCoordinates.length === 0;
@@ -167,11 +160,6 @@ var computerPlayer = {
         console.log("blockcoordinates: " + blockCoordinates);
 
         return blockCoordinates;
-    },
-
-    removeIndexFromCurrentTarget: function(pieceIndex){
-        var indexOfItem = computerPlayer.currentTarget.indexOf(pieceIndex);
-        computerPlayer.currentTarget.splice(indexOfItem, 1);
     },
 
     getEmptySpotFromWinCombination: function(combination){
