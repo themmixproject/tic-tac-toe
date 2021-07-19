@@ -110,7 +110,8 @@ var computerPlayer = {
         var turnCoordinates = [];
 
         var passesBlockThreshold = computerPlayer.checkBlockThreshold();
-        if(passesBlockThreshold){
+        var aboutTooWin = (computerPlayer.currentTargetIndex - 1) === computerPlayer.currentTarget.length;
+        if(passesBlockThreshold && !aboutTooWin){
             console.log("blockPlayer");
             turnCoordinates = computerPlayer.getBlockCoordinates();
         };
