@@ -26,7 +26,6 @@ var computerPlayer = {
         [0, 4, 8],
         [6, 4, 2]
     ],
-    currentTargetIndex: 0,
     currentTargetProgressMarker: 0,
     potentialBaseIndexes: [],
 
@@ -102,19 +101,28 @@ var computerPlayer = {
         // // update game state
         gameBoard[ turnCoordinates[0] ][ turnCoordinates[1] ] = currentPlayer.piece;
 
-        checkGameEndConditions(currentPlayer);
-
         drawCircleOnCanvas(turnCoordinates[0], turnCoordinates[1]);
 
-        if(game.hasEnded)
-            players.humanPlayer.canInteract = false;
+        checkGameEndConditions(currentPlayer);
+
+        checkGameEndConditions(currentPlayer);
+        if(!game.hasEnded)
+            players.humanPlayer.canInteract = true;
+        else
+            restartGame();
     },
 
     getTurnCoordinates: function(){
         var turnCoordinates = [];
 
         var passesBlockThreshold = computerPlayer.checkBlockThreshold();
-        var aboutTooWin = (computerPlayer.currentTargetIndex - 1) === computerPlayer.currentTarget.length;
+        var aboutTooWin = computerPlayer.currentTargetProgressMarker === (computerPlayer.currentTarget.length - 1);
+        console.log(
+            "Current target: " + JSON.stringify(computerPlayer.currentTarget) + "\n" +
+            "Target index: " + computerPlayer.currentTargetProgressMarker + "\n" +
+            "About to win: " + aboutTooWin
+        );
+
         if(passesBlockThreshold && !aboutTooWin){
             console.log("blockPlayer");
             turnCoordinates = computerPlayer.getBlockCoordinates();
@@ -142,6 +150,9 @@ var computerPlayer = {
     },
 
     getBlockCoordinates: function(){
+        // ADD FUNCTIONALITY TO FIND A NEW BLOCK IF THE PIECE HAS ALREADY BEEN PLACED
+        // IN THAT SPOT
+
         var blockCoordinates = [];
 
         computerPlayer.winCombinationIndexes.forEach(function(winCombinationIndex){
@@ -337,5 +348,38 @@ var computerPlayer = {
         else
             computerPlayer.currentTargetProgressMarker = computerPlayer.currentTarget.length-1;
     },
+
+    resetVariablesToDefault: function(){
+        computerPlayer.placedPieces = [];
+        computerPlayer.isFirstTurn = true;
+        computerPlayer.currentTarget = [];
+        computerPlayer.potentialTargets = [];
+        computerPlayer.checkedPotentialTargets = [];
+        computerPlayer.winCombinationIndexes = [
+            [0, 3, 6],
+            [1, 4, 7],
+            [2, 5, 8],
+
+            [0, 1, 2],
+            [3, 4, 5],
+            [6, 7, 8],
+            
+            [0, 4, 8],
+            [6, 4, 2]
+        ];
+        computerPlayer.targetCombinationIndexes = [
+            [0, 3, 6],
+            [1, 4, 7],
+            [2, 5, 8],
+            [0, 1, 2],
+            [3, 4, 5],
+            [6, 7, 8],
+            [0, 4, 8],
+            [6, 4, 2]
+        ];
+        computerPlayer.currentTargetIndex = 0;
+        computerPlayer.currentTargetProgressMarker = 0;
+        computerPlayer.potentialBaseIndexes = [];
+    }
 };
 computerPlayer.init();

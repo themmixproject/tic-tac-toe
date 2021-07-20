@@ -151,7 +151,7 @@ var gameBoard = [
 var computerHasMoved = false;
 var playerCanClick = true;
 
-game = {
+var game = {
     hasBeenWon: false,
     hasEnded: false,
     winningCombination: []
@@ -327,12 +327,32 @@ function playerTurn(x, y){
     // update board state
     gameBoard[x][y] = currentPlayer.piece;
 
-    checkGameEndConditions(currentPlayer);
-
     drawCrossOnCanvas(x, y);
 
-    if(!game.hasEnded){
+    checkGameEndConditions(currentPlayer);
+    if(!game.hasEnded)
         computerPlayer.takeTurn();
+    else
+        restartGame();
+}
+
+function nearlyFillGrid(){
+    var pieceCounter = 0;
+    for(x = 0; x < 2; x++){
+        for(y = 0; y < 3; y++){
+            if(pieceCounter > 0){
+                gameBoard[x][y] = players.humanPlayer.piece;
+                drawCrossOnCanvas(x, y);
+                pieceCounter --;
+            }
+            else{
+                gameBoard[x][y] = players.computerPlayer.piece;
+                drawCircleOnCanvas(x, y);
+                pieceCounter++;
+            }
+            
+            
+        }
     }
 }
 
@@ -351,6 +371,49 @@ function checkGameEndConditions(player){
 // temporary endGame function
 function endGame(){
     game.hasEnded = true;
+}
+
+function restartGame(){
+    resetGameVariablesToDefault();
+    resetGameBoardToDefault();
+
+    computerPlayer.resetVariablesToDefault();
+    computerPlayer.init();
+
+    clearPiecesFromGrid();
+
+    players.humanPlayer.canInteract = true;
+}
+
+function resetGameVariablesToDefault(){
+    game.hasBeenWon = false;
+    game.hasEnded = false;
+    game.winningCombination = [];
+};
+
+function resetGameBoardToDefault(){
+    gameBoard.forEach(function(item, index){
+        row = gameBoard[index];
+        row.forEach(function(piece, indexOfPiece){
+            row[indexOfPiece] = "";
+        });
+    });
+}
+
+function clearPiecesFromGrid(){
+    for(x = 0; x < 3; x++){
+        for(y = 0; y < 3; y++){
+            clearCoordinates = convertBoardToCanvasCoordinates(x, y);
+            
+            var clearStartX = clearCoordinates.x + 5;
+            var clearEndX =  grid.sectionLength - 10;
+            
+            var clearStartY = clearCoordinates.y + 5;
+            var clearEndY =  grid.sectionLength - 10;
+            
+            canvasContext.clearRect(clearStartX, clearStartY, clearEndX, clearEndY);
+        }
+    }
 }
 
 function checkIfPlayerHasWon(player){
