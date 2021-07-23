@@ -960,6 +960,5 @@ function gameEndDelay(player){
 \#####################################################*/
 
 // Implementation
-// drawGrid();
 addEvents();
 drawGridOnCanvas();
