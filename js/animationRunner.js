@@ -5,13 +5,11 @@ function BasicAnimation(startPoint, endPoint, duration){
     this.currentPosition = 0;
     this.timePassed = 0;
     this.isFinished = false;
-    this.easing = "linear";
     this.easingType = "linear";
 
 
     this.updatePosition = function(){
-        this.currentPosition = easing[this.easing](this.timePassed, this.startPoint, this.endPoint, this.duration);
-
+        this.currentPosition = easing[this.easingType](this.timePassed, this.startPoint, this.endPoint, this.duration);
     }
     this.drawOnCanvas;
 
@@ -68,10 +66,11 @@ var animationRunner = {
             })
             
             if(!animationRunner.animationsAreFinished()){
-                canvasContext.clearRect(0, 0, window.innerWidth, window.innerHeight);
                 animationRunner.runningAnimations.forEach(function(animation){
                     animation.drawOnCanvas(delta);
                 })
+                canvasContext.stroke();
+
                 window.requestAnimationFrame(updateFrame);
             }
         }
@@ -97,7 +96,7 @@ var animationRunner = {
     },
 }
 
-function playCrossAnimationOnBoardCoordinates(x, y){
+function playCrossAnimationOnBoardCoordinates(x, y, callback){
     drawCoordinates = convertBoardToCanvasCoordinates(x, y);
 
     var crossAnimation = new BasicAnimation();
@@ -123,6 +122,9 @@ function playCrossAnimationOnBoardCoordinates(x, y){
     };
 
     crossAnimation.drawOnCanvas = function(){
+        var clearLength = grid.sectionLength - 2;
+        canvasContext.clearRect(drawCoordinates.x + 2 , drawCoordinates.y + 2, clearLength - 2, clearLength - 2);
+
         canvasContext.beginPath();
         
         canvasContext.moveTo(crossAnimation.leftStart, crossAnimation.verticalStart);
@@ -130,8 +132,6 @@ function playCrossAnimationOnBoardCoordinates(x, y){
 
         canvasContext.moveTo(crossAnimation.rightStart, crossAnimation.verticalStart);
         canvasContext.lineTo(crossAnimation.currentRightLinePos, crossAnimation.currentVerticalPos);
-
-        canvasContext.stroke();
     };
 
     crossAnimation.play = function(){
@@ -144,6 +144,10 @@ function playCrossAnimationOnBoardCoordinates(x, y){
     };
 
     crossAnimation.play();
+    
+    setTimeout(function(){
+        callback("string");
+    }, crossAnimation.duration*1000);
 }
 
 

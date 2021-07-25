@@ -327,13 +327,15 @@ function playerTurn(x, y){
     // update board state
     gameBoard[x][y] = currentPlayer.piece;
 
-    drawCrossOnCanvas(x, y);
+    // drawCrossOnCanvas(x, y);
 
-    checkGameEndConditions(currentPlayer);
-    if(!game.hasEnded)
-        computerPlayer.takeTurn();
-    else
-        restartGame();
+    playCrossAnimationOnBoardCoordinates(x, y, function(){
+        checkGameEndConditions(currentPlayer);
+        if(!game.hasEnded)
+            computerPlayer.takeTurn();
+        else
+            restartGame();
+    });
 }
 
 function nearlyFillGrid(){
