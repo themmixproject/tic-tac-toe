@@ -97,9 +97,18 @@ var animationRunner = {
 }
 
 function playCrossAnimationOnBoardCoordinates(x, y, callback){
-    drawCoordinates = convertBoardToCanvasCoordinates(x, y);
+    var crossAnimation = createCrossAnimationObject(x, y);
+    crossAnimation.play();
+    
+    setTimeout(function(){
+        callback();
+    }, crossAnimation.duration*1000);
+}
 
+function createCrossAnimationObject(x, y){
+    var drawCoordinates = convertBoardToCanvasCoordinates(x, y)
     var crossAnimation = new BasicAnimation();
+
     crossAnimation.duration = 1;
 
     crossAnimation.verticalStart = drawCoordinates.y + grid.celPadding;
@@ -114,6 +123,7 @@ function playCrossAnimationOnBoardCoordinates(x, y, callback){
     crossAnimation.currentLeftLinePos = 0;
     crossAnimation.currentRightLinePos = 0;
     crossAnimation.currentVerticalPos = 0;
+
     crossAnimation.updatePosition = function(){
         crossAnimation.currentLeftLinePos = easing[crossAnimation.easingType](crossAnimation.timePassed, crossAnimation.leftStart, crossAnimation.leftEnd, crossAnimation.duration);
         crossAnimation.currentRightLinePos = easing[crossAnimation.easingType](crossAnimation.timePassed, crossAnimation.rightStart, crossAnimation.rightEnd, crossAnimation.duration);
@@ -137,77 +147,12 @@ function playCrossAnimationOnBoardCoordinates(x, y, callback){
     crossAnimation.play = function(){
         animationRunner.runAnimation(crossAnimation);
     };
-    crossAnimation.end = function(){ 
+
+    crossAnimation.end = function(){
         // this.currentPosition = this.endPoint;
         // this.drawOnCanvas();
         crossAnimation.isFinished = true;
     };
 
-    crossAnimation.play();
-    
-    setTimeout(function(){
-        callback("string");
-    }, crossAnimation.duration*1000);
+    return crossAnimation;
 }
-
-
-
-// var crossAnimation = {
-//     duration: 1,
-//     timePassed: 0,
-//     isFinished: false,
-//     easingType: "linear",
-
-//     verticalStart: 0,
-//     verticalEnd: 0,
-
-//     leftStart: 0,
-//     lefEnd: 0,
-    
-//     rightStat: 0,
-//     rightEnd: 0,
-
-//     animateOnBoard: function(boardX, boardY){
-//         var drawCoordinates = convertBoardToCanvasCoordinates(boardX, boardY);
-
-//         crossAnimation.verticalStart = drawCoordinates.y + grid.celPadding;
-//         crossAnimation.verticalEnd = drawCoordinates.y + grid.sectionLength - grid.celPadding;
-    
-//         crossAnimation.leftStart = drawCoordinates.x + grid.celPadding ;
-//         crossAnimation.rightStart = drawCoordinates.x + grid.sectionLength - grid.celPadding;
-    
-//         crossAnimation.leftEnd = drawCoordinates.x + grid.sectionLength - grid.celPadding;
-//         crossAnimation.rightEnd =  drawCoordinates.x + grid.celPadding;
-
-//         crossAnimation.play();
-//     },
-//     currentLeftLinePos: 0,
-//     currentRightLinePos: 0,
-//     currentVerticalPos: 0,
-//     updatePosition: function(){
-//         crossAnimation.currentLeftLinePos = easing[crossAnimation.easingType](crossAnimation.timePassed, crossAnimation.leftStart, crossAnimation.leftEnd, crossAnimation.duration);
-//         crossAnimation.currentRightLinePos = easing[crossAnimation.easingType](crossAnimation.timePassed, crossAnimation.rightStart, crossAnimation.rightEnd, crossAnimation.duration);
-    
-//         crossAnimation.currentVerticalPos = easing[crossAnimation.easingType](crossAnimation.timePassed, crossAnimation.verticalStart, crossAnimation.verticalEnd, crossAnimation.duration);
-//     },
-//     drawOnCanvas: function(){
-//         canvasContext.beginPath();
-        
-//         canvasContext.moveTo(crossAnimation.leftStart, crossAnimation.currentVerticalPost);
-//         canvasContext.lineTo(crossAnimation.currentLeftLinePos, crossAnimation.currentVerticalPost);
-
-//         canvasContext.moveTo(crossAnimation.leftStart, crossAnimation.currentVerticalPost);
-//         canvasContext.lineTo(crossAnimation.currentLeftLinePos, crossAnimation.currentVerticalPost);
-
-//         canvasContext.stroke();
-//     },
-//     play: function(){
-//         animationRunner.runAnimation(crossAnimation);
-//     },
-//     end: function(){ 
-//         // this.currentPosition = this.endPoint;
-//         // this.drawOnCanvas();
-//         crossAnimation.isFinished = true;
-//     }
-
-// }
