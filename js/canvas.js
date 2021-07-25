@@ -329,7 +329,7 @@ function playerTurn(x, y){
 
     // drawCrossOnCanvas(x, y);
 
-    playCrossAnimationOnBoardCoordinates(x, y, function(){
+    playCrossAnimationAtBoardCoordinates(x, y, function(){
         checkGameEndConditions(currentPlayer);
         if(!game.hasEnded)
             computerPlayer.takeTurn();
@@ -964,3 +964,7 @@ function gameEndDelay(player){
 // Implementation
 addEvents();
 drawGridOnCanvas();
+
+// canvasContext.beginPath();
+// canvasContext.arc(100, 75, 50, 0, 2 * Math.PI);
+// canvasContext.stroke();

@@ -101,15 +101,13 @@ var computerPlayer = {
         // // update game state
         gameBoard[ turnCoordinates[0] ][ turnCoordinates[1] ] = currentPlayer.piece;
 
-        drawCircleOnCanvas(turnCoordinates[0], turnCoordinates[1]);
-
-        checkGameEndConditions(currentPlayer);
-
-        checkGameEndConditions(currentPlayer);
-        if(!game.hasEnded)
-            players.humanPlayer.canInteract = true;
-        else
-            restartGame();
+        playCircleAnimationAtBoardCoordinates(turnCoordinates[0], turnCoordinates[1], function(){
+            checkGameEndConditions(currentPlayer);
+            if(!game.hasEnded)
+                players.humanPlayer.canInteract = true;
+            else
+                restartGame();
+        });
     },
 
     getTurnCoordinates: function(){

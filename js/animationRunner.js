@@ -1,46 +1,3 @@
-function BasicAnimation(startPoint, endPoint, duration){
-    this.startPoint = startPoint;
-    this.endPoint = endPoint;
-    this.duration = duration;
-    this.currentPosition = 0;
-    this.timePassed = 0;
-    this.isFinished = false;
-    this.easingType = "linear";
-
-
-    this.updatePosition = function(){
-        this.currentPosition = easing[this.easingType](this.timePassed, this.startPoint, this.endPoint, this.duration);
-    }
-    this.drawOnCanvas;
-
-    this.play = function(){
-        animationRunner.runAnimation(this);
-    };
-
-     this.end = function(){ 
-        // this.currentPosition = this.endPoint;
-        // this.drawOnCanvas();
-        this.isFinished = true;
-    }
-       
-}
-
-animation_1 = new BasicAnimation(20, 200, 1);
-animation_1.drawOnCanvas = function(){
-    canvasContext.beginPath();
-    canvasContext.moveTo(50, 50);
-    canvasContext.lineTo(50, animation_1.currentPosition);
-    canvasContext.stroke();
-}
-
-animation_2 = new BasicAnimation(40, 200, 1);
-animation_2.drawOnCanvas = function(){
-    canvasContext.beginPath();
-    canvasContext.moveTo(50, 80);
-    canvasContext.lineTo(animation_2.currentPosition, 80);
-    canvasContext.stroke();
-}
-
 var animationRunner = {
     isRunning: false,
     runningAnimations: [],
@@ -69,7 +26,6 @@ var animationRunner = {
                 animationRunner.runningAnimations.forEach(function(animation){
                     animation.drawOnCanvas(delta);
                 })
-                canvasContext.stroke();
 
                 window.requestAnimationFrame(updateFrame);
             }
@@ -96,7 +52,34 @@ var animationRunner = {
     },
 }
 
-function playCrossAnimationOnBoardCoordinates(x, y, callback){
+function BasicAnimation(startPoint, endPoint, duration){
+    this.startPoint = startPoint;
+    this.endPoint = endPoint;
+    this.duration = duration;
+    this.currentPosition = 0;
+    this.timePassed = 0;
+    this.isFinished = false;
+    this.easingType = "linear";
+
+
+    this.updatePosition = function(){
+        this.currentPosition = easing[this.easingType](this.timePassed, this.startPoint, this.endPoint, this.duration);
+    }
+    this.drawOnCanvas;
+
+    this.play = function(){
+        animationRunner.runAnimation(this);
+    };
+
+     this.end = function(){ 
+        this.currentPosition = this.endPoint;
+        this.drawOnCanvas();
+        this.isFinished = true;
+    }
+       
+}
+
+function playCrossAnimationAtBoardCoordinates(x, y, callback){
     var crossAnimation = createCrossAnimationObject(x, y);
     crossAnimation.play();
     
@@ -142,6 +125,8 @@ function createCrossAnimationObject(x, y){
 
         canvasContext.moveTo(crossAnimation.rightStart, crossAnimation.verticalStart);
         canvasContext.lineTo(crossAnimation.currentRightLinePos, crossAnimation.currentVerticalPos);
+
+        canvasContext.stroke();
     };
 
     crossAnimation.play = function(){
@@ -149,10 +134,35 @@ function createCrossAnimationObject(x, y){
     };
 
     crossAnimation.end = function(){
-        // this.currentPosition = this.endPoint;
-        // this.drawOnCanvas();
         crossAnimation.isFinished = true;
     };
 
     return crossAnimation;
+}
+
+function playCircleAnimationAtBoardCoordinates(x, y, callback){
+    var circleAnimation = new BasicAnimation(0, 2 * Math.PI, 1);
+
+    circleAnimation.drawOnCanvas = function(){
+        var drawCoordinates = convertBoardToCanvasCoordinates(x, y);
+        var celCenter = {
+            x: drawCoordinates.x + (grid.sectionLength/2),
+            y: drawCoordinates.y + (grid.sectionLength/2)
+        };
+
+        var circleRadius = (grid.sectionLength / 2) - grid.celPadding;
+
+        var clearLength = grid.sectionLength - 2;
+        canvasContext.clearRect(drawCoordinates.x + 2 , drawCoordinates.y + 2, clearLength - 2, clearLength - 2);
+        
+        canvasContext.beginPath();
+        canvasContext.arc(celCenter.x, celCenter.y, circleRadius, 0, circleAnimation.currentPosition);
+        canvasContext.stroke()
+    };
+
+    circleAnimation.play();
+    
+    setTimeout(function(){
+        callback();
+    }, circleAnimation.duration*1000);
 }
