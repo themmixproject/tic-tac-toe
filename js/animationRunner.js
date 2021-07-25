@@ -6,6 +6,7 @@ function BasicAnimation(startPoint, endPoint, duration){
     this.timePassed = 0;
     this.isFinished = false;
     this.easing = "linear";
+    this.easingType = "linear";
 
 
     this.updatePosition = function(){
@@ -51,26 +52,23 @@ var animationRunner = {
         var lastFrameDuration = 0;
         var delta = 0;
         
-        function updateFrame(frameDuration){
-            console.log("hello");
-
+        function updateFrame(frameDuration){            
             delta = (frameDuration - lastFrameDuration) / 1000;
             lastFrameDuration = frameDuration;
     
             delta = Math.min(delta, 0.1);
     
-            animationRunner.runningAnimations.forEach(function(animation, index){
+            animationRunner.runningAnimations.forEach(function(animation, index){                
                 animation.timePassed += delta;
                 animation.updatePosition();
 
                 if(animation.timePassed > animation.duration){
                     animation.end()
-                    return;
                 }
             })
             
             if(!animationRunner.animationsAreFinished()){
-                canvasContext.clearRect(0, 0, innerWidth, innerHeight);
+                canvasContext.clearRect(0, 0, window.innerWidth, window.innerHeight);
                 animationRunner.runningAnimations.forEach(function(animation){
                     animation.drawOnCanvas(delta);
                 })
@@ -98,3 +96,114 @@ var animationRunner = {
             animationRunner.run();
     },
 }
+
+function playCrossAnimationOnBoardCoordinates(x, y){
+    drawCoordinates = convertBoardToCanvasCoordinates(x, y);
+
+    var crossAnimation = new BasicAnimation();
+    crossAnimation.duration = 1;
+
+    crossAnimation.verticalStart = drawCoordinates.y + grid.celPadding;
+    crossAnimation.verticalEnd =  grid.sectionLength - (grid.celPadding*2);
+
+    crossAnimation.leftStart = drawCoordinates.x + grid.celPadding ;
+    crossAnimation.leftEnd = grid.sectionLength -(grid.celPadding*2);
+
+    crossAnimation.rightStart = drawCoordinates.x + grid.sectionLength - grid.celPadding;
+    crossAnimation.rightEnd =  -grid.sectionLength + (grid.celPadding*2);
+
+    crossAnimation.currentLeftLinePos = 0;
+    crossAnimation.currentRightLinePos = 0;
+    crossAnimation.currentVerticalPos = 0;
+    crossAnimation.updatePosition = function(){
+        crossAnimation.currentLeftLinePos = easing[crossAnimation.easingType](crossAnimation.timePassed, crossAnimation.leftStart, crossAnimation.leftEnd, crossAnimation.duration);
+        crossAnimation.currentRightLinePos = easing[crossAnimation.easingType](crossAnimation.timePassed, crossAnimation.rightStart, crossAnimation.rightEnd, crossAnimation.duration);
+
+        crossAnimation.currentVerticalPos = easing[crossAnimation.easingType](crossAnimation.timePassed, crossAnimation.verticalStart, crossAnimation.verticalEnd, crossAnimation.duration);
+    };
+
+    crossAnimation.drawOnCanvas = function(){
+        canvasContext.beginPath();
+        
+        canvasContext.moveTo(crossAnimation.leftStart, crossAnimation.verticalStart);
+        canvasContext.lineTo(crossAnimation.currentLeftLinePos, crossAnimation.currentVerticalPos);
+
+        canvasContext.moveTo(crossAnimation.rightStart, crossAnimation.verticalStart);
+        canvasContext.lineTo(crossAnimation.currentRightLinePos, crossAnimation.currentVerticalPos);
+
+        canvasContext.stroke();
+    };
+
+    crossAnimation.play = function(){
+        animationRunner.runAnimation(crossAnimation);
+    };
+    crossAnimation.end = function(){ 
+        // this.currentPosition = this.endPoint;
+        // this.drawOnCanvas();
+        crossAnimation.isFinished = true;
+    };
+
+    crossAnimation.play();
+}
+
+
+
+// var crossAnimation = {
+//     duration: 1,
+//     timePassed: 0,
+//     isFinished: false,
+//     easingType: "linear",
+
+//     verticalStart: 0,
+//     verticalEnd: 0,
+
+//     leftStart: 0,
+//     lefEnd: 0,
+    
+//     rightStat: 0,
+//     rightEnd: 0,
+
+//     animateOnBoard: function(boardX, boardY){
+//         var drawCoordinates = convertBoardToCanvasCoordinates(boardX, boardY);
+
+//         crossAnimation.verticalStart = drawCoordinates.y + grid.celPadding;
+//         crossAnimation.verticalEnd = drawCoordinates.y + grid.sectionLength - grid.celPadding;
+    
+//         crossAnimation.leftStart = drawCoordinates.x + grid.celPadding ;
+//         crossAnimation.rightStart = drawCoordinates.x + grid.sectionLength - grid.celPadding;
+    
+//         crossAnimation.leftEnd = drawCoordinates.x + grid.sectionLength - grid.celPadding;
+//         crossAnimation.rightEnd =  drawCoordinates.x + grid.celPadding;
+
+//         crossAnimation.play();
+//     },
+//     currentLeftLinePos: 0,
+//     currentRightLinePos: 0,
+//     currentVerticalPos: 0,
+//     updatePosition: function(){
+//         crossAnimation.currentLeftLinePos = easing[crossAnimation.easingType](crossAnimation.timePassed, crossAnimation.leftStart, crossAnimation.leftEnd, crossAnimation.duration);
+//         crossAnimation.currentRightLinePos = easing[crossAnimation.easingType](crossAnimation.timePassed, crossAnimation.rightStart, crossAnimation.rightEnd, crossAnimation.duration);
+    
+//         crossAnimation.currentVerticalPos = easing[crossAnimation.easingType](crossAnimation.timePassed, crossAnimation.verticalStart, crossAnimation.verticalEnd, crossAnimation.duration);
+//     },
+//     drawOnCanvas: function(){
+//         canvasContext.beginPath();
+        
+//         canvasContext.moveTo(crossAnimation.leftStart, crossAnimation.currentVerticalPost);
+//         canvasContext.lineTo(crossAnimation.currentLeftLinePos, crossAnimation.currentVerticalPost);
+
+//         canvasContext.moveTo(crossAnimation.leftStart, crossAnimation.currentVerticalPost);
+//         canvasContext.lineTo(crossAnimation.currentLeftLinePos, crossAnimation.currentVerticalPost);
+
+//         canvasContext.stroke();
+//     },
+//     play: function(){
+//         animationRunner.runAnimation(crossAnimation);
+//     },
+//     end: function(){ 
+//         // this.currentPosition = this.endPoint;
+//         // this.drawOnCanvas();
+//         crossAnimation.isFinished = true;
+//     }
+
+// }
