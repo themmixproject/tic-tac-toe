@@ -1,7 +1,7 @@
 function BasicAnimation(startPoint, endPoint, duration){
-    this.startPoint = 40;
-    this.endPoint = 150;
-    this.duration = 1;
+    this.startPoint = startPoint;
+    this.endPoint = endPoint;
+    this.duration = duration;
     this.currentPosition = 0;
     this.timePassed = 0;
     this.isFinished = false;
