@@ -115,14 +115,8 @@ var computerPlayer = {
 
         var passesBlockThreshold = computerPlayer.checkBlockThreshold();
         var aboutTooWin = computerPlayer.currentTargetProgressMarker === (computerPlayer.currentTarget.length - 1);
-        console.log(
-            "Current target: " + JSON.stringify(computerPlayer.currentTarget) + "\n" +
-            "Target index: " + computerPlayer.currentTargetProgressMarker + "\n" +
-            "About to win: " + aboutTooWin
-        );
 
         if(passesBlockThreshold && !aboutTooWin){
-            console.log("blockPlayer");
             turnCoordinates = computerPlayer.getBlockCoordinates();
         };
 
@@ -133,7 +127,6 @@ var computerPlayer = {
         
         var noCoordinatesFoundFromTarget = turnCoordinates.length === 0;
         if(noCoordinatesFoundFromTarget){
-            console.log("Random turn coordinate");
             turnCoordinates = computerPlayer.generateRandomBoardSpace();
         }
         
@@ -166,7 +159,6 @@ var computerPlayer = {
                 }
             }
         });
-        console.log("blockcoordinates: " + blockCoordinates);
 
         return blockCoordinates;
     },
@@ -264,8 +256,6 @@ var computerPlayer = {
         var newTarget = [];
 
         var baseIndexesAvailable = computerPlayer.potentialBaseIndexes.length > 0;
-
-        console.log("Base indexes available: " + baseIndexesAvailable);
         
         if(baseIndexesAvailable){
             newTarget = computerPlayer.getNewTargetFromBaseIndexes();
@@ -301,8 +291,6 @@ var computerPlayer = {
                 if(combinationsFound && noBaseTargetIsSet){
                     var selectedIndex = Math.floor(Math.random() * potentialCombinations.length);
                     baseIndexTarget =  potentialCombinations[selectedIndex];
-                    
-                    console.log("Base index target: " + baseIndexTarget);
                 }
             }
             else{
