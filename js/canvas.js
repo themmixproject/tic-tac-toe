@@ -313,7 +313,7 @@ function canvasInteraction(clientCoordinates){
             var canvasCelCoordinates = convertBoardToCanvasCoordinates(x, y);
             var hasCollision = hasCollisionWithGridCel(clientCoordinates, canvasCelCoordinates);
             var boardSpaceIsEmpty = gameBoard[x][y] === "";
-            var canInteract = players.humanPlayer.canInteract
+            var canInteract = players.humanPlayer.canInteract;
 
             if(hasCollision && boardSpaceIsEmpty && canInteract && !game.hasEnded)
                 playerTurn(x, y);
@@ -322,12 +322,12 @@ function canvasInteraction(clientCoordinates){
 }
 
 function playerTurn(x, y){
+    players.humanPlayer.canInteract = false;
+
     currentPlayer = players.humanPlayer;
 
     // update board state
     gameBoard[x][y] = currentPlayer.piece;
-
-    // drawCrossOnCanvas(x, y);
 
     playCrossAnimationAtBoardCoordinates(x, y, function(){
         checkGameEndConditions(currentPlayer);
