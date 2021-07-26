@@ -338,26 +338,6 @@ function playerTurn(x, y){
     });
 }
 
-function nearlyFillGrid(){
-    var pieceCounter = 0;
-    for(x = 0; x < 2; x++){
-        for(y = 0; y < 3; y++){
-            if(pieceCounter > 0){
-                gameBoard[x][y] = players.humanPlayer.piece;
-                drawCrossOnCanvas(x, y);
-                pieceCounter --;
-            }
-            else{
-                gameBoard[x][y] = players.computerPlayer.piece;
-                drawCircleOnCanvas(x, y);
-                pieceCounter++;
-            }
-            
-            
-        }
-    }
-}
-
 function checkGameEndConditions(player){
     if( checkIfPlayerHasWon(player) ){
         console.log("player has won");
@@ -376,15 +356,18 @@ function endGame(){
 }
 
 function restartGame(){
-    resetGameVariablesToDefault();
-    resetGameBoardToDefault();
+    players.humanPlayer.canInteract = false;
+    playFadeOutBoardPiecesAnimation(function(){
+        clearPiecesFromGrid();
 
-    computerPlayer.resetVariablesToDefault();
-    computerPlayer.init();
-
-    clearPiecesFromGrid();
-
-    players.humanPlayer.canInteract = true;
+        resetGameVariablesToDefault();
+        resetGameBoardToDefault();
+    
+        computerPlayer.resetVariablesToDefault();
+        computerPlayer.init();
+    
+        players.humanPlayer.canInteract = true;
+    });
 }
 
 function resetGameVariablesToDefault(){

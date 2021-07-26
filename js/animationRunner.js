@@ -92,7 +92,7 @@ function createCrossAnimationObject(x, y){
     var drawCoordinates = convertBoardToCanvasCoordinates(x, y)
     var crossAnimation = new BasicAnimation();
 
-    crossAnimation.duration = 1;
+    crossAnimation.duration = 0.25;
 
     crossAnimation.verticalStart = drawCoordinates.y + grid.celPadding;
     crossAnimation.verticalEnd =  grid.sectionLength - (grid.celPadding*2);
@@ -141,7 +141,7 @@ function createCrossAnimationObject(x, y){
 }
 
 function playCircleAnimationAtBoardCoordinates(x, y, callback){
-    var circleAnimation = new BasicAnimation(0, 2 * Math.PI, 1);
+    var circleAnimation = new BasicAnimation(0, 2 * Math.PI, 0.25);
 
     circleAnimation.drawOnCanvas = function(){
         var drawCoordinates = convertBoardToCanvasCoordinates(x, y);
@@ -165,4 +165,49 @@ function playCircleAnimationAtBoardCoordinates(x, y, callback){
     setTimeout(function(){
         callback();
     }, circleAnimation.duration*1000);
+}
+
+function playFadeOutBoardPiecesAnimation(callback){
+    var fadeOutAnimation = new BasicAnimation(1, -1, 0.25);
+    
+    fadeOutAnimation.drawOnCanvas = function(){
+        canvasContext.globalAlpha = fadeOutAnimation.currentPosition;
+
+        drawBoardPiecesOnCanvas();
+
+        canvasContext.globalAlpha = 1;
+    }
+    
+    fadeOutAnimation.end = function(){ 
+        fadeOutAnimation.currentPosition = 0;
+        fadeOutAnimation.drawOnCanvas();
+        fadeOutAnimation.isFinished = true;
+    }
+
+    fadeOutAnimation.play();
+
+    setTimeout(function(){
+        callback();
+    }, fadeOutAnimation.duration*1000);
+};
+
+function drawBoardPiecesOnCanvas(){
+    clearPiecesFromGrid();
+
+    for(x = 0; x < 3; x++){
+        for(y = 0; y < 3; y++){
+            var boardPiece = gameBoard[x][y];
+            var isEmpty = boardPiece === "";
+            
+            if(!isEmpty)
+                drawBoardPieceAt(x, y, boardPiece);
+        }
+    }
+}
+
+function drawBoardPieceAt(x, y, piece){
+    if(piece === players.humanPlayer.piece )
+        drawCrossOnCanvas(x, y);
+    else
+        drawCircleOnCanvas(x, y);
 }
