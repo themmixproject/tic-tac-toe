@@ -625,6 +625,26 @@ function redraw(){
     });
 }
 
+function nearlyFillGrid(){
+    var pieceCounter = 0;
+    for(x = 0; x < 2; x++){
+        for(y = 0; y < 3; y++){
+            if(pieceCounter > 0){
+                gameBoard[x][y] = players.humanPlayer.piece;
+                drawCrossOnCanvas(x, y);
+                pieceCounter --;
+            }
+            else{
+                gameBoard[x][y] = players.computerPlayer.piece;
+                drawCircleOnCanvas(x, y);
+                pieceCounter++;
+            }
+            
+            
+        }
+    }
+}
+
 
 
 
@@ -947,7 +967,3 @@ function gameEndDelay(player){
 // Implementation
 addEvents();
 drawGridOnCanvas();
-
-// canvasContext.beginPath();
-// canvasContext.arc(100, 75, 50, 0, 2 * Math.PI);
-// canvasContext.stroke();

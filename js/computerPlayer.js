@@ -141,9 +141,6 @@ var computerPlayer = {
     },
 
     getBlockCoordinates: function(){
-        // ADD FUNCTIONALITY TO FIND A NEW BLOCK IF THE PIECE HAS ALREADY BEEN PLACED
-        // IN THAT SPOT
-
         var blockCoordinates = [];
 
         computerPlayer.winCombinationIndexes.forEach(function(winCombinationIndex){
