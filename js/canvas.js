@@ -322,7 +322,7 @@ function canvasInteraction(clientCoordinates){
 }
 
 function playerTurn(x, y){
-    players.humanPlayer.canInteract = false;
+    // players.humanPlayer.canInteract = false;
 
     currentPlayer = players.humanPlayer;
 
@@ -331,8 +331,8 @@ function playerTurn(x, y){
 
     playCrossAnimationAtBoardCoordinates(x, y, function(){
         checkGameEndConditions(currentPlayer);
-        if(!game.hasEnded)
-            computerPlayer.takeTurn();
+        // if(!game.hasEnded)
+            // computerPlayer.takeTurn();
     });
 }
 
@@ -509,6 +509,7 @@ function windowResizeEvent(){
     updateGridSize();
     updateGridAttributes();
     drawGridOnCanvas();
+    drawBoardPiecesOnCanvas();
 }
 
 function clearCanvas(){
@@ -1010,9 +1011,10 @@ function gameEndDelay(player){
 // Implementation
 addEvents();
 drawGridOnCanvas();
+// nearlyFillGrid();
 
-// gameBoard[0][0] = players.humanPlayer.piece;
-// gameBoard[1][0] = players.humanPlayer.piece;
-// drawBoardPiecesOnCanvas();
+gameBoard[0][0] = players.humanPlayer.piece;
+gameBoard[1][0] = players.humanPlayer.piece;
+drawBoardPiecesOnCanvas();
 
 

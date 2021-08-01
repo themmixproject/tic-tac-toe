@@ -2,12 +2,14 @@ var animationRunner = {
     isRunning: false,
     runningAnimations: [],
     animationQueue: [],
-    run: function(){
-        animationRunner.isRunning = true;
-
-        var lastFrameDuration = 0;
-        var delta = 0;
         
+
+    executeFrameUpdater : function(){
+        console.log("call");
+        animationRunner.isRunning = true;
+        var delta = 0;
+        var lastFrameDuration = 0;
+
         function updateFrame(frameDuration){            
             delta = (frameDuration - lastFrameDuration) / 1000;
             lastFrameDuration = frameDuration;
@@ -34,13 +36,16 @@ var animationRunner = {
                 if(noRunningAnimations && queueIsNotEmpty){
                     animationRunner.playNextAnimationFromQueue();
                 }
-
+                
                 window.requestAnimationFrame(updateFrame);
+            }
+            else{
+                animationRunner.isRunning = false;
             }
         }
         updateFrame(0);
-        animationRunner.isRunning = false;
     },
+
     filterCompletedAnimations: function(){
         animationRunner.runningAnimations.forEach(function(animation, index){
             if(animation.isFinished){
@@ -66,7 +71,7 @@ var animationRunner = {
         }
 
         if(!animationRunner.isRunning)
-            animationRunner.run();
+            animationRunner.executeFrameUpdater();
     },
     addAnimationToQueue: function(animation){
         animationRunner.animationQueue.push(animation);
@@ -104,8 +109,6 @@ function BasicAnimation(startPoint, endPoint, duration){
 
 animation_1 = new BasicAnimation(20, 200, 2);
 animation_1.drawOnCanvas = function(){
-    canvasContext.beginPath();
-    canvasContext.moveTo(50, 50);
     canvasContext.lineTo(50, animation_1.currentPosition);
     canvasContext.stroke();
 }
@@ -113,15 +116,14 @@ animation_1.addToQueue = true;
 
 animation_2 = new BasicAnimation(40, 200, 2);
 animation_2.drawOnCanvas = function(){
-    canvasContext.beginPath();
-    canvasContext.moveTo(50, 80);
     canvasContext.lineTo(animation_2.currentPosition, 80);
     canvasContext.stroke();
 }
-animation_2.addToQueue = true;
+// animation_2.addToQueue = true;
 
 // animation_1.play();
-// animation_2.play();
+
+// animation_1.play();
 
 
 
@@ -224,6 +226,7 @@ function playCircleAnimationAtBoardCoordinates(x, y, callback){
 }
 
 function playFadeOutBoardPiecesAnimation(callback){
+
     var fadeOutAnimation = new BasicAnimation(1, -1, 0.25);
     fadeOutAnimation.addToQueue = true;
     
