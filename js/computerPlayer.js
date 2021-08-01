@@ -105,8 +105,6 @@ var computerPlayer = {
             checkGameEndConditions(currentPlayer);
             if(!game.hasEnded)
                 players.humanPlayer.canInteract = true;
-            else
-                restartGame();
         });
     },
 

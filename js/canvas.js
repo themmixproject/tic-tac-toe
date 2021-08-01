@@ -333,20 +333,21 @@ function playerTurn(x, y){
         checkGameEndConditions(currentPlayer);
         if(!game.hasEnded)
             computerPlayer.takeTurn();
-        else
-            restartGame();
     });
 }
 
 function checkGameEndConditions(player){
     if( checkIfPlayerHasWon(player) ){
         console.log("player has won");
-        endGame();
-
+        playWinLineAnimation(function(){
+            endGame();
+            restartGame();
+        })
     }
     else if( checkIfGameHasTied() ){
         console.log("game has been tied");
         endGame();
+        restartGame();
     }
 }
 
@@ -365,7 +366,7 @@ function restartGame(){
     
         computerPlayer.resetVariablesToDefault();
         computerPlayer.init();
-    
+
         players.humanPlayer.canInteract = true;
     });
 }
@@ -643,6 +644,48 @@ function nearlyFillGrid(){
             
         }
     }
+}
+
+function drawBoardPiecesOnCanvas(){
+    clearPiecesFromGrid();
+
+    for(x = 0; x < 3; x++){
+        for(y = 0; y < 3; y++){
+            var boardPiece = gameBoard[x][y];
+            var isEmpty = boardPiece === "";
+            
+            if(!isEmpty)
+                drawBoardPieceAt(x, y, boardPiece);
+        }
+    }
+}
+
+function drawBoardPieceAt(x, y, piece){
+    if(piece === players.humanPlayer.piece )
+        drawCrossOnCanvas(x, y);
+    else
+        drawCircleOnCanvas(x, y);
+}
+
+function drawWinLineOnCanvas(){
+    var winCombination = game.winningCombination.sort();
+    var startBoardCoordinates = winCombination[0];
+    var endBoardCoordinates = winCombination[winCombination.length-1];
+
+    var startCoordinates = convertBoardToCanvasCoordinates(startBoardCoordinates[0], startBoardCoordinates[1]);
+    var endCoordinates = convertBoardToCanvasCoordinates(endBoardCoordinates[0], endBoardCoordinates[1]);
+
+    var halfSection = grid.sectionLength / 2;
+    var horizontalStart = startCoordinates.x + halfSection;
+    var verticalStart = startCoordinates.y + halfSection;
+
+    var horizontalEnd = endCoordinates.x  + halfSection;
+    var verticalEnd = endCoordinates.y + halfSection;
+
+    canvasContext.beginPath();
+    canvasContext.moveTo(horizontalStart, verticalStart);
+    canvasContext.lineTo(horizontalEnd, verticalEnd);
+    canvasContext.stroke();
 }
 
 
@@ -967,3 +1010,9 @@ function gameEndDelay(player){
 // Implementation
 addEvents();
 drawGridOnCanvas();
+
+// gameBoard[0][0] = players.humanPlayer.piece;
+// gameBoard[1][0] = players.humanPlayer.piece;
+// drawBoardPiecesOnCanvas();
+
+

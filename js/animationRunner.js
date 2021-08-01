@@ -12,26 +12,25 @@ var animationRunner = {
             delta = (frameDuration - lastFrameDuration) / 1000;
             lastFrameDuration = frameDuration;
 
-            delta = Math.min(delta, 0.01);
+            delta = Math.min(delta, 0.1);
 
             animationRunner.runningAnimations.forEach(function(animation, index){
 
                 animation.timePassed += delta;
                 animation.updatePosition();
+                animation.drawOnCanvas(delta);
 
                 if(animation.timePassed > animation.duration){
                     animation.end();
                 }
             })
-            animationRunner.filterCompletedAnimations();
-            
-            if(animationRunner.animationsAreRunning()){
-                animationRunner.runningAnimations.forEach(function(animation){
-                    animation.drawOnCanvas(delta);
-                })
 
+            if(animationRunner.animationsAreRunning()){
+                animationRunner.filterCompletedAnimations();
+            
                 var noRunningAnimations = animationRunner.runningAnimations.length === 0;
                 var queueIsNotEmpty = animationRunner.animationQueue.length > 0;
+            
                 if(noRunningAnimations && queueIsNotEmpty){
                     animationRunner.playNextAnimationFromQueue();
                 }
@@ -44,13 +43,14 @@ var animationRunner = {
     },
     filterCompletedAnimations: function(){
         animationRunner.runningAnimations.forEach(function(animation, index){
-            if(animation.isFinished)
+            if(animation.isFinished){
                 animationRunner.runningAnimations.splice(index, 1);
+            }
         });
     },
     playNextAnimationFromQueue: function(){
-        var queueAnimation = animationRunner.animationQueue[0];
-        animationRunner.runningAnimations.push(queueAnimation);
+        var firstInQueue = animationRunner.animationQueue[0];
+        animationRunner.runningAnimations.push(firstInQueue);
         animationRunner.animationQueue.splice(0, 1);
     },
     animationsAreRunning: function(){
@@ -93,7 +93,7 @@ function BasicAnimation(startPoint, endPoint, duration){
         animationRunner.runAnimation(this);
     };
 
-     this.end = function(){ 
+     this.end = function(){
         this.currentPosition = this.endPoint;
         this.drawOnCanvas();
         this.isFinished = true;
@@ -102,23 +102,23 @@ function BasicAnimation(startPoint, endPoint, duration){
 }
 
 
-// animation_1 = new BasicAnimation(20, 200, 1);
-// animation_1.drawOnCanvas = function(){
-//     canvasContext.beginPath();
-//     canvasContext.moveTo(50, 50);
-//     canvasContext.lineTo(50, animation_1.currentPosition);
-//     canvasContext.stroke();
-// }
-// animation_1.addToQueue = true;
+animation_1 = new BasicAnimation(20, 200, 2);
+animation_1.drawOnCanvas = function(){
+    canvasContext.beginPath();
+    canvasContext.moveTo(50, 50);
+    canvasContext.lineTo(50, animation_1.currentPosition);
+    canvasContext.stroke();
+}
+animation_1.addToQueue = true;
 
-// animation_2 = new BasicAnimation(40, 200, 1);
-// animation_2.drawOnCanvas = function(){
-//     canvasContext.beginPath();
-//     canvasContext.moveTo(50, 80);
-//     canvasContext.lineTo(animation_2.currentPosition, 80);
-//     canvasContext.stroke();
-// }
-// animation_2.addToQueue = true;
+animation_2 = new BasicAnimation(40, 200, 2);
+animation_2.drawOnCanvas = function(){
+    canvasContext.beginPath();
+    canvasContext.moveTo(50, 80);
+    canvasContext.lineTo(animation_2.currentPosition, 80);
+    canvasContext.stroke();
+}
+animation_2.addToQueue = true;
 
 // animation_1.play();
 // animation_2.play();
@@ -228,9 +228,16 @@ function playFadeOutBoardPiecesAnimation(callback){
     fadeOutAnimation.addToQueue = true;
     
     fadeOutAnimation.drawOnCanvas = function(){
-        canvasContext.globalAlpha = fadeOutAnimation.currentPosition;
 
+        clearCanvas();
+        drawGridOnCanvas();
+
+        canvasContext.globalAlpha = fadeOutAnimation.currentPosition;
         drawBoardPiecesOnCanvas();
+
+        if(game.hasBeenWon){
+            drawWinLineOnCanvas();
+        };
 
         canvasContext.globalAlpha = 1;
     }
@@ -248,23 +255,73 @@ function playFadeOutBoardPiecesAnimation(callback){
     }, fadeOutAnimation.duration*1000);
 };
 
-function drawBoardPiecesOnCanvas(){
-    clearPiecesFromGrid();
 
-    for(x = 0; x < 3; x++){
-        for(y = 0; y < 3; y++){
-            var boardPiece = gameBoard[x][y];
-            var isEmpty = boardPiece === "";
-            
-            if(!isEmpty)
-                drawBoardPieceAt(x, y, boardPiece);
+
+function playWinLineAnimation(callback){
+    var winCombination = game.winningCombination.sort();
+
+    var startBoardCoordinates = winCombination[0];
+    var endBoardCoordinates = winCombination[winCombination.length-1];
+
+    var startCoordinates = convertBoardToCanvasCoordinates(startBoardCoordinates[0], startBoardCoordinates[1]);
+    var endCoordinates = convertBoardToCanvasCoordinates(endBoardCoordinates[0], endBoardCoordinates[1]);
+
+    var winLineAnimation = new BasicAnimation();
+    winLineAnimation.duration = 1;
+    winLineAnimation.addToQueue = true;
+
+    var halfSection = grid.sectionLength / 2;
+    winLineAnimation.horizontalStart = startCoordinates.x + halfSection;
+    winLineAnimation.verticalStart = startCoordinates.y + halfSection;
+
+    winLineAnimation.horizontalEnd = (endCoordinates.x) - startCoordinates.x + 2;
+    winLineAnimation.verticalEnd = (endCoordinates.y) - startCoordinates.y + 2;
+
+    winLineAnimation.currentHorizontalPos = 0;
+    winLineAnimation.currentVerticalPos = 0;
+
+    winLineAnimation.updatePosition = function(){
+        if(winLineAnimation.horizontalStart != winLineAnimation.horizontalEnd) {
+            winLineAnimation.currentHorizontalPos = easing[winLineAnimation.easingType](winLineAnimation.timePassed, winLineAnimation.horizontalStart, winLineAnimation.horizontalEnd, winLineAnimation.duration);
         }
-    }
+        else{
+            winLineAnimation.currentHorizontalPos = winLineAnimation.horizontalStart;
+        }
+        
+        if(winLineAnimation.verticalStart != winLineAnimation.verticalEnd) {
+            winLineAnimation.currentVerticalPos = easing[winLineAnimation.easingType](winLineAnimation.timePassed, winLineAnimation.verticalStart, winLineAnimation.verticalEnd, winLineAnimation.duration);
+        }
+        else {
+            winLineAnimation.currentVerticalPos = winLineAnimation.verticalStart;
+        }
+        
+    };
+
+    winLineAnimation.drawOnCanvas = function(){
+        clearCanvas();
+
+        drawGridOnCanvas();
+        drawBoardPiecesOnCanvas();
+
+        canvasContext.beginPath();
+        canvasContext.moveTo(winLineAnimation.horizontalStart, winLineAnimation.verticalStart);
+        canvasContext.lineTo(winLineAnimation.currentHorizontalPos, winLineAnimation.currentVerticalPos);
+        canvasContext.stroke();
+    };
+
+    winLineAnimation.play = function(){
+        animationRunner.runAnimation(winLineAnimation);
+    };
+
+    winLineAnimation.end = function(){
+        winLineAnimation.isFinished = true;
+    };
+
+    winLineAnimation.play();
+
+    setTimeout(function(){
+        callback();
+    }, (winLineAnimation.duration*1000));
 }
 
-function drawBoardPieceAt(x, y, piece){
-    if(piece === players.humanPlayer.piece )
-        drawCrossOnCanvas(x, y);
-    else
-        drawCircleOnCanvas(x, y);
-}
+
