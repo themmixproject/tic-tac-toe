@@ -154,7 +154,8 @@ var playerCanClick = true;
 var game = {
     hasBeenWon: false,
     hasEnded: false,
-    winningCombination: []
+    winningCombination: [],
+    endFunctionHasBeenCalled: false
 }
 
 var winCombinations = [
@@ -329,37 +330,57 @@ function playerTurn(x, y){
     // update board state
     gameBoard[x][y] = currentPlayer.piece;
 
+    checkGameEndConditions(currentPlayer);
+    console.log(game.hasEnded);
     playCrossAnimationAtBoardCoordinates(x, y, function(){
-        checkGameEndConditions(currentPlayer);
         // if(!game.hasEnded)
-            // computerPlayer.takeTurn();
+        //     computerPlayer.takeTurn();
+        // else
+        //     endGame();
+        if(game.hasEnded && !game.endFunctionHasBeenCalled){
+            endGame();
+        }
     });
 }
 
 function checkGameEndConditions(player){
-    if( checkIfPlayerHasWon(player) ){
-        console.log("player has won");
-        playWinLineAnimation(function(){
-            endGame();
-            restartGame();
-        })
-    }
-    else if( checkIfGameHasTied() ){
-        console.log("game has been tied");
-        endGame();
-        restartGame();
-    }
+    checkIfPlayerHasWon(player);
+    checkIfGameHasTied();
 }
+
+//     if( checkIfPlayerHasWon(player) ){
+//         console.log("player has won");
+//         // playWinLineAnimation(function(){
+//         //     endGame();
+//         //     restartGame();
+//         // })
+//     }
+//     else if( checkIfGameHasTied() ){
+//         console.log("game has been tied");
+//         // endGame();
+//         // restartGame();
+//     }
+// }
 
 // temporary endGame function
 function endGame(){
-    game.hasEnded = true;
+    game.endFunctionHasBeenCalled = true;
+    if(game.hasBeenWon){
+        playWinLineAnimation(function(){
+            console.log("winline callback");
+            restartGame();
+        });
+    }
+    else if(game.hasEnded){
+        restartGame();
+    }
 }
 
 function restartGame(){
     players.humanPlayer.canInteract = false;
     playFadeOutBoardPiecesAnimation(function(){
-        clearPiecesFromGrid();
+        clearCanvas();
+        drawGridOnCanvas();
 
         resetGameVariablesToDefault();
         resetGameBoardToDefault();
@@ -375,6 +396,7 @@ function resetGameVariablesToDefault(){
     game.hasBeenWon = false;
     game.hasEnded = false;
     game.winningCombination = [];
+    game.endFunctionHasBeenCalled = false;
 };
 
 function resetGameBoardToDefault(){
@@ -418,13 +440,7 @@ function checkIfPlayerHasWon(player){
             game.winningCombination = winCombination;
         }
 
-    });
-
-    if( game.hasBeenWon )
-        return true;
-    else
-        return false
-    
+    });    
 }
 
 function checkIfGameHasTied(){
@@ -438,9 +454,7 @@ function checkIfGameHasTied(){
     })
 
     if(pieceCounter === 9)
-        return true
-    else
-        return false
+        game.hasEnded = true;
 }
 
 function hasCollisionWithGridCel(clientXY, celXY){

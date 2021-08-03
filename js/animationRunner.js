@@ -5,7 +5,6 @@ var animationRunner = {
         
 
     executeFrameUpdater : function(){
-        console.log("call");
         animationRunner.isRunning = true;
         var delta = 0;
         var lastFrameDuration = 0;
@@ -87,6 +86,7 @@ function BasicAnimation(startPoint, endPoint, duration){
     this.isFinished = false;
     this.easingType = "linear";
     this.addToQueue = false;
+    this.callback = null;
 
 
     this.updatePosition = function(){
@@ -102,6 +102,7 @@ function BasicAnimation(startPoint, endPoint, duration){
         this.currentPosition = this.endPoint;
         this.drawOnCanvas();
         this.isFinished = true;
+        this.callback();
     }
        
 }
@@ -138,15 +139,11 @@ animation_2.drawOnCanvas = function(){
 
 
 function playCrossAnimationAtBoardCoordinates(x, y, callback){
-    var crossAnimation = createCrossAnimationObject(x, y);
+    var crossAnimation = createCrossAnimationObject(x, y, callback);
     crossAnimation.play();
-    
-    setTimeout(function(){
-        callback();
-    }, crossAnimation.duration*1000);
 }
 
-function createCrossAnimationObject(x, y){
+function createCrossAnimationObject(x, y, callback){
     var drawCoordinates = convertBoardToCanvasCoordinates(x, y)
     var crossAnimation = new BasicAnimation();
 
@@ -193,7 +190,10 @@ function createCrossAnimationObject(x, y){
 
     crossAnimation.end = function(){
         crossAnimation.isFinished = true;
+        crossAnimation.callback();
     };
+
+    crossAnimation.callback = callback;
 
     return crossAnimation;
 }
@@ -218,11 +218,9 @@ function playCircleAnimationAtBoardCoordinates(x, y, callback){
         canvasContext.stroke()
     };
 
+    circleAnimation.callback = callback;
+
     circleAnimation.play();
-    
-    setTimeout(function(){
-        callback();
-    }, circleAnimation.duration*1000);
 }
 
 function playFadeOutBoardPiecesAnimation(callback){
@@ -249,13 +247,16 @@ function playFadeOutBoardPiecesAnimation(callback){
         fadeOutAnimation.currentPosition = 0;
         fadeOutAnimation.drawOnCanvas();
         fadeOutAnimation.isFinished = true;
+        fadeOutAnimation.callback();
     }
 
+    fadeOutAnimation.callback = callback;
+    
     fadeOutAnimation.play();
 
-    setTimeout(function(){
-        callback();
-    }, fadeOutAnimation.duration*1000);
+    // setTimeout(function(){
+        // callback();
+    // }, fadeOutAnimation.duration*1000);
 };
 
 
@@ -318,13 +319,12 @@ function playWinLineAnimation(callback){
 
     winLineAnimation.end = function(){
         winLineAnimation.isFinished = true;
+        winLineAnimation.callback();
     };
 
-    winLineAnimation.play();
+    winLineAnimation.callback = callback;
 
-    setTimeout(function(){
-        callback();
-    }, (winLineAnimation.duration*1000));
+    winLineAnimation.play();
 }
 
 
