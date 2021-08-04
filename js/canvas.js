@@ -323,7 +323,7 @@ function canvasInteraction(clientCoordinates){
 }
 
 function playerTurn(x, y){
-    // players.humanPlayer.canInteract = false;
+    players.humanPlayer.canInteract = false;
 
     currentPlayer = players.humanPlayer;
 
@@ -337,9 +337,10 @@ function playerTurn(x, y){
         //     computerPlayer.takeTurn();
         // else
         //     endGame();
-        if(game.hasEnded && !game.endFunctionHasBeenCalled){
+        if(game.hasEnded && !game.endFunctionHasBeenCalled)
             endGame();
-        }
+        else
+            computerPlayer.takeTurn();
     });
 }
 
@@ -1027,8 +1028,8 @@ addEvents();
 drawGridOnCanvas();
 // nearlyFillGrid();
 
-gameBoard[0][0] = players.humanPlayer.piece;
-gameBoard[1][0] = players.humanPlayer.piece;
-drawBoardPiecesOnCanvas();
+// gameBoard[0][0] = players.humanPlayer.piece;
+// gameBoard[1][0] = players.humanPlayer.piece;
+// drawBoardPiecesOnCanvas();
 
 

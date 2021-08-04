@@ -103,7 +103,9 @@ var computerPlayer = {
 
         playCircleAnimationAtBoardCoordinates(turnCoordinates[0], turnCoordinates[1], function(){
             checkGameEndConditions(currentPlayer);
-            if(!game.hasEnded)
+            if(game.hasEnded && !game.endFunctionHasBeenCalled)
+                endGame();
+            else
                 players.humanPlayer.canInteract = true;
         });
     },
