@@ -108,35 +108,6 @@ function BasicAnimation(startPoint, endPoint, duration){
 }
 
 
-animation_1 = new BasicAnimation(20, 200, 2);
-animation_1.drawOnCanvas = function(){
-    canvasContext.lineTo(50, animation_1.currentPosition);
-    canvasContext.stroke();
-}
-animation_1.addToQueue = true;
-
-animation_2 = new BasicAnimation(40, 200, 2);
-animation_2.drawOnCanvas = function(){
-    canvasContext.lineTo(animation_2.currentPosition, 80);
-    canvasContext.stroke();
-}
-// animation_2.addToQueue = true;
-
-// animation_1.play();
-
-// animation_1.play();
-
-
-
-
-
-
-
-
-
-
-
-
 
 function playCrossAnimationAtBoardCoordinates(x, y, callback){
     var crossAnimation = createCrossAnimationObject(x, y, callback);
@@ -147,7 +118,8 @@ function createCrossAnimationObject(x, y, callback){
     var drawCoordinates = convertBoardToCanvasCoordinates(x, y)
     var crossAnimation = new BasicAnimation();
 
-    crossAnimation.duration = 1;
+    crossAnimation.duration = 0.7;
+    crossAnimation.easingType = "easeOutQuint";
 
     crossAnimation.verticalStart = drawCoordinates.y + grid.celPadding;
     crossAnimation.verticalEnd =  grid.sectionLength - (grid.celPadding*2);
@@ -199,7 +171,8 @@ function createCrossAnimationObject(x, y, callback){
 }
 
 function playCircleAnimationAtBoardCoordinates(x, y, callback){
-    var circleAnimation = new BasicAnimation(0, 2 * Math.PI, 1);
+    var circleAnimation = new BasicAnimation(0, 2 * Math.PI, 0.7);
+    circleAnimation.easingType = "easeOutQuint";
 
     circleAnimation.drawOnCanvas = function(){
         var drawCoordinates = convertBoardToCanvasCoordinates(x, y);
@@ -253,10 +226,6 @@ function playFadeOutBoardPiecesAnimation(callback){
     fadeOutAnimation.callback = callback;
     
     fadeOutAnimation.play();
-
-    // setTimeout(function(){
-        // callback();
-    // }, fadeOutAnimation.duration*1000);
 };
 
 
@@ -271,7 +240,8 @@ function playWinLineAnimation(callback){
     var endCoordinates = convertBoardToCanvasCoordinates(endBoardCoordinates[0], endBoardCoordinates[1]);
 
     var winLineAnimation = new BasicAnimation();
-    winLineAnimation.duration = 1;
+    winLineAnimation.duration = 0.7;
+    winLineAnimation.easingType = "easeOutQuint";
     winLineAnimation.addToQueue = true;
 
     var halfSection = grid.sectionLength / 2;
