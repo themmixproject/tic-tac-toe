@@ -64,6 +64,7 @@ window.cancelAnimationFrame = (function () {
 })();
 
 var styles = {
+    defaultThickness: 10,
     cross : {
         color : "#4F9BA8",
         cap : "round",
@@ -74,11 +75,6 @@ var styles = {
         cap : "round",
         thickness : 10
     },
-    // gamePiece : {
-    //     crossColor: "#4F9BA8",
-    //     knotColor: "#D9695F",
-
-    // },
     grid : {
         color : "#2D3742",
         thickness : 10,
@@ -129,8 +125,8 @@ function resetContextStyleToDefault(){
 }
 
 grid = {
-    margin: 15,
-    celPadding: 25,
+    margin: 50,
+    celPadding: 20,
     lineLength: 350.5
 };
 grid.sectionLength = grid.lineLength / 3;
@@ -578,12 +574,12 @@ function scaleGridSize(){
 
 function scaleBoardPieces(){
     // (grid.sectionLength - (grid.celPadding))/grid.width
-    var newThickness =  Math.round((0.0285 * grid.width) * 10) / 10;
+    var newThickness =  Math.round((0.028530 * grid.width) * 10) / 10;
 
     setGlobalStyleThickness(newThickness);
 
     // calculated by "grid.celPadding / grid.width";
-    var paddingScaleFactor = 0.0713;
+    var paddingScaleFactor = 0.05706134094151213;
     grid.celPadding = Math.round((paddingScaleFactor * grid.width) * 10) / 10;
 }
 
