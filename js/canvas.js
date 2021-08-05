@@ -129,8 +129,8 @@ function resetContextStyleToDefault(){
 }
 
 grid = {
-    margin: 50,
-    celPadding: 20,
+    margin: 15,
+    celPadding: 25,
     lineLength: 350.5
 };
 grid.sectionLength = grid.lineLength / 3;
@@ -153,12 +153,10 @@ grid.setHeightAndWidth = function(heightWidth){
     grid.height = grid.width;
 }
 
-function updateCanvasOnLoad(){
+function scaleCanvasOnLoad(){
     updateCanvasAttributes();
     updateGridSize();
     updateGridAttributes();
-    drawGridOnCanvas();
-    drawBoardPiecesOnCanvas();
 }
 
 
@@ -585,8 +583,8 @@ function scaleBoardPieces(){
     setGlobalStyleThickness(newThickness);
 
     // calculated by "grid.celPadding / grid.width";
-    var paddingScaleFactor = 0.056205;
-    grid.celPadding = Math.round((paddingScaleFactor * grid.width) * 100) / 100;
+    var paddingScaleFactor = 0.0713;
+    grid.celPadding = Math.round((paddingScaleFactor * grid.width) * 10) / 10;
 }
 
 function setGlobalStyleThickness(newThickness){
@@ -722,5 +720,5 @@ function drawWinLineOnCanvas(){
 // Implementation
 
 addEvents();
-updateCanvasOnLoad();
+scaleCanvasOnLoad();
 drawGridOnCanvas();
