@@ -118,6 +118,8 @@ function createCrossAnimationObject(x, y, callback){
     var drawCoordinates = convertBoardToCanvasCoordinates(x, y)
     var crossAnimation = new BasicAnimation();
 
+    var boardCoordinates = {x: x, y: y};
+
     crossAnimation.duration = 0.7;
     crossAnimation.easingType = "easeOutQuint";
 
@@ -125,7 +127,7 @@ function createCrossAnimationObject(x, y, callback){
     crossAnimation.verticalEnd =  grid.sectionLength - (grid.celPadding*2);
 
     crossAnimation.leftStart = drawCoordinates.x + grid.celPadding ;
-    crossAnimation.leftEnd = grid.sectionLength -(grid.celPadding*2);
+    crossAnimation.leftEnd = grid.sectionLength - (grid.celPadding*2);
 
     crossAnimation.rightStart = drawCoordinates.x + grid.sectionLength - grid.celPadding;
     crossAnimation.rightEnd =  -grid.sectionLength + (grid.celPadding*2);
@@ -142,9 +144,10 @@ function createCrossAnimationObject(x, y, callback){
     };
 
     crossAnimation.drawOnCanvas = function(){
-        var clearLength = grid.sectionLength - 2;
-        canvasContext.clearRect(drawCoordinates.x + 2 , drawCoordinates.y + 2, clearLength - 2, clearLength - 2);
+        loadStyle(styles.cross);
 
+        clearCanvasGridCel(boardCoordinates.x, boardCoordinates.y);
+        
         canvasContext.beginPath();
         
         canvasContext.moveTo(crossAnimation.leftStart, crossAnimation.verticalStart);
@@ -174,7 +177,11 @@ function playCircleAnimationAtBoardCoordinates(x, y, callback){
     var circleAnimation = new BasicAnimation(0, 2 * Math.PI, 0.7);
     circleAnimation.easingType = "easeOutQuint";
 
+    var boardCoordinates = {x: x, y: y};
+
     circleAnimation.drawOnCanvas = function(){
+        loadStyle(styles.circle);
+
         var drawCoordinates = convertBoardToCanvasCoordinates(x, y);
         var celCenter = {
             x: drawCoordinates.x + (grid.sectionLength/2),
@@ -183,8 +190,7 @@ function playCircleAnimationAtBoardCoordinates(x, y, callback){
 
         var circleRadius = (grid.sectionLength / 2) - grid.celPadding;
 
-        var clearLength = grid.sectionLength - 2;
-        canvasContext.clearRect(drawCoordinates.x + 2 , drawCoordinates.y + 2, clearLength - 2, clearLength - 2);
+        clearCanvasGridCel(boardCoordinates.x, boardCoordinates.y);
         
         canvasContext.beginPath();
         canvasContext.arc(celCenter.x, celCenter.y, circleRadius, 0, circleAnimation.currentPosition);
@@ -240,7 +246,7 @@ function playWinLineAnimation(callback){
     var endCoordinates = convertBoardToCanvasCoordinates(endBoardCoordinates[0], endBoardCoordinates[1]);
 
     var winLineAnimation = new BasicAnimation();
-    winLineAnimation.duration = 0.7;
+    winLineAnimation.duration = 0.5;
     winLineAnimation.easingType = "easeOutQuint";
     winLineAnimation.addToQueue = true;
 
@@ -248,8 +254,8 @@ function playWinLineAnimation(callback){
     winLineAnimation.horizontalStart = startCoordinates.x + halfSection;
     winLineAnimation.verticalStart = startCoordinates.y + halfSection;
 
-    winLineAnimation.horizontalEnd = (endCoordinates.x) - startCoordinates.x + 2;
-    winLineAnimation.verticalEnd = (endCoordinates.y) - startCoordinates.y + 2;
+    winLineAnimation.horizontalEnd = (endCoordinates.x) - startCoordinates.x;
+    winLineAnimation.verticalEnd = (endCoordinates.y) - startCoordinates.y;
 
     winLineAnimation.currentHorizontalPos = 0;
     winLineAnimation.currentVerticalPos = 0;
@@ -267,8 +273,7 @@ function playWinLineAnimation(callback){
         }
         else {
             winLineAnimation.currentVerticalPos = winLineAnimation.verticalStart;
-        }
-        
+        }        
     };
 
     winLineAnimation.drawOnCanvas = function(){
@@ -276,6 +281,8 @@ function playWinLineAnimation(callback){
 
         drawGridOnCanvas();
         drawBoardPiecesOnCanvas();
+
+        loadStyle(styles.winLine);
 
         canvasContext.beginPath();
         canvasContext.moveTo(winLineAnimation.horizontalStart, winLineAnimation.verticalStart);

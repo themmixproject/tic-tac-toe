@@ -63,22 +63,22 @@ window.cancelAnimationFrame = (function () {
     };
 })();
 
-var theme = {
+var styles = {
     cross : {
         color : "#4F9BA8",
         cap : "round",
         thickness : 10
     },
-    knot : {
+    circle : {
         color: "#D9695F",
         cap : "round",
         thickness : 10
     },
-    gamePiece : {
-        crossColor: "#4F9BA8",
-        knotColor: "#D9695F",
+    // gamePiece : {
+    //     crossColor: "#4F9BA8",
+    //     knotColor: "#D9695F",
 
-    },
+    // },
     grid : {
         color : "#2D3742",
         thickness : 10,
@@ -89,12 +89,9 @@ var theme = {
         thickness : 10,
         cap : "round"
     },
-    background : "#EFCDBF"
 };
 
-
-
-
+var canvasBackgroundColor = "#EFCDBF";
 
 
 /*#####################################################\
@@ -105,7 +102,7 @@ var theme = {
 
 // setting up canvas
 var canvas = document.getElementById("canvas");
-canvas.style.backgroundColor = theme.background;
+canvas.style.backgroundColor = canvasBackgroundColor;
 
 var canvasContext = canvas.getContext('2d');
 
@@ -116,6 +113,18 @@ var canvasCenter = {
     x: canvas.width / 2,
     y: canvas.height / 2
 };
+
+function loadStyle(style){
+    canvasContext.lineWidth = style.thickness;
+    canvasContext.lineCap = style.cap;
+    canvasContext.strokeStyle = style.color;
+}
+
+function resetContextStyleToDefault(){
+    canvasContext.lineWidth = 1;
+    canvasContext.lineCap = "butt";
+    canvasContext.strokeStyle = "#000000";
+}
 
 grid = {
     margin: 50,
@@ -331,7 +340,6 @@ function playerTurn(x, y){
     gameBoard[x][y] = currentPlayer.piece;
 
     checkGameEndConditions(currentPlayer);
-    console.log(game.hasEnded);
     playCrossAnimationAtBoardCoordinates(x, y, function(){
         if(game.hasEnded && !game.endFunctionHasBeenCalled)
             endGame();
@@ -349,7 +357,6 @@ function endGame(){
     game.endFunctionHasBeenCalled = true;
     if(game.hasBeenWon){
         playWinLineAnimation(function(){
-            console.log("winline callback");
             restartGame();
         });
     }
@@ -456,6 +463,8 @@ function hasCollisionWithGridCel(clientXY, celXY){
 
 
 function drawCrossOnCanvas(boardX, boardY){
+    loadStyle(styles.cross);
+
     var drawCoordinates = convertBoardToCanvasCoordinates(boardX, boardY);
 
     var lineStartY = drawCoordinates.y + grid.celPadding;
@@ -478,6 +487,8 @@ function drawCrossOnCanvas(boardX, boardY){
 }
 
 function drawCircleOnCanvas(boardX, boardY){
+    loadStyle(styles.circle);
+    
     var drawCoordinates = convertBoardToCanvasCoordinates(boardX, boardY);
 
     var celCenterPoint = {
@@ -510,6 +521,16 @@ function windowResizeEvent(){
 
 function clearCanvas(){
     canvasContext.clearRect(0, 0, canvas.width, canvas.height);
+}
+
+function clearCanvasGridCel(x, y){
+    var clearStartCoordinates = convertBoardToCanvasCoordinates(x, y);
+
+    var clearStartX = clearStartCoordinates.x + (grid.celPadding / 2);
+    var clearStartY = clearStartCoordinates.y + (grid.celPadding / 2);
+    var clearLength = grid.sectionLength - ((grid.celPadding/2) * 2);
+
+    canvasContext.clearRect(clearStartX, clearStartY, clearLength, clearLength);
 }
 
 function updateCanvasAttributes(){
@@ -574,6 +595,8 @@ function canvasTouchStartEvent(event){
 }
 
 function drawGridOnCanvas(){
+    loadStyle(styles.grid);
+
     var lineStart = grid.sectionLength * 1.5;
     var lineEnd = -lineStart;
 
@@ -643,6 +666,8 @@ function drawBoardPieceAt(x, y, piece){
 }
 
 function drawWinLineOnCanvas(){
+    loadStyle(styles.winLine);
+
     var winCombination = game.winningCombination.sort();
     var startBoardCoordinates = winCombination[0];
     var endBoardCoordinates = winCombination[winCombination.length-1];
