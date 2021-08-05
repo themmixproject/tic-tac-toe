@@ -48,8 +48,6 @@ var computerPlayer = {
         computerPlayer.checkedPotentialTargets.push(target);
 
         shuffleArray(computerPlayer.currentTarget);
-
-        console.log("Current target: " + computerPlayer.currentTarget);
     },
 
     updatePotentialTargetCombinations: function(){

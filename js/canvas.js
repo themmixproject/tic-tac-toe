@@ -114,6 +114,8 @@ var canvasCenter = {
     y: canvas.height / 2
 };
 
+
+
 function loadStyle(style){
     canvasContext.lineWidth = style.thickness;
     canvasContext.lineCap = style.cap;
@@ -128,7 +130,7 @@ function resetContextStyleToDefault(){
 
 grid = {
     margin: 50,
-    celPadding: 15,
+    celPadding: 20,
     lineLength: 350.5
 };
 grid.sectionLength = grid.lineLength / 3;
@@ -150,6 +152,17 @@ grid.setHeightAndWidth = function(heightWidth){
     //the grid is a square, so height and width are the same
     grid.height = grid.width;
 }
+
+function updateCanvasOnLoad(){
+    updateCanvasAttributes();
+    updateGridSize();
+    updateGridAttributes();
+    drawGridOnCanvas();
+    drawBoardPiecesOnCanvas();
+}
+
+
+
 
 var gameBoard = [
     ["", "", ""],
@@ -400,15 +413,7 @@ function resetGameBoardToDefault(){
 function clearPiecesFromGrid(){
     for(x = 0; x < 3; x++){
         for(y = 0; y < 3; y++){
-            clearCoordinates = convertBoardToCanvasCoordinates(x, y);
-            
-            var clearStartX = clearCoordinates.x + 5;
-            var clearEndX =  grid.sectionLength - 10;
-            
-            var clearStartY = clearCoordinates.y + 5;
-            var clearEndY =  grid.sectionLength - 10;
-            
-            canvasContext.clearRect(clearStartX, clearStartY, clearEndX, clearEndY);
+            clearCanvasGridCel(x, y);
         }
     }
 }
@@ -526,9 +531,9 @@ function clearCanvas(){
 function clearCanvasGridCel(x, y){
     var clearStartCoordinates = convertBoardToCanvasCoordinates(x, y);
 
-    var clearStartX = clearStartCoordinates.x + (grid.celPadding / 2);
-    var clearStartY = clearStartCoordinates.y + (grid.celPadding / 2);
-    var clearLength = grid.sectionLength - ((grid.celPadding/2) * 2);
+    var clearStartX = clearStartCoordinates.x + (grid.celPadding / 2) + 2;
+    var clearStartY = clearStartCoordinates.y + (grid.celPadding / 2) + 2;
+    var clearLength = grid.sectionLength - ((grid.celPadding/2) * 2) - 2;
 
     canvasContext.clearRect(clearStartX, clearStartY, clearLength, clearLength);
 }
@@ -556,9 +561,11 @@ function updateGridSize(){
     if(winWidth > totalMaxWidth && winHeight > totalMaxHeight)
         grid.setHeightAndWidth(grid.maxHeightWidth);
     else if(winWidth < totalMinWidth || winHeight < totalMinHeight)
-        grid.setHeightAndWidth(grid.minHeighWidth)
+        grid.setHeightAndWidth(grid.minHeighWidth);
     else
         scaleGridSize();
+    
+    scaleBoardPieces();
 }
 
 function scaleGridSize(){
@@ -569,6 +576,24 @@ function scaleGridSize(){
         grid.setHeightAndWidth(innerWidth - grid.margin);
     else
         grid.setHeightAndWidth(innerHeight - grid.margin);
+}
+
+function scaleBoardPieces(){
+    // (grid.sectionLength - (grid.celPadding))/grid.width
+    var newThickness =  Math.round((0.0285 * grid.width) * 10) / 10;
+
+    setGlobalStyleThickness(newThickness);
+
+    // calculated by "grid.celPadding / grid.width";
+    var paddingScaleFactor = 0.056205;
+    grid.celPadding = Math.round((paddingScaleFactor * grid.width) * 100) / 100;
+}
+
+function setGlobalStyleThickness(newThickness){
+    styles.grid.thickness = newThickness;
+    styles.circle.thickness = newThickness;
+    styles.cross.thickness = newThickness;
+    styles.winLine.thickness = newThickness;
 }
 
 function updateGridAttributes(){
@@ -695,12 +720,7 @@ function drawWinLineOnCanvas(){
 \#####################################################*/
 
 // Implementation
+
 addEvents();
+updateCanvasOnLoad();
 drawGridOnCanvas();
-// nearlyFillGrid();
-
-// gameBoard[0][0] = players.humanPlayer.piece;
-// gameBoard[1][0] = players.humanPlayer.piece;
-// drawBoardPiecesOnCanvas();
-
-
