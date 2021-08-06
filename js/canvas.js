@@ -110,13 +110,21 @@ var canvasCenter = {
     y: canvas.height / 2
 };
 
-var devicePixelRatio = window.devicePixelRatio;
+var devicePixelRatio = window.devicePixelRatio || 1;
+var backingStoreRatio = canvasContext.webkitBackingStorePixelRatio ||
+canvasContext.mozBackingStorePixelRatio ||
+canvasContext.msBackingStorePixelRatio ||
+canvasContext.oBackingStorePixelRatio ||
+canvasContext.backingStorePixelRatio || 1;
 function fixCanvasDPI(){
-    var style_height = +window.getComputedStyle(canvas).getPropertyValue("height").slice(0, -2);
-    var style_width = +window.getComputedStyle(canvas).getPropertyValue("width").slice(0, -2);
+    var currentWidth = canvas.width
+    var currentHeight = canvas.height;
+    
+    canvas.width = canvas.width * devicePixelRatio;
+    canvas.height = canvas.height * devicePixelRatio;
 
-    canvas.setAttribute("height", style_height * devicePixelRatio);
-    canvas.setAttribute("width", style_width + devicePixelRatio);
+    canvas.style.width = currentWidth + "px";
+    canvas.style.height = currentHeight + "px";
 }
 
 
@@ -133,7 +141,7 @@ function resetContextStyleToDefault(){
 }
 
 grid = {
-    margin: 50,
+    margin: 15,
     celPadding: 20,
     lineLength: 350.5
 };
@@ -519,7 +527,8 @@ function convertBoardToCanvasCoordinates(x, y){
 
 function windowResizeEvent(){
     clearCanvas();
-    updateCanvasAttributes(); 
+    updateCanvasAttributes();
+    fixCanvasDPI();
     updateGridSize();
     updateGridAttributes();
     drawGridOnCanvas();
