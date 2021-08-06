@@ -110,6 +110,14 @@ var canvasCenter = {
     y: canvas.height / 2
 };
 
+var devicePixelRatio = window.devicePixelRatio;
+function fixCanvasDPI(){
+    var style_height = +window.getComputedStyle(canvas).getPropertyValue("height").slice(0, -2);
+    var style_width = +window.getComputedStyle(canvas).getPropertyValue("width").slice(0, -2);
+
+    canvas.setAttribute("height", style_height * devicePixelRatio);
+    canvas.setAttribute("width", style_width + devicePixelRatio);
+}
 
 
 function loadStyle(style){
@@ -715,6 +723,7 @@ function drawWinLineOnCanvas(){
 
 // Implementation
 
+fixCanvasDPI();
 addEvents();
 scaleCanvasOnLoad();
 drawGridOnCanvas();
