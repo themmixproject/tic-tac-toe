@@ -116,6 +116,9 @@ canvasContext.mozBackingStorePixelRatio ||
 canvasContext.msBackingStorePixelRatio ||
 canvasContext.oBackingStorePixelRatio ||
 canvasContext.backingStorePixelRatio || 1;
+
+devicePixelRatio = devicePixelRatio / backingStoreRatio;
+
 function fixCanvasDPI(){
     var currentWidth = canvas.width
     var currentHeight = canvas.height;
