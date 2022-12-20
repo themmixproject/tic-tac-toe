@@ -102,13 +102,7 @@ canvas.style.backgroundColor = canvasBackgroundColor;
 
 var canvasContext = canvas.getContext('2d');
 
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
 
-var canvasCenter = {
-    x: canvas.width / 2,
-    y: canvas.height / 2
-};
 
 var devicePixelRatio = window.devicePixelRatio || 1;
 var backingStoreRatio = canvasContext.webkitBackingStorePixelRatio ||
@@ -119,19 +113,23 @@ canvasContext.backingStorePixelRatio || 1;
 
 devicePixelRatio = devicePixelRatio / backingStoreRatio;
 
-function fixCanvasDPI(){
-    canvas.width = canvas.width * devicePixelRatio;
-    canvas.height = canvas.height * devicePixelRatio;
+canvasContext.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0)
 
-    canvas.style.width = canvas.width + "px";
-    canvas.style.height = canvas.height + "px";
+var height = window.innerHeight;
+var width = window.innerWidth;
 
-    canvasContext.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0)
-    // canvas.getContext("2d").scale(devicePixelRatio, devicePixelRatio);
+canvas.height = height;
+canvas.width = width;
 
-    // canvas.style.width = currentWidth + "px";
-    // canvas.style.height = currentHeight + "px";
-}
+canvas.style.width = width + "px";
+canvas.style.height = height + "px";
+
+canvasCenter = {
+    x: canvas.width / 2,
+    y: canvas.height / 2
+};
+
+
 
 function loadStyle(style){
     canvasContext.lineWidth = style.thickness;
@@ -171,7 +169,7 @@ grid.setHeightAndWidth = function(heightWidth){
 }
 
 function scaleCanvasOnLoad(){
-    updateCanvasAttributes();
+    // updateCanvasAttributes();
     updateGridSize();
     updateGridAttributes();
 }
@@ -533,7 +531,6 @@ function convertBoardToCanvasCoordinates(x, y){
 function windowResizeEvent(){
     clearCanvas();
     updateCanvasAttributes();
-    fixCanvasDPI();
     updateGridSize();
     updateGridAttributes();
     drawGridOnCanvas();
@@ -555,9 +552,14 @@ function clearCanvasGridCel(x, y){
 }
 
 function updateCanvasAttributes(){
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    canvasContext.translate(0.5, 0.5);
+    var height = window.innerHeight * devicePixelRatio;
+    var width = window.innerWidth * devicePixelRatio;
+
+    canvas.height = height;
+    canvas.width = width;
+
+    canvas.style.width = width + "px";
+    canvas.style.height = height + "px";
 
     canvasCenter = {
         x: canvas.width / 2,
@@ -737,7 +739,6 @@ function drawWinLineOnCanvas(){
 
 // Implementation
 
-fixCanvasDPI();
 addEvents();
 scaleCanvasOnLoad();
 drawGridOnCanvas();
