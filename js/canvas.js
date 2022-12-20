@@ -120,23 +120,17 @@ canvasContext.backingStorePixelRatio || 1;
 devicePixelRatio = devicePixelRatio / backingStoreRatio;
 
 function fixCanvasDPI(){
-    var currentWidth = makeCopyOfVariable(canvas.width)
-    var currentHeight = makeCopyOfVariable(canvas.height);
-    
     canvas.width = canvas.width * devicePixelRatio;
     canvas.height = canvas.height * devicePixelRatio;
 
-    canvas.style.width = currentWidth + "px";
-    canvas.style.height = currentHeight + "px";
+    canvas.style.width = canvas.width + "px";
+    canvas.style.height = canvas.height + "px";
 
-    canvas.getContext("2d").scale(devicePixelRatio, devicePixelRatio);
+    canvasContext.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0)
+    // canvas.getContext("2d").scale(devicePixelRatio, devicePixelRatio);
 
     // canvas.style.width = currentWidth + "px";
     // canvas.style.height = currentHeight + "px";
-}
-
-function makeCopyOfVariable(variable){
-    return variable;
 }
 
 function loadStyle(style){
