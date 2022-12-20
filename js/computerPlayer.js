@@ -363,4 +363,4 @@ var computerPlayer = {
         computerPlayer.potentialBaseIndexes = [];
     }
 };
-// computerPlayer.init();
+computerPlayer.init();
