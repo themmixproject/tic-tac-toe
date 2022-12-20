@@ -98,9 +98,10 @@ var canvasBackgroundColor = "#EFCDBF";
 
 // setting up canvas
 var canvas = document.getElementById("canvas");
+canvas.style.backgroundColor = canvasBackgroundColor;
+
 var canvasContext = canvas.getContext('2d');
 
-// canvas.height = window.innerHeight;
 
 
 var devicePixelRatio = window.devicePixelRatio || 1;
@@ -113,27 +114,23 @@ canvasContext.backingStorePixelRatio || 1;
 devicePixelRatio = devicePixelRatio / backingStoreRatio;
 
 
-let height = 500; 
-canvas.height =height * devicePixelRatio;
-canvas.style.height = height + "px"
+var height = window.innerHeight;
+var width = window.innerWidth;
 
-let width = window.innerWidth;
+canvas.height = height * devicePixelRatio;
 canvas.width = width * devicePixelRatio;
-canvas.style.width  = width + "px"
+
+canvas.style.width = width + "px";
+canvas.style.height = height + "px";
+
 canvasContext.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0)
 
-canvasContext.lineWidth = 5
-canvasContext.beginPath();
-canvasContext.arc(100, 75, 50, 0, 2 * Math.PI);
-canvasContext.stroke();
+canvasCenter = {
+    x: canvas.width / 2,
+    y: canvas.height / 2
+};
 
-canvasContext.lineCap = "round"
-canvasContext.lineWidth = 10
-
-canvasContext.beginPath();
-canvasContext.moveTo(100, 300);
-canvasContext.lineTo(300, 150);
-canvasContext.stroke();
+canvasContext.fillRect(width - 200, 0, 200, 200)
 
 
 // function loadStyle(style){
