@@ -165,11 +165,10 @@ var backingStoreRatio =
     canvasContext.msBackingStorePixelRatio ||
     canvasContext.oBackingStorePixelRatio ||
     canvasContext.backingStorePixelRatio ||
-    1;
+    1; 
 
 devicePixelRatio = devicePixelRatio / backingStoreRatio;
 canvasContext.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
-canvasContext.scale(devicePixelRatio, devicePixelRatio)
 
 canvasCenter = {
     x: 0,
@@ -191,7 +190,7 @@ grid.sectionLength = grid.lineLength / 3;
 grid.width = grid.lineLength + grid.margin;
 grid.height = grid.width;
 grid.maxHeightWidth = 350.5;
-grid.minHeighWidth = 200;
+grid.minHeighWidth = 400;
 grid.maxWidth = 350.5;
 grid.minWidth = 200;
 grid.maxHeight = grid.maxWidth;
@@ -530,8 +529,8 @@ function updateCanvasAttributes() {
     var height = window.innerHeight;
     var width = window.innerWidth;
 
-    canvas.height = height * devicePixelRatio;
-    canvas.width = width * devicePixelRatio;
+    canvas.height = height;
+    canvas.width = width;
 
     canvas.style.width = width + "px";
     canvas.style.height = height + "px";
@@ -552,14 +551,21 @@ function scaleCanvasOnLoad() {
 function updateGridSize() {
     var winHeight = window.innerHeight;
     var winWidth = window.innerWidth;
-
+    
+    console.log("height: " + winHeight)
+    console.log("width: " + winWidth)
     var totalMaxWidth = grid.maxWidth + grid.margin;
     var totalMaxHeight = grid.maxHeight + grid.margin;
     var totalMinWidth = grid.minWidth + grid.margin;
     var totalMinHeight = grid.minHeight + grid.margin;
 
-    if (winWidth > totalMaxWidth && winHeight > totalMaxHeight)
+    console.log("total maxheight: " + totalMaxHeight)
+    console.log("total maxwidth: " + totalMaxWidth)
+
+    if (winWidth > totalMaxWidth && winHeight > totalMaxHeight){
+        console.log("max")
         grid.setHeightAndWidth(grid.maxHeightWidth);
+    }
     else if (winWidth < totalMinWidth || winHeight < totalMinHeight)
         grid.setHeightAndWidth(grid.minHeighWidth);
     else scaleGridSize();
@@ -719,4 +725,4 @@ function drawWinLineOnCanvas() {
 
 // addEvents();
 scaleCanvasOnLoad();
-// drawGridOnCanvas();
+drawGridOnCanvas();
