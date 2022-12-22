@@ -97,7 +97,7 @@ canvas.style.backgroundColor = canvasBackgroundColor;
 
 var canvasContext = canvas.getContext("2d");
 
-var devicePixelRatio = window.devicePixelRatio || 1;
+var devicePixelRatio = Math.ceil(window.devicePixelRatio || 1);
 var backingStoreRatio =
     canvasContext.webkitBackingStorePixelRatio ||
     canvasContext.mozBackingStorePixelRatio ||
