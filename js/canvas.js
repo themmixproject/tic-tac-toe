@@ -115,10 +115,8 @@ devicePixelRatio = devicePixelRatio / backingStoreRatio;
 
 var height = window.innerHeight;
 var width = window.innerWidth;
-
 canvas.height = height * devicePixelRatio;
 canvas.width = width * devicePixelRatio;
-
 canvas.style.width = width + "px";
 canvas.style.height = height + "px";
 
@@ -130,7 +128,7 @@ canvasCenter = {
 
 
 function loadStyle(style){
-    canvasContext.lineWidth = style.thickness;
+    canvasContext.lineWidth = style.thickness * devicePixelRatio;
     canvasContext.lineCap = style.cap;
     canvasContext.strokeStyle = style.color;
 }
@@ -638,7 +636,7 @@ function canvasTouchStartEvent(event){
 function drawGridOnCanvas(){
     loadStyle(styles.grid);
 
-    var lineStart = grid.sectionLength * 1.5;
+    var lineStart = grid.sectionLength * 1.5 * devicePixelRatio;
     var lineEnd = -lineStart;
 
     var verticalStart = canvasCenter.y + lineStart;
@@ -650,12 +648,12 @@ function drawGridOnCanvas(){
     canvasContext.beginPath();
 
     for(i=1; i>=-2; i-=2){
-        var lineDifference = grid.sectionLength * 0.5 * i;
+        var lineDifference = grid.sectionLength * 0.5 * i * devicePixelRatio;
         var horizontalDifference = canvasCenter.y - lineDifference;
         var verticalDifference = canvasCenter.x - lineDifference;
 
         canvasContext.moveTo(verticalDifference, verticalStart);
-        canvasContext.lineTo(verticalDifference, verticalEnd);
+        canvasContext.lineTo(verticalDifference, verticalEnd); 
 
         canvasContext.moveTo(horizontalStart, horizontalDifference);
         canvasContext.lineTo(horizontalEnd, horizontalDifference);
