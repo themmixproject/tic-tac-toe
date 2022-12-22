@@ -113,13 +113,11 @@ canvasContext.backingStorePixelRatio || 1;
 
 devicePixelRatio = devicePixelRatio / backingStoreRatio;
 
-canvasContext.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0)
-
 var height = window.innerHeight;
 var width = window.innerWidth;
 
-canvas.height = height;
-canvas.width = width;
+canvas.height = height * devicePixelRatio;
+canvas.width = width * devicePixelRatio;
 
 canvas.style.width = width + "px";
 canvas.style.height = height + "px";
