@@ -94,21 +94,36 @@ var canvasBackgroundColor = "#EFCDBF";
  *|                                                    #
  *| 3. Canvas properties                               #
  *|                                                    #
-\#####################################################*/
+ \#####################################################*/
 
 // setting up canvas
 var canvas = document.getElementById("canvas");
 canvas.style.backgroundColor = canvasBackgroundColor;
-
+ 
 var canvasContext = canvas.getContext('2d');
 
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+var devicePixelRatio = window.devicePixelRatio || 1;
+var backingStoreRatio = canvasContext.webkitBackingStorePixelRatio ||
+canvasContext.mozBackingStorePixelRatio ||
+canvasContext.msBackingStorePixelRatio ||
+canvasContext.oBackingStorePixelRatio ||
+canvasContext.backingStorePixelRatio || 1;
 
+devicePixelRatio = devicePixelRatio / backingStoreRatio;
+
+canvasContext.scale(devicePixelRatio, devicePixelRatio)
+
+var height = window.innerHeight;
+var width = window.innerWidth;
+canvas.height = height * devicePixelRatio;
+canvas.width = width * devicePixelRatio;
+canvas.style.width = width + "px";
+canvas.style.height = height + "px";
 var canvasCenter = {
-    x: canvas.width / 2,
-    y: canvas.height / 2
+    x: width / 2,
+    y: height / 2
 };
+
 
 
 
