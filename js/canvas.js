@@ -102,26 +102,28 @@ canvas.style.backgroundColor = canvasBackgroundColor;
  
 var canvasContext = canvas.getContext('2d');
 
-var devicePixelRatio = window.devicePixelRatio || 1;
-var backingStoreRatio = canvasContext.webkitBackingStorePixelRatio ||
-canvasContext.mozBackingStorePixelRatio ||
-canvasContext.msBackingStorePixelRatio ||
-canvasContext.oBackingStorePixelRatio ||
-canvasContext.backingStorePixelRatio || 1;
+var devicePixelRatio = Math.ceil(window.devicePixelRatio || 1);
+var backingStoreRatio =
+    canvasContext.webkitBackingStorePixelRatio ||
+    canvasContext.mozBackingStorePixelRatio ||
+    canvasContext.msBackingStorePixelRatio ||
+    canvasContext.oBackingStorePixelRatio ||
+    canvasContext.backingStorePixelRatio ||
+    1;
 
 devicePixelRatio = devicePixelRatio / backingStoreRatio;
 
 
-var height = window.innerHeight;
-var width = window.innerWidth;
-canvas.height = height * devicePixelRatio;
+let height = window.innerHeight;
+let width = window.innerWidth;
 canvas.width = width * devicePixelRatio;
-canvas.style.width = width + "px";
+canvas.height = height * devicePixelRatio;
 canvas.style.height = height + "px";
+canvas.style.width = width + "px";
 
-
-canvasContext.scale(devicePixelRatio, devicePixelRatio)
-
+if(window.devicePixelRatio > 1){
+    canvasContext.scale(window.devicePixelRatio, window.devicePixelRatio)
+}
 var canvasCenter = {
     x: width / 2,
     y: height / 2
