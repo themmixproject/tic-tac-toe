@@ -733,5 +733,5 @@ function drawWinLineOnCanvas(){
 // Implementation
 
 addEvents();
-scaleCanvasOnLoad();
+// scaleCanvasOnLoad();
 drawGridOnCanvas();
