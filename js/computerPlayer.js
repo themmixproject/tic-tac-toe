@@ -2,8 +2,8 @@ var computerPlayer = {
     placedPieces: [],
     isFirstTurn: true,
     currentTarget: [],
-    potentialTargets: [],
-    checkedPotentialTargets: [],
+    possibleTargets: [],
+    checkedPossibleTargets: [],
     winCombinationIndexes: [
         [0, 3, 6],
         [1, 4, 7],
@@ -38,24 +38,25 @@ var computerPlayer = {
         computerPlayer.updatePotentialTargetCombinations();
         
         var initialTarget = [];
-        var targetIndex = Math.floor(Math.random() * computerPlayer.potentialTargets.length);
-        initialTarget = computerPlayer.potentialTargets[targetIndex];
+        var targetIndex = Math.floor(Math.random() * computerPlayer.possibleTargets.length);
+        initialTarget = computerPlayer.possibleTargets[targetIndex];
 
         return initialTarget;
     },
     setTargetCombination: function(target){
         computerPlayer.currentTarget = target;
-        computerPlayer.checkedPotentialTargets.push(target);
+
+        computerPlayer.checkedPossibleTargets.push(target);
 
         shuffleArray(computerPlayer.currentTarget);
     },
 
     updatePotentialTargetCombinations: function(){
-        computerPlayer.potentialTargets = [];
+        computerPlayer.possibleTargets = [];
 
         computerPlayer.winCombinationIndexes.forEach(function(combination){
             if(computerPlayer.combinationHasPotential(combination)){
-                computerPlayer.potentialTargets.push(combination);
+                computerPlayer.possibleTargets.push(combination);
             };
         });
         
@@ -78,11 +79,11 @@ var computerPlayer = {
         return hasPotential;
     },
     filterPotentialTargets: function(){
-        computerPlayer.potentialTargets.forEach(function(potentialTarget){
-            var hasBeenChecked = multiDimensionalArrayHasArray(computerPlayer.checkedPotentialTargets, potentialTarget);
+        computerPlayer.possibleTargets.forEach(function(potentialTarget){
+            var hasBeenChecked = multiDimensionalArrayHasArray(computerPlayer.checkedPossibleTargets, potentialTarget);
             if(hasBeenChecked){
-                var indexOfPotentialTarget = computerPlayer.potentialTargets.indexOf(potentialTarget);
-                computerPlayer.potentialTargets.splice(indexOfPotentialTarget, 1);
+                var indexOfPotentialTarget = computerPlayer.possibleTargets.indexOf(potentialTarget);
+                computerPlayer.possibleTargets.splice(indexOfPotentialTarget, 1);
             };
         });
     },
@@ -214,7 +215,7 @@ var computerPlayer = {
                 
         computerPlayer.updatePotentialTargetCombinations();
 
-        var potentialTargetsAvailable = computerPlayer.potentialTargets.length > 0;
+        var potentialTargetsAvailable = computerPlayer.possibleTargets.length > 0;
         if(potentialTargetsAvailable){
             return computerPlayer.getCoordinatesFromNewTarget();
         }
@@ -298,14 +299,14 @@ var computerPlayer = {
     },
 
     getNewTargetFromPotentialTargets: function(){
-        var selectedPotentialTargetIndex = Math.floor(Math.random() * computerPlayer.potentialTargets.length);
-        return computerPlayer.potentialTargets[selectedPotentialTargetIndex];
+        var selectedPotentialTargetIndex = Math.floor(Math.random() * computerPlayer.possibleTargets.length);
+        return computerPlayer.possibleTargets[selectedPotentialTargetIndex];
     },
 
     getPotentialCombinationsFromBaseIndex: function(baseIndex){
         var baseIndexCombinations = [];
 
-        computerPlayer.potentialTargets.forEach(function(combination){
+        computerPlayer.possibleTargets.forEach(function(combination){
             var hasBaseIndex = combination.indexOf(baseIndex) > -1;
             if(hasBaseIndex)
                 baseIndexCombinations.push(combination);
@@ -334,8 +335,8 @@ var computerPlayer = {
         computerPlayer.placedPieces = [];
         computerPlayer.isFirstTurn = true;
         computerPlayer.currentTarget = [];
-        computerPlayer.potentialTargets = [];
-        computerPlayer.checkedPotentialTargets = [];
+        computerPlayer.possibleTargets = [];
+        computerPlayer.checkedPossibleTargets = [];
         computerPlayer.winCombinationIndexes = [
             [0, 3, 6],
             [1, 4, 7],
