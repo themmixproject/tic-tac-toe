@@ -12,7 +12,6 @@ var computerPlayer = {
         [0, 4, 8],
         [6, 4, 2]
     ],
-    checkedPossibleTargets: [],
     winCombinationIndexes: [
         [0, 3, 6],
         [1, 4, 7],
