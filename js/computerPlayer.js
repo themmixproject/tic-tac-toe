@@ -2,7 +2,16 @@ var computerPlayer = {
     placedPieces: [],
     isFirstTurn: true,
     currentTarget: [],
-    possibleTargets: [],
+    possibleTargets: [
+        [0, 3, 6],
+        [1, 4, 7],
+        [2, 5, 8],
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8],
+        [0, 4, 8],
+        [6, 4, 2]
+    ],
     checkedPossibleTargets: [],
     winCombinationIndexes: [
         [0, 3, 6],
@@ -13,16 +22,6 @@ var computerPlayer = {
         [3, 4, 5],
         [6, 7, 8],
         
-        [0, 4, 8],
-        [6, 4, 2]
-    ],
-    targetCombinationIndexes: [
-        [0, 3, 6],
-        [1, 4, 7],
-        [2, 5, 8],
-        [0, 1, 2],
-        [3, 4, 5],
-        [6, 7, 8],
         [0, 4, 8],
         [6, 4, 2]
     ],
@@ -45,47 +44,33 @@ var computerPlayer = {
     },
     setTargetCombination: function(target){
         computerPlayer.currentTarget = target;
-
-        computerPlayer.checkedPossibleTargets.push(target);
-
-        shuffleArray(computerPlayer.currentTarget);
+        computerPlayer.currentTarget = shuffleArray(computerPlayer.currentTarget);
     },
 
     updatePotentialTargetCombinations: function(){
-        computerPlayer.possibleTargets = [];
-
-        computerPlayer.winCombinationIndexes.forEach(function(combination){
-            if(computerPlayer.combinationHasPotential(combination)){
-                computerPlayer.possibleTargets.push(combination);
-            };
-        });
+        var newTargets = []
         
-        computerPlayer.filterPotentialTargets();
+        for(i = 0; i < computerPlayer.possibleTargets.length; i++){
+            var target = computerPlayer.possibleTargets[i]
+            
+            if(computerPlayer.combinationHasPotential(target)){
+                newTargets.push(target)
+            }
+        }
+        computerPlayer.possibleTargets = newTargets;
     },
 
     combinationHasPotential: function(combination){
         var hasPotential = true;
+        for(o = 0; o < combination.length; o++){
+           var coordinate = convertIndexToBoardCoordinate(combination[o]);
 
-        for(i=0; i<combination.length; i++){
-            var item = combination[i];
-
-            coordinate = convertIndexToBoardCoordinate(item);
-            
             var isPossible = gameBoard[ coordinate[0] ][ coordinate[1] ] !== players.humanPlayer.piece;
             if(!isPossible)
                 hasPotential = false;
-        };
-
-        return hasPotential;
-    },
-    filterPotentialTargets: function(){
-        computerPlayer.possibleTargets.forEach(function(potentialTarget){
-            var hasBeenChecked = multiDimensionalArrayHasArray(computerPlayer.checkedPossibleTargets, potentialTarget);
-            if(hasBeenChecked){
-                var indexOfPotentialTarget = computerPlayer.possibleTargets.indexOf(potentialTarget);
-                computerPlayer.possibleTargets.splice(indexOfPotentialTarget, 1);
             };
-        });
+            
+        return hasPotential;
     },
 
     takeTurn: function(){
@@ -299,8 +284,15 @@ var computerPlayer = {
     },
 
     getNewTargetFromPotentialTargets: function(){
-        var selectedPotentialTargetIndex = Math.floor(Math.random() * computerPlayer.possibleTargets.length);
-        return computerPlayer.possibleTargets[selectedPotentialTargetIndex];
+        var potentialTargetIndex = Math.floor(
+            Math.random() * computerPlayer.possibleTargets.length
+        );
+
+        var newTarget =  computerPlayer.possibleTargets[potentialTargetIndex];
+        
+        computerPlayer.possibleTargets.splice(potentialTargetIndex,1)
+
+        return newTarget;
     },
 
     getPotentialCombinationsFromBaseIndex: function(baseIndex){
@@ -335,8 +327,16 @@ var computerPlayer = {
         computerPlayer.placedPieces = [];
         computerPlayer.isFirstTurn = true;
         computerPlayer.currentTarget = [];
-        computerPlayer.possibleTargets = [];
-        computerPlayer.checkedPossibleTargets = [];
+        computerPlayer.possibleTargets = [
+            [0, 3, 6],
+            [1, 4, 7],
+            [2, 5, 8],
+            [0, 1, 2],
+            [3, 4, 5],
+            [6, 7, 8],
+            [0, 4, 8],
+            [6, 4, 2]
+        ],
         computerPlayer.winCombinationIndexes = [
             [0, 3, 6],
             [1, 4, 7],
@@ -346,16 +346,6 @@ var computerPlayer = {
             [3, 4, 5],
             [6, 7, 8],
             
-            [0, 4, 8],
-            [6, 4, 2]
-        ];
-        computerPlayer.targetCombinationIndexes = [
-            [0, 3, 6],
-            [1, 4, 7],
-            [2, 5, 8],
-            [0, 1, 2],
-            [3, 4, 5],
-            [6, 7, 8],
             [0, 4, 8],
             [6, 4, 2]
         ];
