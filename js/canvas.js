@@ -175,8 +175,8 @@ function scaleCanvasOnLoad(){
 var gameBoard = {
     _board: [
         "", "", "",
-        "", "", "", 
-        "", "", "", 
+        "", "", "",
+        "", "", "",
     ],
     setState: function(index, state){
         gameBoard._board[index] = state;
