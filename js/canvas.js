@@ -329,22 +329,6 @@ function convertIndexToBoardCoordinate(index){
     return [x, y]
 }
 
-// function arrayEquals(a, b) {
-//     return Array.isArray(a) &&
-//     Array.isArray(b) &&
-//     a.length === b.length &&
-//     a.every((val, index) => val === b[index]);
-// }
-
-// function multiDimensionalArrayHasArray(multiArray, checkArray){
-//     var containsItem = false;
-//     multiArray.forEach(function(item){
-//         if(arrayEquals(item, checkArray))
-//             containsItem = true;
-//     });
-//     return containsItem;
-// };
-
 function shuffleArray(array) {
     var currentIndex = array.length,  randomIndex;
   
@@ -661,44 +645,6 @@ function drawGridOnCanvas(){
     }
 
     canvasContext.stroke();
-}
-
-
-function nearlyFillGrid(){
-    // var sameCounter = 0;
-    // for(i = 0; i < 8; i++){
-    //     var canvasCoords = convertIndexToBoardCoordinate(i)
-    //     if(i % 2 == 0){
-    //         gameBoard.setState(i, players.humanPlayer.piece);
-    //         drawCrossOnCanvas(canvasCoords[0], canvasCoords[1])
-    //     }
-    //     else{
-    //         gameBoard.setState(i, players.computerPlayer.piece);
-    //         drawCircleOnCanvas(canvasCoords[0], canvasCoords[1])
-    //     }
-    // }
-
-    
-    gameBoard.setState(0, players.humanPlayer.piece);
-    drawCrossOnCanvas(0,0)
-    gameBoard.setState(1, players.humanPlayer.piece);
-    drawCrossOnCanvas(1,0)
-    gameBoard.setState(2, players.computerPlayer.piece);
-    drawCircleOnCanvas(2,0)
-
-    gameBoard.setState(3, players.computerPlayer.piece);
-    drawCircleOnCanvas(0,1)
-    gameBoard.setState(4, players.computerPlayer.piece);
-    drawCircleOnCanvas(1,1)
-    gameBoard.setState(5, players.humanPlayer.piece);
-    drawCrossOnCanvas(2,1)
-
-    gameBoard.setState(6, players.computerPlayer.piece);
-    drawCircleOnCanvas(0,2)
-    gameBoard.setState(7, players.humanPlayer.piece);
-    drawCrossOnCanvas(1,2)
-
-
 }
 
 function drawBoardPiecesOnCanvas(){
