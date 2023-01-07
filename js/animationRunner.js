@@ -239,8 +239,8 @@ function playFadeOutBoardPiecesAnimation(callback){
 function playWinLineAnimation(callback){
     var winCombination = game.winningCombination.sort();
 
-    var startBoardCoordinates = winCombination[0];
-    var endBoardCoordinates = winCombination[winCombination.length-1];
+    var startBoardCoordinates = convertIndexToBoardCoordinate(winCombination[0]);
+    var endBoardCoordinates = convertIndexToBoardCoordinate(winCombination[winCombination.length-1]);
 
     var startCoordinates = convertBoardToCanvasCoordinates(startBoardCoordinates[0], startBoardCoordinates[1]);
     var endCoordinates = convertBoardToCanvasCoordinates(endBoardCoordinates[0], endBoardCoordinates[1]);

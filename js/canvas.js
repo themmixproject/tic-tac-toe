@@ -172,14 +172,36 @@ function scaleCanvasOnLoad(){
     updateGridAttributes();
 }
 
+var gameBoard = {
+    _board: [
+        "", "", "",
+        "", "", "", 
+        "", "", "", 
+    ],
+    setState: function(index, state){
+        gameBoard._board[index] = state;
+    },
+    getState: function(index){
+        return gameBoard._board[index]
+    },
+    getStates: function(indexes){
+        var states=[]
+        for(i = 0; i < indexes.length; i++){
+            var index = indexes[i]
+            states.push(gameBoard._board[index])
+        }
 
-
-
-var gameBoard = [
-    ["", "", ""],
-    ["", "", ""],
-    ["", "", ""]
-];
+        return states;
+    },
+    getAllStates: function(){
+        return gameBoard._board;
+    },
+    reset: function(){
+        for(i = 0; i < gameBoard._board.length; i++){
+            gameBoard._board[i] = ""
+        }
+    }
+}
 
 var computerHasMoved = false;
 var playerCanClick = true;
@@ -193,18 +215,18 @@ var game = {
 
 var winCombinations = [
     // horizontal
-    [ [0, 0], [0, 1], [0, 2] ],
-    [ [1, 0], [1, 1], [1, 2] ],
-    [ [2, 0], [2, 1], [2, 2] ],
-    
-    // vertical
-    [ [0, 0], [1, 0], [2, 0] ],
-    [ [0, 1], [1, 1], [2, 1] ],
-    [ [0, 2], [1, 2], [2, 2] ],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
 
+    // vertical
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    
     // diagonal
-    [ [0, 0], [1, 1], [2, 2] ],
-    [ [0, 2], [1, 1], [2, 0] ]
+    [0, 4, 8],
+    [6, 4, 2]
 ];
 
 
@@ -307,21 +329,21 @@ function convertIndexToBoardCoordinate(index){
     return [x, y]
 }
 
-function arrayEquals(a, b) {
-    return Array.isArray(a) &&
-    Array.isArray(b) &&
-    a.length === b.length &&
-    a.every((val, index) => val === b[index]);
-}
+// function arrayEquals(a, b) {
+//     return Array.isArray(a) &&
+//     Array.isArray(b) &&
+//     a.length === b.length &&
+//     a.every((val, index) => val === b[index]);
+// }
 
-function multiDimensionalArrayHasArray(multiArray, checkArray){
-    var containsItem = false;
-    multiArray.forEach(function(item){
-        if(arrayEquals(item, checkArray))
-            containsItem = true;
-    });
-    return containsItem;
-};
+// function multiDimensionalArrayHasArray(multiArray, checkArray){
+//     var containsItem = false;
+//     multiArray.forEach(function(item){
+//         if(arrayEquals(item, checkArray))
+//             containsItem = true;
+//     });
+//     return containsItem;
+// };
 
 function shuffleArray(array) {
     var currentIndex = array.length,  randomIndex;
@@ -346,22 +368,22 @@ function canvasInteraction(clientCoordinates){
         for(y=0;y<3;y++){
             var canvasCelCoordinates = convertBoardToCanvasCoordinates(x, y);
             var hasCollision = hasCollisionWithGridCel(clientCoordinates, canvasCelCoordinates);
-            var boardSpaceIsEmpty = gameBoard[x][y] === "";
-            var canInteract = players.humanPlayer.canInteract;
+            
+            var boardIndex = convertBoardCoordinateToIndex(x, y);
 
+            var boardSpaceIsEmpty = gameBoard.getState(boardIndex) === "";
+            var canInteract = players.humanPlayer.canInteract;
             if(hasCollision && boardSpaceIsEmpty && canInteract && !game.hasEnded)
-                playerTurn(x, y);
+                playerTurn(x, y, boardIndex);
         }
     }
 }
 
-function playerTurn(x, y){
+function playerTurn(x, y, index){
     players.humanPlayer.canInteract = false;
 
     currentPlayer = players.humanPlayer;
-
-    // update board state
-    gameBoard[x][y] = currentPlayer.piece;
+    gameBoard.setState(index, currentPlayer.piece)
 
     checkGameEndConditions(currentPlayer);
     playCrossAnimationAtBoardCoordinates(x, y, function(){
@@ -396,7 +418,7 @@ function restartGame(){
         drawGridOnCanvas();
 
         resetGameVariablesToDefault();
-        resetGameBoardToDefault();
+        gameBoard.reset()
     
         computerPlayer.resetVariablesToDefault();
         computerPlayer.init();
@@ -412,15 +434,6 @@ function resetGameVariablesToDefault(){
     game.endFunctionHasBeenCalled = false;
 };
 
-function resetGameBoardToDefault(){
-    gameBoard.forEach(function(item, index){
-        row = gameBoard[index];
-        row.forEach(function(piece, indexOfPiece){
-            row[indexOfPiece] = "";
-        });
-    });
-}
-
 function clearPiecesFromGrid(){
     for(x = 0; x < 3; x++){
         for(y = 0; y < 3; y++){
@@ -431,13 +444,12 @@ function clearPiecesFromGrid(){
 
 function checkIfPlayerHasWon(player){
     winCombinations.forEach( function(winCombination){
-        
         var sameCounter = 0;
-        
-        winCombination.forEach( function(boardPoint){
-            if( gameBoard[ boardPoint[0] ][ boardPoint[1] ] === player.piece )
-                sameCounter++;9
-        });
+        for(i = 0; i < winCombination.length; i++){
+            var index = winCombination[i]
+            if(gameBoard.getState(index) === player.piece)
+                sameCounter++;
+        }
 
         if(sameCounter === 3){
             game.hasEnded = true;
@@ -449,17 +461,9 @@ function checkIfPlayerHasWon(player){
 }
 
 function checkIfGameHasTied(){
-    var pieceCounter = 0;
-    
-    gameBoard.forEach(function(boardRow){
-        boardRow.forEach(function(boardPiece){
-            if(boardPiece !== "")
-                pieceCounter++;
-        })
-    })
-
-    if(pieceCounter === 9)
-        game.hasEnded = true;
+    if(gameBoard.getAllStates().indexOf("") === -1){
+        game.hasEnded = true;    
+    };
 }
 
 function hasCollisionWithGridCel(clientXY, celXY){
@@ -661,36 +665,50 @@ function drawGridOnCanvas(){
 
 
 function nearlyFillGrid(){
-    var pieceCounter = 0;
-    for(x = 0; x < 2; x++){
-        for(y = 0; y < 3; y++){
-            if(pieceCounter > 0){
-                gameBoard[x][y] = players.humanPlayer.piece;
-                drawCrossOnCanvas(x, y);
-                pieceCounter --;
-            }
-            else{
-                gameBoard[x][y] = players.computerPlayer.piece;
-                drawCircleOnCanvas(x, y);
-                pieceCounter++;
-            }
-            
-            
-        }
-    }
+    // var sameCounter = 0;
+    // for(i = 0; i < 8; i++){
+    //     var canvasCoords = convertIndexToBoardCoordinate(i)
+    //     if(i % 2 == 0){
+    //         gameBoard.setState(i, players.humanPlayer.piece);
+    //         drawCrossOnCanvas(canvasCoords[0], canvasCoords[1])
+    //     }
+    //     else{
+    //         gameBoard.setState(i, players.computerPlayer.piece);
+    //         drawCircleOnCanvas(canvasCoords[0], canvasCoords[1])
+    //     }
+    // }
+
+    
+    gameBoard.setState(0, players.humanPlayer.piece);
+    drawCrossOnCanvas(0,0)
+    gameBoard.setState(1, players.humanPlayer.piece);
+    drawCrossOnCanvas(1,0)
+    gameBoard.setState(2, players.computerPlayer.piece);
+    drawCircleOnCanvas(2,0)
+
+    gameBoard.setState(3, players.computerPlayer.piece);
+    drawCircleOnCanvas(0,1)
+    gameBoard.setState(4, players.computerPlayer.piece);
+    drawCircleOnCanvas(1,1)
+    gameBoard.setState(5, players.humanPlayer.piece);
+    drawCrossOnCanvas(2,1)
+
+    gameBoard.setState(6, players.computerPlayer.piece);
+    drawCircleOnCanvas(0,2)
+    gameBoard.setState(7, players.humanPlayer.piece);
+    drawCrossOnCanvas(1,2)
+
+
 }
 
 function drawBoardPiecesOnCanvas(){
     clearPiecesFromGrid();
+    for(i = 0; i < gameBoard.getAllStates().length; i++){
+        var boardPiece = gameBoard.getState(i);
+        var coords = convertIndexToBoardCoordinate(i)
 
-    for(x = 0; x < 3; x++){
-        for(y = 0; y < 3; y++){
-            var boardPiece = gameBoard[x][y];
-            var isEmpty = boardPiece === "";
-            
-            if(!isEmpty)
-                drawBoardPieceAt(x, y, boardPiece);
-        }
+        if(boardPiece !== "")
+            drawBoardPieceAt(coords[0], coords[1], boardPiece)
     }
 }
 

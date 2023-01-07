@@ -29,19 +29,19 @@ var computerPlayer = {
 
     init: function(){
         var initialTarget = computerPlayer.getInitialTarget();
-        computerPlayer.setTargetCombination(initialTarget);
+        computerPlayer.setCurrentTarget(initialTarget);
     },
 
     getInitialTarget: function(){
         computerPlayer.updatePotentialTargetCombinations();
-        
+
         var initialTarget = [];
         var targetIndex = Math.floor(Math.random() * computerPlayer.possibleTargets.length);
         initialTarget = computerPlayer.possibleTargets[targetIndex];
 
         return initialTarget;
     },
-    setTargetCombination: function(target){
+    setCurrentTarget: function(target){
         computerPlayer.currentTarget = target;
         computerPlayer.currentTarget = shuffleArray(computerPlayer.currentTarget);
     },
@@ -49,7 +49,7 @@ var computerPlayer = {
     updatePotentialTargetCombinations: function(){
         var newTargets = []
         
-        for(i = 0; i < computerPlayer.possibleTargets.length; i++){
+        for(var i = 0; i < computerPlayer.possibleTargets.length; i++){
             var target = computerPlayer.possibleTargets[i]
             
             if(computerPlayer.combinationHasPotential(target)){
@@ -60,41 +60,41 @@ var computerPlayer = {
     },
 
     combinationHasPotential: function(combination){
-        var hasPotential = true;
-        for(o = 0; o < combination.length; o++){
-           var coordinate = convertIndexToBoardCoordinate(combination[o]);
-
-            var isPossible = gameBoard[ coordinate[0] ][ coordinate[1] ] !== players.humanPlayer.piece;
-            if(!isPossible)
-                hasPotential = false;
-            };
-            
-        return hasPotential;
+        var opponentPiece = players.humanPlayer.piece;
+        var combinationState = gameBoard.getStates(combination)
+        var isPossible = combinationState.indexOf(opponentPiece) < 0;
+        
+        return isPossible;
     },
 
     takeTurn: function(){
         currentPlayer = players.computerPlayer;
 
-        var turnCoordinates = computerPlayer.getTurnCoordinates();
-        var turnIndex = convertBoardCoordinateToIndex(turnCoordinates[0], turnCoordinates[1]);
-        
+        var turnIndex = computerPlayer.getTurnCoordinates();        
         computerPlayer.placedPieces.push(turnIndex);
         computerPlayer.potentialBaseIndexes.push(turnIndex);
 
-        // // update game state
-        gameBoard[ turnCoordinates[0] ][ turnCoordinates[1] ] = currentPlayer.piece;
+        gameBoard.setState(turnIndex, currentPlayer.piece);
 
-        playCircleAnimationAtBoardCoordinates(turnCoordinates[0], turnCoordinates[1], function(){
+        var animationCoords = convertIndexToBoardCoordinate(turnIndex);
+        playCircleAnimationAtBoardCoordinates(animationCoords[0], animationCoords[1], function(){
             checkGameEndConditions(currentPlayer);
             if(game.hasEnded && !game.endFunctionHasBeenCalled)
                 endGame();
             else
                 players.humanPlayer.canInteract = true;
         });
+        // drawCircleOnCanvas(animationCoords[0], animationCoords[1]);
+        // checkGameEndConditions(currentPlayer);
+        // if(game.hasEnded && !game.endFunctionHasBeenCalled)
+        //         endGame();
+        // else
+        //     players.humanPlayer.canInteract = true;
+
     },
 
     getTurnCoordinates: function(){
-        var turnCoordinates = [];
+        var turnCoordinates = -1;
 
         var passesBlockThreshold = computerPlayer.checkBlockThreshold();
         var aboutTooWin = computerPlayer.currentTargetProgressMarker === (computerPlayer.currentTarget.length - 1);
@@ -103,12 +103,12 @@ var computerPlayer = {
             turnCoordinates = computerPlayer.getBlockCoordinates();
         };
 
-        var noBlockCoordinatesHaveBeenFound = turnCoordinates.length === 0;
+        var noBlockCoordinatesHaveBeenFound = turnCoordinates === -1;
         if(noBlockCoordinatesHaveBeenFound){
             turnCoordinates = computerPlayer.getCoordinatesFromTarget();
         }
         
-        var noCoordinatesFoundFromTarget = turnCoordinates.length === 0;
+        var noCoordinatesFoundFromTarget = turnCoordinates === -1;
         if(noCoordinatesFoundFromTarget){
             turnCoordinates = computerPlayer.generateRandomBoardSpace();
         }
@@ -118,82 +118,66 @@ var computerPlayer = {
     
     checkBlockThreshold: function(){
         var blockScale = 100;
-        var blockThreshold = 40;
+        var blockThreshold = 30;
         var passNumber = Math.floor(Math.random() * blockScale + 1);
-        return (passNumber > blockThreshold);
+        var check = passNumber > blockThreshold;
+        return check;
+        // return true;
     },
 
     getBlockCoordinates: function(){
-        var blockCoordinates = [];
+        var blockIndex = -1;
 
-        computerPlayer.winCombinationIndexes.forEach(function(winCombinationIndex){
-            var winCombinationCoordinates = computerPlayer.getWinCombinationCoordinates(winCombinationIndex);
-            var winCombinationCopy = winCombinationCoordinates.slice();
+        for(var i = 0; i < computerPlayer.winCombinationIndexes.length; i++){
+            var combination = computerPlayer.winCombinationIndexes[i];
+            var isAboutToWin = computerPlayer.playerIsAboutToWinAtCombination(combination);
 
-            for(i = 0; i < 3; i++){
-                var isAboutToWin = computerPlayer.playerIsAboutToWinAtCombination(winCombinationCopy);
-                var blockCoordinatesIsSet = (blockCoordinates.length > 0);
-
-                if(!blockCoordinatesIsSet && isAboutToWin){
-                    blockCoordinates = computerPlayer.getEmptySpotFromWinCombination(winCombinationCopy);
-                }
+            var blockIndexIsSet = blockIndex > -1;
+            if(!blockIndexIsSet && isAboutToWin){
+                var combinationIndex = gameBoard.getStates(combination).indexOf("")
+                blockIndex = combination[combinationIndex]
             }
-        });
 
-        return blockCoordinates;
+        }
+
+        return blockIndex;
     },
 
     getEmptySpotFromWinCombination: function(combination){
-        var emptySpot = [];
-
-        combination.forEach(function(coordinate){
-            var isEmpty = gameBoard[coordinate[0]][coordinate[1]] === "";
-            if(isEmpty)
-                emptySpot = coordinate;
-        });
-
-        return emptySpot;
+        return gameBoard.getStates(combination).indexOf("")
     },
 
     playerIsAboutToWinAtCombination: function(winCombination){
         var sameCounter = 0;
         var isAboutToWin = false;
-        
-        winCombination.forEach(function(coordinate){
-            if(gameBoard[coordinate[0]][coordinate[1]] === players.humanPlayer.piece)
-                sameCounter ++;
-        });
+        var hasEmptySpot = gameBoard.getStates(winCombination).indexOf("") > -1;
 
-        if(sameCounter == 2)
+        for(var i = 0; i < winCombination.length; i++){
+            var state = gameBoard.getState(winCombination[i]);
+            if(state === players.humanPlayer.piece)
+                sameCounter++;
+        }
+
+        if(sameCounter == 2 && hasEmptySpot)
             isAboutToWin = true;
-
+        
         return isAboutToWin;
     },
 
-    getWinCombinationCoordinates: function(winCombination){
-        var winCoordinates = [];
-        winCombination.forEach(function(index){
-            var coordinates = convertIndexToBoardCoordinate(index);
-            winCoordinates.push(coordinates);
-        });
-
-        return winCoordinates;
-    },
     generateRandomBoardSpace: function(){
-        var randomX = Math.floor( Math.random() * 3 );
-        var randomY = Math.floor( Math.random() * 3 );
+        var randomIndex = Math.floor(Math.random() * 9)
 
-        var isEmpty = gameBoard[ randomX ][ randomY ] === "";
+        var isEmpty = gameBoard.getState(randomIndex) === "";
         if(!isEmpty){
             return computerPlayer.generateRandomBoardSpace();
         }
         else{
-            return [randomX, randomY];
+            return randomIndex;
         }
     },
 
     getCoordinatesFromTarget(){
-        if(computerPlayer.currentTargetIsPossible()){
+        if(computerPlayer.combinationHasPotential(computerPlayer.currentTarget)){
             return computerPlayer.getCoordinatesFromCurrentTarget();
         }
                 
@@ -204,30 +188,16 @@ var computerPlayer = {
             return computerPlayer.getCoordinatesFromNewTarget();
         }
 
-        return [];
-    },
-
-    currentTargetIsPossible: function(){
-        var isPossible = true;
-        computerPlayer.currentTarget.forEach(function(item){
-            var coordinates = convertIndexToBoardCoordinate(item);
-            var isBlocked = gameBoard[ coordinates[0] ][ coordinates[1] ] === players.humanPlayer.piece;
-
-            if(isBlocked){
-                isPossible = false;
-            }
-        });
-        return isPossible;
+        return -1;
     },
 
     getCoordinatesFromCurrentTarget: function(){
         var targetIndex = computerPlayer.currentTarget[computerPlayer.currentTargetProgressMarker];
-        turnCoordinates =  convertIndexToBoardCoordinate(targetIndex);
-
+       
         // WATCH OUT FOR THIS LINE OF CODE
         computerPlayer.updateTargetIndex();
 
-        return turnCoordinates
+        return targetIndex;
     },
 
     getCoordinatesFromNewTarget: function(){
@@ -250,36 +220,49 @@ var computerPlayer = {
         if(newTargetIsFound){
             newTarget = computerPlayer.filterPlacedPiecesFromTarget(newTarget);
 
-            computerPlayer.setTargetCombination(newTarget);
+            computerPlayer.setCurrentTarget(newTarget);
     
             return computerPlayer.getCoordinatesFromCurrentTarget();
         }
 
-        return newTarget;
+        return -1;
        
     },
     getNewTargetFromBaseIndexes: function(){
         var baseIndexTarget = [];
-
-        computerPlayer.potentialBaseIndexes.forEach(function(baseIndex, index){
-            var potentialCombinations = computerPlayer.getPotentialCombinationsFromBaseIndex(baseIndex);
-            var combinationsFound = potentialCombinations.length > 0;
+        var potentialCombinations = computerPlayer.getPotentialCombinationsFromBaseIndexes();
+        var combinationsFound = potentialCombinations.length > 0;
 
             if(combinationsFound){
                 var noBaseTargetIsSet = baseIndexTarget.length === 0;
                 
-                if(combinationsFound && noBaseTargetIsSet){
+                if(noBaseTargetIsSet){
                     var selectedIndex = Math.floor(Math.random() * potentialCombinations.length);
                     baseIndexTarget =  potentialCombinations[selectedIndex];
                 }
             }
-            else{
-                computerPlayer.potentialBaseIndexes.slice(index, 1);
-            }
-
-        });
 
         return baseIndexTarget;
+    },
+    
+    getPotentialCombinationsFromBaseIndexes: function(){
+        var combinations = []
+
+        computerPlayer.possibleTargets.forEach(function(combination){
+            var hasBaseIndex = false
+
+            for(var i = 0; i < computerPlayer.potentialBaseIndexes.length; i++){
+                var baseIndex = computerPlayer.potentialBaseIndexes[i]
+
+                if(combination.indexOf(baseIndex) > -1)
+                    hasBaseIndex = true
+            }
+
+            if(hasBaseIndex)
+                combinations.push(combination)
+        })
+
+        return combinations;
     },
 
     getNewTargetFromPotentialTargets: function(){
@@ -294,24 +277,15 @@ var computerPlayer = {
         return newTarget;
     },
 
-    getPotentialCombinationsFromBaseIndex: function(baseIndex){
-        var baseIndexCombinations = [];
-
-        computerPlayer.possibleTargets.forEach(function(combination){
-            var hasBaseIndex = combination.indexOf(baseIndex) > -1;
-            if(hasBaseIndex)
-                baseIndexCombinations.push(combination);
-        });
-
-        return baseIndexCombinations;
-    },
 
     filterPlacedPiecesFromTarget: function(target){
         var filteredTarget = [];
-        target.forEach(function(boardIndex){
-            if(computerPlayer.placedPieces.indexOf(boardIndex) < 0)
-                filteredTarget.push(boardIndex)
-        });
+        for(var i = 0; i < target.length; i++){
+            var targetIndex = target[i];
+            if(gameBoard.getStates(target)[i] === "")
+                filteredTarget.push(targetIndex)
+        }
+
         return filteredTarget;
     },
 
