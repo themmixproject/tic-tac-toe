@@ -223,28 +223,31 @@ var computerPlayer = {
     getPossibleTargetsFromBaseIndexes: function(){
         var combinations = []
 
-        computerPlayer.possibleTargets.forEach(function(combination){
-            var hasBaseIndex = false
-
-            for(var i = 0; i < computerPlayer.possibleBaseIndexes.length; i++){
-                var baseIndex = computerPlayer.possibleBaseIndexes[i]
-
-                if(combination.indexOf(baseIndex) > -1)
-                    hasBaseIndex = true
-            }
-
-            if(hasBaseIndex)
+        for(var i = 0; i < computerPlayer.possibleTargets.length; i++){
+            var combination = computerPlayer.possibleTargets.length;
+            if(computerPlayer.combinationHasBaseIndex(combination))
                 combinations.push(combination)
-        })
-
+        }
+        
         return combinations;
+    },
+    combinationHasBaseIndex: function(baseIndex){
+        var hasBaseIndex = false;
+
+        for (var i = 0; i < combination.length; i++) {
+            var baseIndex = computerPlayer.possibleBaseIndexes[i];
+            
+            if(combination.indexOf(baseIndex) > -1)
+                hasBaseIndex = true;
+        }
+
+        return hasBaseIndex;
     },
 
     getNewTargetFromPossibleTargets: function(){
         var targetIndex = Math.floor(
             Math.random() * computerPlayer.possibleTargets.length
         );
-
         var newTarget =  computerPlayer.possibleTargets[targetIndex];
         
         computerPlayer.possibleTargets.splice(targetIndex,1)
