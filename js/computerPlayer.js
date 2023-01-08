@@ -84,26 +84,24 @@ var computerPlayer = {
     },
 
     getTurnIndex: function(){
-        var turnCoordinates = -1;
+        var turnIndex = -1;
 
         var passesBlockThreshold = computerPlayer.checkBlockThreshold();
         var aboutTooWin = computerPlayer.currentTargetProgressMarker === (computerPlayer.currentTarget.length - 1);
-
         if(passesBlockThreshold && !aboutTooWin){
-            turnCoordinates = computerPlayer.getBlockIndex();
+            turnIndex = computerPlayer.getBlockIndex();
         };
-
-        var noBlockCoordinatesHaveBeenFound = turnCoordinates === -1;
-        if(noBlockCoordinatesHaveBeenFound){
-            turnCoordinates = computerPlayer.getCoordinatesFromTarget();
+        if(computerPlayer.noIndexFound(turnIndex)){
+            turnIndex = computerPlayer.getCoordinatesFromTarget();
+        }
+        if(computerPlayer.noIndexFound(turnIndex)){
+            turnIndex = computerPlayer.generateRandomBoardSpace();
         }
         
-        var noCoordinatesFoundFromTarget = turnCoordinates === -1;
-        if(noCoordinatesFoundFromTarget){
-            turnCoordinates = computerPlayer.generateRandomBoardSpace();
-        }
-        
-        return turnCoordinates;
+        return turnIndex;
+    },
+    noIndexFound: function(index){
+        return index === -1;
     },
     
     checkBlockThreshold: function(){
@@ -167,11 +165,10 @@ var computerPlayer = {
 
     getCoordinatesFromTarget(){
         if(computerPlayer.combinationIsPossible(computerPlayer.currentTarget)){
-            return computerPlayer.getCoordinatesFromCurrentTarget();
+            return computerPlayer.getIndexFromCurrentTarget();
         }
                 
         computerPlayer.updatePossibleTargets();
-
         var targetsAvailable = computerPlayer.possibleTargets.length > 0;
         if(targetsAvailable){
             return computerPlayer.getIndexFromNewTarget();
@@ -179,11 +176,9 @@ var computerPlayer = {
 
         return -1;
     },
-
-    getCoordinatesFromCurrentTarget: function(){
+    getIndexFromCurrentTarget: function(){
         return computerPlayer.currentTarget.splice(0, 1)[0];
     },
-
     getIndexFromNewTarget: function(){
         var newTarget = [];
 
@@ -192,23 +187,21 @@ var computerPlayer = {
         if(baseIndexesAvailable){
             newTarget = computerPlayer.getNewTargetFromBaseIndexes();
         }
-        
-        var noBaseTargetFound = newTarget.length === 0;
-        if(noBaseTargetFound){
+        if(!computerPlayer.newTargetIsFound(newTarget)){
             newTarget = computerPlayer.getNewTargetFromPossibleTargets();
         }
-
-        var newTargetIsFound = newTarget.length > 0;
-        if(newTargetIsFound){
+        if(computerPlayer.newTargetIsFound(newTarget)){
             newTarget = computerPlayer.filterPlacedPiecesFromTarget(newTarget);
-
             computerPlayer.setCurrentTarget(newTarget);
     
-            return computerPlayer.getCoordinatesFromCurrentTarget();
+            return computerPlayer.getIndexFromCurrentTarget();
         }
 
         return -1;
        
+    },
+    newTargetIsFound(newTarget){
+        return newTarget.length > 0;
     },
     getNewTargetFromBaseIndexes: function(){
         var baseIndexTarget = [];
