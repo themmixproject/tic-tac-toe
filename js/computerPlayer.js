@@ -182,17 +182,10 @@ var computerPlayer = {
     },
 
     getCoordinatesFromCurrentTarget: function(){
-        var targetIndex = computerPlayer.currentTarget[computerPlayer.currentTargetProgressMarker];
-       
-        // WATCH OUT FOR THIS LINE OF CODE
-        computerPlayer.updateTargetIndex();
-
-        return targetIndex;
+        return computerPlayer.currentTarget.splice(0, 1)[0];
     },
 
     getCoordinatesFromNewTarget: function(){
-        computerPlayer.currentTargetProgressMarker = 0;
-
         var newTarget = [];
 
         var baseIndexesAvailable = computerPlayer.potentialBaseIndexes.length > 0;
@@ -279,13 +272,6 @@ var computerPlayer = {
         return filteredTarget;
     },
 
-    updateTargetIndex: function(){
-        if(computerPlayer.currentTargetProgressMarker < computerPlayer.currentTarget.length-1)
-        computerPlayer.currentTargetProgressMarker++;
-        else
-            computerPlayer.currentTargetProgressMarker = computerPlayer.currentTarget.length-1;
-    },
-
     resetVariablesToDefault: function(){
         computerPlayer.currentTarget = [];
         computerPlayer.possibleTargets = [
@@ -310,7 +296,6 @@ var computerPlayer = {
             [0, 4, 8],
             [6, 4, 2]
         ];
-        computerPlayer.currentTargetProgressMarker = 0;
         computerPlayer.potentialBaseIndexes = [];
     }
 };
