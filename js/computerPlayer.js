@@ -23,7 +23,7 @@ var computerPlayer = {
         [6, 4, 2]
     ],
     currentTargetProgressMarker: 0,
-    potentialBaseIndexes: [],
+    possibleBaseIndexes: [],
 
     init: function(){
         var initialTarget = computerPlayer.getInitialTarget();
@@ -31,7 +31,7 @@ var computerPlayer = {
     },
 
     getInitialTarget: function(){
-        computerPlayer.updatePotentialTargetCombinations();
+        computerPlayer.updatePossibleTargets();
 
         var initialTarget = [];
         var targetIndex = Math.floor(Math.random() * computerPlayer.possibleTargets.length);
@@ -44,20 +44,20 @@ var computerPlayer = {
         computerPlayer.currentTarget = shuffleArray(computerPlayer.currentTarget);
     },
 
-    updatePotentialTargetCombinations: function(){
+    updatePossibleTargets: function(){
         var newTargets = []
         
         for(var i = 0; i < computerPlayer.possibleTargets.length; i++){
             var target = computerPlayer.possibleTargets[i]
             
-            if(computerPlayer.combinationHasPotential(target)){
+            if(computerPlayer.combinationIsPossible(target)){
                 newTargets.push(target)
             }
         }
         computerPlayer.possibleTargets = newTargets;
     },
 
-    combinationHasPotential: function(combination){
+    combinationIsPossible: function(combination){
         var opponentPiece = players.humanPlayer.piece;
         var combinationState = gameBoard.getStates(combination)
         var isPossible = combinationState.indexOf(opponentPiece) < 0;
@@ -68,8 +68,8 @@ var computerPlayer = {
     takeTurn: function(){
         currentPlayer = players.computerPlayer;
 
-        var turnIndex = computerPlayer.getTurnCoordinates();        
-        computerPlayer.potentialBaseIndexes.push(turnIndex);
+        var turnIndex = computerPlayer.getTurnIndex();        
+        computerPlayer.possibleBaseIndexes.push(turnIndex);
 
         gameBoard.setState(turnIndex, currentPlayer.piece);
 
@@ -83,14 +83,14 @@ var computerPlayer = {
         });
     },
 
-    getTurnCoordinates: function(){
+    getTurnIndex: function(){
         var turnCoordinates = -1;
 
         var passesBlockThreshold = computerPlayer.checkBlockThreshold();
         var aboutTooWin = computerPlayer.currentTargetProgressMarker === (computerPlayer.currentTarget.length - 1);
 
         if(passesBlockThreshold && !aboutTooWin){
-            turnCoordinates = computerPlayer.getBlockCoordinates();
+            turnCoordinates = computerPlayer.getBlockIndex();
         };
 
         var noBlockCoordinatesHaveBeenFound = turnCoordinates === -1;
@@ -112,10 +112,9 @@ var computerPlayer = {
         var passNumber = Math.floor(Math.random() * blockScale + 1);
         var check = passNumber > blockThreshold;
         return check;
-        // return true;
     },
 
-    getBlockCoordinates: function(){
+    getBlockIndex: function(){
         var blockIndex = -1;
 
         for(var i = 0; i < computerPlayer.winCombinationIndexes.length; i++){
@@ -167,15 +166,15 @@ var computerPlayer = {
     },
 
     getCoordinatesFromTarget(){
-        if(computerPlayer.combinationHasPotential(computerPlayer.currentTarget)){
+        if(computerPlayer.combinationIsPossible(computerPlayer.currentTarget)){
             return computerPlayer.getCoordinatesFromCurrentTarget();
         }
                 
-        computerPlayer.updatePotentialTargetCombinations();
+        computerPlayer.updatePossibleTargets();
 
-        var potentialTargetsAvailable = computerPlayer.possibleTargets.length > 0;
-        if(potentialTargetsAvailable){
-            return computerPlayer.getCoordinatesFromNewTarget();
+        var targetsAvailable = computerPlayer.possibleTargets.length > 0;
+        if(targetsAvailable){
+            return computerPlayer.getIndexFromNewTarget();
         }
 
         return -1;
@@ -185,10 +184,10 @@ var computerPlayer = {
         return computerPlayer.currentTarget.splice(0, 1)[0];
     },
 
-    getCoordinatesFromNewTarget: function(){
+    getIndexFromNewTarget: function(){
         var newTarget = [];
 
-        var baseIndexesAvailable = computerPlayer.potentialBaseIndexes.length > 0;
+        var baseIndexesAvailable = computerPlayer.possibleBaseIndexes.length > 0;
         
         if(baseIndexesAvailable){
             newTarget = computerPlayer.getNewTargetFromBaseIndexes();
@@ -196,7 +195,7 @@ var computerPlayer = {
         
         var noBaseTargetFound = newTarget.length === 0;
         if(noBaseTargetFound){
-            newTarget = computerPlayer.getNewTargetFromPotentialTargets();
+            newTarget = computerPlayer.getNewTargetFromPossibleTargets();
         }
 
         var newTargetIsFound = newTarget.length > 0;
@@ -213,29 +212,29 @@ var computerPlayer = {
     },
     getNewTargetFromBaseIndexes: function(){
         var baseIndexTarget = [];
-        var potentialCombinations = computerPlayer.getPotentialCombinationsFromBaseIndexes();
-        var combinationsFound = potentialCombinations.length > 0;
+        var possibleCombinations = computerPlayer.getPossibleTargetsFromBaseIndexes();
+        var combinationsFound = possibleCombinations.length > 0;
 
             if(combinationsFound){
                 var noBaseTargetIsSet = baseIndexTarget.length === 0;
                 
                 if(noBaseTargetIsSet){
-                    var selectedIndex = Math.floor(Math.random() * potentialCombinations.length);
-                    baseIndexTarget =  potentialCombinations[selectedIndex];
+                    var selectedIndex = Math.floor(Math.random() * possibleCombinations.length);
+                    baseIndexTarget =  possibleCombinations[selectedIndex];
                 }
             }
 
         return baseIndexTarget;
     },
     
-    getPotentialCombinationsFromBaseIndexes: function(){
+    getPossibleTargetsFromBaseIndexes: function(){
         var combinations = []
 
         computerPlayer.possibleTargets.forEach(function(combination){
             var hasBaseIndex = false
 
-            for(var i = 0; i < computerPlayer.potentialBaseIndexes.length; i++){
-                var baseIndex = computerPlayer.potentialBaseIndexes[i]
+            for(var i = 0; i < computerPlayer.possibleBaseIndexes.length; i++){
+                var baseIndex = computerPlayer.possibleBaseIndexes[i]
 
                 if(combination.indexOf(baseIndex) > -1)
                     hasBaseIndex = true
@@ -248,14 +247,14 @@ var computerPlayer = {
         return combinations;
     },
 
-    getNewTargetFromPotentialTargets: function(){
-        var potentialTargetIndex = Math.floor(
+    getNewTargetFromPossibleTargets: function(){
+        var targetIndex = Math.floor(
             Math.random() * computerPlayer.possibleTargets.length
         );
 
-        var newTarget =  computerPlayer.possibleTargets[potentialTargetIndex];
+        var newTarget =  computerPlayer.possibleTargets[targetIndex];
         
-        computerPlayer.possibleTargets.splice(potentialTargetIndex,1)
+        computerPlayer.possibleTargets.splice(targetIndex,1)
 
         return newTarget;
     },
@@ -296,7 +295,7 @@ var computerPlayer = {
             [0, 4, 8],
             [6, 4, 2]
         ];
-        computerPlayer.potentialBaseIndexes = [];
+        computerPlayer.possibleBaseIndexes = [];
     }
 };
 computerPlayer.init();
