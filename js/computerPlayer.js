@@ -1,6 +1,4 @@
 var computerPlayer = {
-    placedPieces: [],
-    isFirstTurn: true,
     currentTarget: [],
     possibleTargets: [
         [0, 3, 6],
@@ -71,7 +69,6 @@ var computerPlayer = {
         currentPlayer = players.computerPlayer;
 
         var turnIndex = computerPlayer.getTurnCoordinates();        
-        computerPlayer.placedPieces.push(turnIndex);
         computerPlayer.potentialBaseIndexes.push(turnIndex);
 
         gameBoard.setState(turnIndex, currentPlayer.piece);
@@ -84,13 +81,6 @@ var computerPlayer = {
             else
                 players.humanPlayer.canInteract = true;
         });
-        // drawCircleOnCanvas(animationCoords[0], animationCoords[1]);
-        // checkGameEndConditions(currentPlayer);
-        // if(game.hasEnded && !game.endFunctionHasBeenCalled)
-        //         endGame();
-        // else
-        //     players.humanPlayer.canInteract = true;
-
     },
 
     getTurnCoordinates: function(){
@@ -297,8 +287,6 @@ var computerPlayer = {
     },
 
     resetVariablesToDefault: function(){
-        computerPlayer.placedPieces = [];
-        computerPlayer.isFirstTurn = true;
         computerPlayer.currentTarget = [];
         computerPlayer.possibleTargets = [
             [0, 3, 6],
@@ -322,7 +310,6 @@ var computerPlayer = {
             [0, 4, 8],
             [6, 4, 2]
         ];
-        computerPlayer.currentTargetIndex = 0;
         computerPlayer.currentTargetProgressMarker = 0;
         computerPlayer.potentialBaseIndexes = [];
     }
