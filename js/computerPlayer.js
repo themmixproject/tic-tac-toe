@@ -231,7 +231,7 @@ var computerPlayer = {
         
         return combinations;
     },
-    combinationHasBaseIndex: function(baseIndex){
+    combinationHasBaseIndex: function(combination){
         var hasBaseIndex = false;
 
         for (var i = 0; i < combination.length; i++) {
