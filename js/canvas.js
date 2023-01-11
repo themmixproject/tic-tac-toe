@@ -114,16 +114,15 @@ var backingStoreRatio =
 devicePixelRatio = devicePixelRatio / backingStoreRatio;
 
 
-let height = window.innerHeight;
-let width = window.innerWidth;
+var height = window.innerHeight;
+var width = window.innerWidth;
 canvas.width = width * devicePixelRatio;
 canvas.height = height * devicePixelRatio;
 canvas.style.height = height + "px";
 canvas.style.width = width + "px";
 
-if(window.devicePixelRatio > 1){
-    canvasContext.scale(window.devicePixelRatio, window.devicePixelRatio)
-}
+canvasContext.scale(window.devicePixelRatio, window.devicePixelRatio)
+
 var canvasCenter = {
     x: width / 2,
     y: height / 2
@@ -538,13 +537,18 @@ function clearCanvasGridCel(x, y){
 }
 
 function updateCanvasAttributes(){
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    canvasContext.translate(0.5, 0.5);
-
+    var height = window.innerHeight;
+    var width = window.innerWidth;
+    canvas.width = width * devicePixelRatio;
+    canvas.height = height * devicePixelRatio;
+    canvas.style.height = height + "px";
+    canvas.style.width = width + "px";
+    
+    canvasContext.scale(window.devicePixelRatio, window.devicePixelRatio)
+    
     canvasCenter = {
-        x: canvas.width / 2,
-        y: canvas.height / 2
+        x: width / 2,
+        y: height / 2
     };
 }
 
@@ -697,5 +701,5 @@ function drawWinLineOnCanvas(){
 // Implementation
 
 addEvents();
-// scaleCanvasOnLoad();
+scaleCanvasOnLoad();
 drawGridOnCanvas();
