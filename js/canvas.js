@@ -63,6 +63,40 @@ window.cancelAnimationFrame = (function () {
     };
 })();
 
+
+
+function convertBoardCoordinateToIndex(x, y){
+    // 3 because it's a 3x3 grid
+    return y * 3 + x;
+}
+
+function convertIndexToBoardCoordinate(index){
+    var x = index % 3;
+    var y = Math.floor( (index / 3) % 3 );
+
+    return [x, y]
+}
+
+
+
+function shuffleArray(array) {
+    var currentIndex = array.length,  randomIndex;
+  
+    // While there remain elements to shuffle...
+    while (0 !== currentIndex) {
+  
+      // Pick a remaining element...
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex--;
+  
+      // And swap it with the current element.
+      [array[currentIndex], array[randomIndex]] = [
+        array[randomIndex], array[currentIndex]];
+    }
+  
+    return array;
+  }
+
 var styles = {
     defaultThickness: 10,
     cross : {
@@ -230,7 +264,15 @@ var winCombinations = [
 
 
 var currentPlayer;
-
+var players = {
+    humanPlayer: {
+        piece: "X",
+        canInteract: true
+    },
+    computerPlayer: {
+        piece: "O"
+    }
+}
 
 
 /**
@@ -279,8 +321,6 @@ function rotateBoard(){
     return rotatedRows;
 }
 
-
-
 function addEvents(){
     if(isMobileDevice())
         addMobileEvents();
@@ -306,45 +346,8 @@ function canvasClickEvent(event){
     canvasInteraction(clientXY);
 }
 
-var players = {
-    humanPlayer: {
-        piece: "X",
-        canInteract: true
-    },
-    computerPlayer: {
-        piece: "O"
-    }
-}
 
-function convertBoardCoordinateToIndex(x, y){
-    // 3 because it's a 3x3 grid
-    return y * 3 + x;
-}
 
-function convertIndexToBoardCoordinate(index){
-    var x = index % 3;
-    var y = Math.floor( (index / 3) % 3 );
-
-    return [x, y]
-}
-
-function shuffleArray(array) {
-    var currentIndex = array.length,  randomIndex;
-  
-    // While there remain elements to shuffle...
-    while (0 !== currentIndex) {
-  
-      // Pick a remaining element...
-      randomIndex = Math.floor(Math.random() * currentIndex);
-      currentIndex--;
-  
-      // And swap it with the current element.
-      [array[currentIndex], array[randomIndex]] = [
-        array[randomIndex], array[currentIndex]];
-    }
-  
-    return array;
-  }
 
 function canvasInteraction(clientCoordinates){
     for(x=0; x<3;x++){
@@ -382,48 +385,6 @@ function checkGameEndConditions(player){
     checkIfGameHasTied();
 }
 
-function endGame(){
-    game.endFunctionHasBeenCalled = true;
-    if(game.hasBeenWon){
-        playWinLineAnimation(function(){
-            restartGame();
-        });
-    }
-    else if(game.hasEnded){
-        restartGame();
-    }
-}
-
-function restartGame(){
-    players.humanPlayer.canInteract = false;
-    playFadeOutBoardPiecesAnimation(function(){
-        clearCanvas();
-        drawGridOnCanvas();
-
-        resetGameVariablesToDefault();
-        gameBoard.reset()
-    
-        computerPlayer.resetVariablesToDefault();
-        computerPlayer.init();
-
-        players.humanPlayer.canInteract = true;
-    });
-}
-
-function resetGameVariablesToDefault(){
-    game.hasBeenWon = false;
-    game.hasEnded = false;
-    game.winningCombination = [];
-    game.endFunctionHasBeenCalled = false;
-};
-
-function clearPiecesFromGrid(){
-    for(x = 0; x < 3; x++){
-        for(y = 0; y < 3; y++){
-            clearCanvasGridCel(x, y);
-        }
-    }
-}
 
 function checkIfPlayerHasWon(player){
     winCombinations.forEach( function(winCombination){
@@ -448,6 +409,42 @@ function checkIfGameHasTied(){
         game.hasEnded = true;    
     };
 }
+
+function endGame(){
+    game.endFunctionHasBeenCalled = true;
+    if(game.hasBeenWon){
+        playWinLineAnimation(function(){
+            restartGame();
+        });
+    }
+    else if(game.hasEnded){
+        restartGame();
+    }
+}
+function restartGame(){
+    players.humanPlayer.canInteract = false;
+    playFadeOutBoardPiecesAnimation(function(){
+        clearCanvas();
+        drawGridOnCanvas();
+
+        resetGameVariablesToDefault();
+        gameBoard.reset()
+    
+        computerPlayer.resetVariablesToDefault();
+        computerPlayer.init();
+
+        players.humanPlayer.canInteract = true;
+    });
+}
+function resetGameVariablesToDefault(){
+    game.hasBeenWon = false;
+    game.hasEnded = false;
+    game.winningCombination = [];
+    game.endFunctionHasBeenCalled = false;
+};
+
+
+
 
 function hasCollisionWithGridCel(clientXY, celXY){
     var startX = celXY.x;
@@ -521,21 +518,9 @@ function windowResizeEvent(){
     drawGridOnCanvas();
     drawBoardPiecesOnCanvas();
 }
-
 function clearCanvas(){
     canvasContext.clearRect(0, 0, canvas.width, canvas.height);
 }
-
-function clearCanvasGridCel(x, y){
-    var clearStartCoordinates = convertBoardToCanvasCoordinates(x, y);
-
-    var clearStartX = clearStartCoordinates.x + (grid.celPadding / 2) + 2;
-    var clearStartY = clearStartCoordinates.y + (grid.celPadding / 2) + 2;
-    var clearLength = grid.sectionLength - ((grid.celPadding/2) * 2) - 2;
-
-    canvasContext.clearRect(clearStartX, clearStartY, clearLength, clearLength);
-}
-
 function updateCanvasAttributes(){
     var height = window.innerHeight;
     var width = window.innerWidth;
@@ -551,7 +536,6 @@ function updateCanvasAttributes(){
         y: height / 2
     };
 }
-
 function updateGridSize(){
     var winHeight = window.innerHeight;
     var winWidth = window.innerWidth;
@@ -570,7 +554,6 @@ function updateGridSize(){
     
     scaleBoardPieces();
 }
-
 function scaleGridSize(){
     var innerHeight = window.innerHeight;
     var innerWidth = window.innerWidth;
@@ -580,7 +563,6 @@ function scaleGridSize(){
     else
         grid.setHeightAndWidth(innerHeight - grid.margin);
 }
-
 function scaleBoardPieces(){
     // (grid.sectionLength - (grid.celPadding))/grid.width
     var newThickness =  Math.round((0.028530 * grid.width) * 10) / 10;
@@ -598,7 +580,6 @@ function setGlobalStyleThickness(newThickness){
     styles.cross.thickness = newThickness;
     styles.winLine.thickness = newThickness;
 }
-
 function updateGridAttributes(){
     grid.sectionLength = grid.width / 3;
 
@@ -661,7 +642,22 @@ function drawBoardPiecesOnCanvas(){
             drawBoardPieceAt(coords[0], coords[1], boardPiece)
     }
 }
+function clearPiecesFromGrid(){
+    for(x = 0; x < 3; x++){
+        for(y = 0; y < 3; y++){
+            clearCanvasGridCel(x, y);
+        }
+    }
+}
+function clearCanvasGridCel(x, y){
+    var clearStartCoordinates = convertBoardToCanvasCoordinates(x, y);
 
+    var clearStartX = clearStartCoordinates.x + (grid.celPadding / 2) + 2;
+    var clearStartY = clearStartCoordinates.y + (grid.celPadding / 2) + 2;
+    var clearLength = grid.sectionLength - ((grid.celPadding/2) * 2) - 2;
+
+    canvasContext.clearRect(clearStartX, clearStartY, clearLength, clearLength);
+}
 function drawBoardPieceAt(x, y, piece){
     if(piece === players.humanPlayer.piece )
         drawCrossOnCanvas(x, y);
